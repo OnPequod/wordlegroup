@@ -1,5 +1,6 @@
 import './bootstrap';
-// import './elements/turbo-echo-stream-tag';
-// import './libs/turbo';
-// require("flatpickr");
+import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
 
+window.Alpine = Alpine;
+
+Livewire.start();

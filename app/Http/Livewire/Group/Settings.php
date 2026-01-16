@@ -23,7 +23,7 @@ class Settings extends Component
 
     public $confirmTransfer;
 
-    protected function getRules()
+    public function getRules()
     {
         return [
             'group.name'          => ['required'],

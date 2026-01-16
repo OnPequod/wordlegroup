@@ -91,7 +91,7 @@ class RecordForm extends Component
             'hard_mode'         => $data['hardMode'] ?? null,
         ]);
 
-        $this->emitUp('scoreRecorded');
+        $this->dispatch('scoreRecorded')->toParent();
     }
 
     public function recordScoreManually()
@@ -109,7 +109,7 @@ class RecordForm extends Component
             'hardMode'    => $this->hardMode ?? false,
         ]);
 
-        $this->emitUp('scoreRecorded');
+        $this->dispatch('scoreRecorded')->toParent();
     }
 
     public function updatedDate($date)
@@ -117,7 +117,7 @@ class RecordForm extends Component
         $this->boardNumber = app(WordleBoard::class)->getBoardNumberFromDate(Carbon::parse($date));
 
         if(!$this->boardNumber) {
-            $this->dispatchBrowserEvent('notify', [
+            $this->dispatch('notify', [
                 'type' => 'error',
                 'content' => 'Cannot use a date from the future.'
             ]);

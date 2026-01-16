@@ -14,7 +14,7 @@ class Register extends Component
 
     public $email;
 
-    protected function getRules()
+    public function getRules()
     {
         return [
             'email' => [

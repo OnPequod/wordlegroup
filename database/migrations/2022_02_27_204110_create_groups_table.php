@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedInteger('member_count')->default(0);
             $table->unsignedInteger('scores_recorded')->default(0);
-            $table->unsignedFloat('score_mean')->nullable();
-            $table->unsignedFloat('score_median')->nullable();
+            $table->float('score_mean')->nullable();
+            $table->float('score_median')->nullable();
             $table->tinyInteger('score_mode')->nullable();
             $table->jsonb('score_distribution')->nullable();
             $table->jsonb('leaderboard')->nullable();

@@ -20,8 +20,8 @@ return new class extends Migration
             $table->boolean('dismissed_email_notification')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->unsignedInteger('daily_scores_recorded')->default(0);
-            $table->unsignedFloat('daily_score_mean')->nullable();
-            $table->unsignedFloat('daily_score_median')->nullable();
+            $table->float('daily_score_mean')->nullable();
+            $table->float('daily_score_median')->nullable();
             $table->unsignedTinyInteger('daily_score_mode')->nullable();
             $table->jsonb('score_distribution')->nullable();
             $table->string('password')->nullable();

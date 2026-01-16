@@ -32,7 +32,7 @@ class CreateForm extends Component
         $this->autofocus = $autofocus;
     }
 
-    protected function getRules()
+    public function getRules()
     {
         $rules = ['groupName' => 'required',];
 

@@ -48,7 +48,7 @@ class Share extends Component
             $this->score->save();
         }
 
-        $this->dispatchBrowserEvent("shared-score-{$this->score->id}-to-{$type}");
+        $this->dispatch("shared-score-{$this->score->id}-to-{$type}");
     }
 
     protected function getListeners()

@@ -26,6 +26,13 @@ class Login extends Component
     {
         if ($request->input('id') && $request->input('token')) {
             $this->attemptLogInThroughEmailLink($request);
+
+            return;
+        }
+
+        if ($request->filled('email')) {
+            $this->email = $request->input('email');
+            $this->send();
         }
     }
 
@@ -80,7 +87,7 @@ class Login extends Component
         Mail::to($this->user)
             ->send(new LoginEmail($this->user));
 
-        $this->dispatchBrowserEvent('login-code-sent');
+        $this->dispatch('login-code-sent');
 
         $this->codeSent = true;
     }
@@ -89,7 +96,7 @@ class Login extends Component
     {
         $this->send();
 
-        $this->dispatchBrowserEvent('login-code-resent');
+        $this->dispatch('login-code-resent');
     }
 
     public function render()

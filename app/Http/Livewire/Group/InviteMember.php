@@ -15,7 +15,7 @@ class InviteMember extends Component
 
     public $name;
 
-    protected function getRules()
+    public function getRules()
     {
         return [
             'name' => 'required',

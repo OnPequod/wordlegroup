@@ -21,10 +21,8 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
 <link rel="manifest" href="/favicons/site.webmanifest">
 <link rel="shortcut icon" href="/favicons/favicon.ico">
-<link href="{{ mix('css/app.css') }}" rel="stylesheet" />
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 @stack('styles')
-
-<script src="{{ mix('js/app.js') }}"></script>
 @stack('scripts')
 
 @livewireStyles
@@ -42,8 +40,6 @@
 </main>
 
 @livewireScripts
-<script src="//unpkg.com/alpinejs" defer></script>
-<script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js" data-turbolinks-eval="false" data-turbo-eval="false"></script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-22785728-11"></script>
@@ -56,7 +52,7 @@
 </script>
 
 <script>
-    document.addEventListener("turbo:load", function() {
+    document.addEventListener("DOMContentLoaded", function() {
         window.dispatchEvent(new CustomEvent("reset-notifications"));
     })
 

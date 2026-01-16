@@ -15,7 +15,7 @@ services:
     networks:
       - wordle-group-network
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -52,7 +52,7 @@ services:
     networks:
       - wordle-group-network
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -61,23 +61,26 @@ services:
   # ===================
   # Data Services
   # ===================
-  postgres:
-    image: postgres:17-alpine
-    container_name: wordle-group-postgres
+  mysql:
+    image: mysql:8.4
+    container_name: wordle-group-mysql
     restart: on-failure
+    command: --port=5432
     environment:
-      POSTGRES_DB: wordle_group
-      POSTGRES_USER: wordle_group
-      POSTGRES_PASSWORD: wordle-group-dev-secret
+      MYSQL_DATABASE: wordlegroup_prod
+      MYSQL_USER: wordlegroup_prodgroup
+      MYSQL_PASSWORD: wordlegroup-dev-secret
+      MYSQL_ROOT_PASSWORD: wordlegroup-dev-secret
+      MYSQL_TCP_PORT: 5432
     volumes:
-      - wordle-group-postgres-data:/var/lib/postgresql/data
+      - wordle-group-mysql-data:/var/lib/mysql
       - ./storage/app/dumps:/dumps
     ports:
-      - "127.0.0.1:5443:5432"
+      - "127.0.0.1:3307:5432"
     networks:
       - wordle-group-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U wordle_group -d wordle_group"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "5432", "-pwordlegroup-dev-secret"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -116,5 +119,5 @@ networks:
     driver: bridge
 
 volumes:
-  wordle-group-postgres-data:
+  wordle-group-mysql-data:
   wordle-group-redis-data:

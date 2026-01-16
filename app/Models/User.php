@@ -22,7 +22,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, Prunable, SoftDeletes;
 
-    protected $dates = ['last_reminded_at', 'email_verified_at', 'auth_token_generated_at', 'login_code_generated_at'];
 
     protected $fillable = [
         'name',
@@ -56,6 +55,10 @@ class User extends Authenticatable
 
     protected $casts = [
         'score_distribution' => 'collection',
+        'last_reminded_at' => 'datetime',
+        'email_verified_at' => 'datetime',
+        'auth_token_generated_at' => 'datetime',
+        'login_code_generated_at' => 'datetime',
     ];
 
     public function canBeNudged()
