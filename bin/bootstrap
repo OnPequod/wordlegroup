@@ -1,0 +1,105 @@
+#!/bin/bash
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "=== Wordle Group Bootstrap ==="
+echo
+
+# Check for Docker
+if ! command -v docker &> /dev/null; then
+    echo "ERROR: Docker is not installed"
+    exit 1
+fi
+
+if ! docker info &> /dev/null; then
+    echo "ERROR: Docker daemon is not running"
+    exit 1
+fi
+
+# Check/add hosts entry
+HOSTS_ENTRY="127.0.0.1 wordlegroup.test"
+if ! grep -q "wordlegroup.test" /etc/hosts; then
+    echo "Adding wordlegroup.test to /etc/hosts (requires sudo)..."
+    echo "$HOSTS_ENTRY" | sudo tee -a /etc/hosts > /dev/null
+    echo "  Added: $HOSTS_ENTRY"
+else
+    echo "  wordlegroup.test already in /etc/hosts"
+fi
+
+# Copy environment file if needed
+if [ ! -f .env ]; then
+    echo "Creating .env from .env.docker..."
+    cp .env.docker .env
+else
+    echo "  .env already exists"
+fi
+
+# Build Docker images
+echo
+echo "Building Docker images..."
+docker compose build
+
+# Start containers
+echo
+echo "Starting containers..."
+docker compose up -d
+
+# Wait for healthy services
+echo
+echo "Waiting for services to be healthy..."
+sleep 5
+
+# Install PHP dependencies
+echo
+echo "Installing PHP dependencies..."
+docker compose exec -T php composer install
+
+# Generate app key if not set
+if grep -q "^APP_KEY=$" .env; then
+    echo
+    echo "Generating application key..."
+    docker compose exec -T php php artisan key:generate
+fi
+
+# Install npm dependencies and build assets
+echo
+echo "Installing npm dependencies..."
+docker compose exec -T php npm install
+
+echo
+echo "Building frontend assets..."
+docker compose exec -T php npm run prod
+
+# Fix storage permissions
+echo
+echo "Setting storage permissions..."
+docker compose exec -T php chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+docker compose exec -T php chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Run migrations
+echo
+echo "Running database migrations..."
+docker compose exec -T php php artisan migrate --force
+
+# Cache config for production-like performance
+echo
+echo "Caching configuration..."
+docker compose exec -T php php artisan config:cache
+docker compose exec -T php php artisan view:cache
+docker compose exec -T php php artisan route:cache
+
+echo
+echo "=== Bootstrap Complete ==="
+echo
+echo "  Web App:    http://wordlegroup.test"
+echo "  Mailpit:    http://localhost:8034"
+echo "  PostgreSQL: localhost:5443"
+echo "  Redis:      localhost:6394"
+echo
+echo "Useful commands:"
+echo "  make db-fresh   # Reset DB with fixture data"
+echo "  make db-load    # Load production dump"
+echo "  make shell      # PHP container shell"
+echo "  make test       # Run tests"
+echo "  make logs       # View logs"

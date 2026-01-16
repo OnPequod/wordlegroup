@@ -1,0 +1,6 @@
+#!/bin/bash
+# Export current database to a timestamped file
+DUMP_FILE="storage/app/dumps/$(date +%Y%m%d_%H%M%S).sql"
+echo "Dumping database to: $DUMP_FILE"
+docker compose exec postgres pg_dump -U wordle_group wordle_group > "$DUMP_FILE"
+echo "Done."
