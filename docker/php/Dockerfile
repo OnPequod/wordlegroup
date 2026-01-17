@@ -2,7 +2,7 @@ FROM php:8.4-fpm-alpine
 
 # Install system deps including mailparse requirements
 RUN apk add --no-cache \
-    postgresql-dev \
+    mysql-client \
     libzip-dev \
     icu-dev \
     oniguruma-dev \
@@ -12,7 +12,7 @@ RUN apk add --no-cache \
     re2c
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql zip intl mbstring bcmath pcntl
+RUN docker-php-ext-install pdo pdo_mysql zip intl mbstring bcmath pcntl
 
 # Install mailparse (requires pecl)
 RUN pecl install mailparse && docker-php-ext-enable mailparse
