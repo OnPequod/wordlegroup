@@ -20,7 +20,7 @@
                             autofocus
                             label="Your Name"
                             placeholder="Jane Doe"
-                            wire:model.lazy="name"
+                            wire:model.blur="name"
                         />
                     </div>
 

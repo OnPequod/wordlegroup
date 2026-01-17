@@ -7,7 +7,7 @@
                     name="name"
                     label="Invitee's Name"
                     placeholder="Jane Doe"
-                    wire:model.lazy="name"
+                    wire:model.blur="name"
                 />
             </div>
 
@@ -18,7 +18,7 @@
                     type="email"
                     label="Email Address"
                     placeholder="email@address.com"
-                    wire:model.lazy="email"
+                    wire:model.blur="email"
                 />
             </div>
 

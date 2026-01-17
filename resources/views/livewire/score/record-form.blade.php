@@ -60,7 +60,7 @@
                         :rows="7"
                         :tip="$quick ? '' : 'Just paste in your board and we\'ll figure out the dare and score and save your board.'"
                         placeholder="Wordle 250 3/6..."
-                        wire:model.lazy="board"
+                        wire:model.blur="board"
                         class="font-system"
                     />
                 </div>
@@ -134,7 +134,7 @@
                             placeholder="123"
                             min="1"
                             max="10000"
-                            wire:model.lazy="boardNumber"
+                            wire:model.blur="boardNumber"
                         />
                     </div>
 
@@ -147,7 +147,7 @@
                         placeholder="3"
                         min="1"
                         max="6"
-                        wire:model.lazy="score"
+                        wire:model.blur="score"
                     />
                     <div class="@if($errors->has('score')) mt-4 @else mt-1 @endif text-gray-500 text-sm">
                         Click the checkbox below if you missed.

@@ -3,7 +3,13 @@
     "allow": [
       "Bash(docker compose exec:*)",
       "Bash(docker compose:*)",
-      "Bash(docker compose run:*)"
+      "Bash(docker compose run:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker restart:*)",
+      "Bash(timeout 5 curl:*)",
+      "Bash(for url in \"/\" \"/login\" \"/register\" \"/group/create\" \"/about\" \"/contact\")",
+      "Bash(do echo -n \"$url: \")",
+      "Bash(done)"
     ]
   }
 }

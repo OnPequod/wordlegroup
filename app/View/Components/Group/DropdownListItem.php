@@ -16,7 +16,7 @@ class DropdownListItem extends Component
     public function __construct(GroupMembership $groupMembership, User $user = null)
     {
         $this->groupMembership = $groupMembership;
-        $this->user = $user->id ? $user : Auth::user();
+        $this->user = $user ?? Auth::user();
     }
 
     public function render()

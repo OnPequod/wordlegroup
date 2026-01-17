@@ -65,22 +65,20 @@ services:
     image: mysql:8.4
     container_name: wordle-group-mysql
     restart: on-failure
-    command: --port=5432
     environment:
-      MYSQL_DATABASE: wordlegroup_prod
-      MYSQL_USER: wordlegroup_prodgroup
+      MYSQL_DATABASE: wordlegroup_prod_copy
+      MYSQL_USER: wordlegroup
       MYSQL_PASSWORD: wordlegroup-dev-secret
       MYSQL_ROOT_PASSWORD: wordlegroup-dev-secret
-      MYSQL_TCP_PORT: 5432
     volumes:
       - wordle-group-mysql-data:/var/lib/mysql
       - ./storage/app/dumps:/dumps
     ports:
-      - "127.0.0.1:3307:5432"
+      - "127.0.0.1:3307:3306"
     networks:
       - wordle-group-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "5432", "-pwordlegroup-dev-secret"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pwordlegroup-dev-secret"]
       interval: 10s
       timeout: 5s
       retries: 5

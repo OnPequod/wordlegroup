@@ -1,7 +1,7 @@
 <form wire:submit.prevent="store" class="my-0">
     <div class="py-8 grid grid-cols-1 gap-y-7">
         <x-form.input.text
-            wire:model.lazy="groupName"
+            wire:model.blur="groupName"
             :autofocus="$autofocus"
             name="groupName"
             :errors="$errors"
@@ -10,7 +10,7 @@
         />
         @unless(Auth::check())
             <x-form.input.text
-                wire:model.lazy="email"
+                wire:model.blur="email"
                 name="email"
                 :errors="$errors"
                 type="email"

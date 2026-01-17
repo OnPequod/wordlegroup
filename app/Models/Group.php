@@ -177,6 +177,8 @@ class Group extends Model
     {
         [$startBoard, $endBoard] = app(WordleBoard::class)->getStartAndEndBoardsFromDates($startDate, $endDate);
 
+        $this->loadMissing('memberships.user');
+
         $userScores = $this->memberships
             ->map(function ($membership) use ($startBoard, $endBoard) {
                 $userScores = $this->scores

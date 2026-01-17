@@ -39,7 +39,7 @@
                 class="font-fixed"
                 name="loginCode"
                 label="Login Code"
-                wire:model.lazy="loginCode"
+                wire:model.blur="loginCode"
                 placeholder="123456"
             />
 
@@ -60,7 +60,7 @@
                 name="email"
                 autofocus
                 label="Email Address"
-                wire:model.lazy="email"
+                wire:model.blur="email"
                 placeholder="your@email.address"
             />
 

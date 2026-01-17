@@ -22,7 +22,7 @@ class Manage extends Component
     {
         $this->authorize($group);
 
-        $this->group = $group;
+        $this->group = $group->load('memberships.user');
     }
 
     public function authorize(Group $group)

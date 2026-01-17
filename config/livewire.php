@@ -3,90 +3,118 @@
 return [
 
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
+    | Component Locations
+    |---------------------------------------------------------------------------
+    |
+    | This value sets the root directories that'll be used to resolve view-based
+    | components like single and multi-file components. The make command will
+    | use the first directory in this array to add new component files to.
+    |
+    */
+
+    'component_locations' => [
+        resource_path('views/components'),
+        resource_path('views/livewire'),
+    ],
+
+    /*
+    |---------------------------------------------------------------------------
+    | Component Namespaces
+    |---------------------------------------------------------------------------
+    |
+    | This value sets default namespaces that will be used to resolve view-based
+    | components like single-file and multi-file components. These folders'll
+    | also be referenced when creating new components via the make command.
+    |
+    */
+
+    'component_namespaces' => [
+        'layouts' => resource_path('views/layouts'),
+        'pages' => resource_path('views/pages'),
+    ],
+
+    /*
+    |---------------------------------------------------------------------------
+    | Page Layout
+    |---------------------------------------------------------------------------
+    | The view that will be used as the layout when rendering a single component as
+    | an entire page via `Route::livewire('/post/create', 'pages::create-post')`.
+    | In this case, the content of pages::create-post will render into $slot.
+    |
+    */
+
+    'component_layout' => 'layouts.app',
+
+    /*
+    |---------------------------------------------------------------------------
+    | Lazy Loading Placeholder
+    |---------------------------------------------------------------------------
+    | Livewire allows you to lazy load components that would otherwise slow down
+    | the initial page load. Every component can have a custom placeholder or
+    | you can define the default placeholder view for all components below.
+    |
+    */
+
+    'component_placeholder' => null,
+
+    /*
+    |---------------------------------------------------------------------------
+    | Make Command
+    |---------------------------------------------------------------------------
+    | This value determines the default configuration for the artisan make command
+    | You can configure the component type (sfc, mfc, class) and whether to use
+    | the high-voltage emoji as a prefix in the sfc|mfc component names.
+    |
+    */
+
+    'make_command' => [
+        'type' => 'class',
+        'emoji' => false,
+    ],
+
+    /*
+    |---------------------------------------------------------------------------
     | Class Namespace
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     |
-    | This value sets the root namespace for Livewire component classes in
-    | your application. This value affects component auto-discovery and
-    | any Livewire file helper commands, like `artisan make:livewire`.
-    |
-    | After changing this item, run: `php artisan livewire:discover`.
+    | This value sets the root class namespace for Livewire component classes in
+    | your application. This value will change where component auto-discovery
+    | finds components. It's also referenced by the file creation commands.
     |
     */
 
     'class_namespace' => 'App\\Http\\Livewire',
 
     /*
-    |--------------------------------------------------------------------------
-    | View Path
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
+    | Class Path
+    |---------------------------------------------------------------------------
     |
-    | This value sets the path for Livewire component views. This affects
-    | file manipulation helper commands like `artisan make:livewire`.
+    | This value is used to specify the path where Livewire component class files
+    | are created when running creation commands like `artisan make:livewire`.
+    | This path is customizable to match your projects directory structure.
+    |
+    */
+
+    'class_path' => app_path('Http/Livewire'),
+
+    /*
+    |---------------------------------------------------------------------------
+    | View Path
+    |---------------------------------------------------------------------------
+    |
+    | This value is used when creating new components to set the view path. It
+    | will be used to create both the path and the namespace of the view.
     |
     */
 
     'view_path' => resource_path('views/livewire'),
 
     /*
-    |--------------------------------------------------------------------------
-    | Layout
-    |--------------------------------------------------------------------------
-    | The default layout view that will be used when rendering a component via
-    | Route::get('/some-endpoint', SomeComponent::class);. In this case the
-    | the view returned by SomeComponent will be wrapped in "layouts.app"
-    |
-    */
-
-    'layout' => 'layouts.app',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Livewire Assets URL
-    |--------------------------------------------------------------------------
-    |
-    | This value sets the path to Livewire JavaScript assets, for cases where
-    | your app's domain root is not the correct path. By default, Livewire
-    | will load its JavaScript assets from the app's "relative root".
-    |
-    | Examples: "/assets", "myurl.com/app".
-    |
-    */
-
-    'asset_url' => null,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Livewire App URL
-    |--------------------------------------------------------------------------
-    |
-    | This value should be used if livewire assets are served from CDN.
-    | Livewire will communicate with an app through this url.
-    |
-    | Examples: "https://my-app.com", "myurl.com/app".
-    |
-    */
-
-    'app_url' => null,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Livewire Endpoint Middleware Group
-    |--------------------------------------------------------------------------
-    |
-    | This value sets the middleware group that will be applied to the main
-    | Livewire "message" endpoint (the endpoint that gets hit everytime
-    | a Livewire component updates). It is set to "web" by default.
-    |
-    */
-
-    'middleware_group' => 'web',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Livewire Temporary File Uploads Endpoint Configuration
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
+    | Temporary File Uploads
+    |---------------------------------------------------------------------------
     |
     | Livewire handles file uploads by storing uploads in a temporary directory
     | before the file is validated and stored permanently. All file uploads
@@ -96,63 +124,42 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => null,        // Example: 'local', 's3'              Default: 'default'
-        'rules' => null,       // Example: ['file', 'mimes:png,jpg']  Default: ['required', 'file', 'max:12288'] (12MB)
-        'directory' => null,   // Example: 'tmp'                      Default  'livewire-tmp'
-        'middleware' => null,  // Example: 'throttle:5,1'             Default: 'throttle:60,1'
-        'preview_mimes' => [   // Supported file types for temporary pre-signed file URLs.
+        'disk' => null,
+        'rules' => null,
+        'directory' => null,
+        'middleware' => null,
+        'preview_mimes' => [
             'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
             'mov', 'avi', 'wmv', 'mp3', 'm4a',
             'jpg', 'jpeg', 'mpga', 'webp', 'wma',
         ],
-        'max_upload_time' => 5, // Max duration (in minutes) before an upload gets invalidated.
+        'max_upload_time' => 5,
     ],
 
     /*
-    |--------------------------------------------------------------------------
-    | Manifest File Path
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
+    | Pagination Theme
+    |---------------------------------------------------------------------------
     |
-    | This value sets the path to the Livewire manifest file.
-    | The default should work for most cases (which is
-    | "<app_root>/bootstrap/cache/livewire-components.php"), but for specific
-    | cases like when hosting on Laravel Vapor, it could be set to a different value.
-    |
-    | Example: for Laravel Vapor, it would be "/tmp/storage/bootstrap/cache/livewire-components.php".
+    | When enabling Livewire's pagination feature by using the `WithPagination`
+    | trait, Livewire will use Tailwind templates for the page links. If you
+    | want Bootstrap CSS, you can specify it here or per-component.
     |
     */
 
-    'manifest_path' => null,
+    'pagination_theme' => 'tailwind',
 
     /*
-    |--------------------------------------------------------------------------
-    | Back Button Cache
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
+    | Inject Assets
+    |---------------------------------------------------------------------------
     |
-    | This value determines whether the back button cache will be used on pages
-    | that contain Livewire. By disabling back button cache, it ensures that
-    | the back button shows the correct state of components, instead of
-    | potentially stale, cached data.
-    |
-    | Setting it to "false" (default) will disable back button cache.
+    | By default, Livewire injects its JavaScript and CSS assets into the page.
+    | If you're using a CDN or want to manually include the assets, you can
+    | disable this behavior by setting this option to false.
     |
     */
 
-    'back_button_cache' => false,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Render On Redirect
-    |--------------------------------------------------------------------------
-    |
-    | This value determines whether Livewire will render before it's redirected
-    | or not. Setting it to "false" (default) will mean the render method is
-    | skipped when redirecting. And "true" will mean the render method is
-    | run before redirecting. Browsers bfcache can store a potentially
-    | stale view if render is skipped on redirect.
-    |
-    */
-
-    'render_on_redirect' => false,
+    'inject_assets' => true,
 
 ];
