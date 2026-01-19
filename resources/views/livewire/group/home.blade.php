@@ -25,18 +25,10 @@
 
     <x-account.home-layout :page="'group.' . $group->id ">
 
-        <div class="grid grid-cols-1 gap-y-12 divide-gray-200 divide-y">
+        <div class="grid grid-cols-1 gap-y-8">
 
             @if($memberOfGroup && $memberCount === 1)
-                <div>
-                    <x-layout.sub-heading class="text-center">Invite Someone to
-                        Join {{ $group->name }}</x-layout.sub-heading>
-                    <div class="mt-8 w-full flex justify-center">
-                        <div class="w-72">
-                            <livewire:group.invite-member :group="$group"/>
-                        </div>
-                    </div>
-                </div>
+                <livewire:group.invite-member :group="$group"/>
             @endif
 
             <div @if($memberOfGroup && $memberCount === 1) class="pt-8" @endif>
@@ -68,9 +60,9 @@
             </div>
             @if($memberOfGroup)
                 @if($group->public)
-                <div class="pt-8 pb-4">
+                <div class="pt-6 pb-1">
                     <x-layout.sub-heading class="text-center">Share</x-layout.sub-heading>
-                    <x-group.share-links :group="$group" class="mt-6" />
+                    <x-group.share-links :group="$group" class="mt-4" />
                 </div>
                 @endif
                 @unless($user->dismissed_email_notification)
@@ -107,38 +99,18 @@
                 </div>
             @endif
             @if($group->scores_recorded > 0)
-                <div class="pt-8">
-                    <x-layout.sub-heading class="text-center">Group Activity</x-layout.sub-heading>
-                    <div class="mt-8">
-
-                        <livewire:group.activity-feed
-                            :group="$group"
-                            :anonymize-private-users="$group->public && !$memberOfGroup"
-                        />
-                    </div>
-                </div>
+                <livewire:group.activity-feed
+                    :group="$group"
+                    :anonymize-private-users="$group->public && !$memberOfGroup"
+                />
             @endif
 
             @if($memberOfGroup)
                 @if($memberCount > 1)
-                <div class="pt-8">
-                    <x-layout.sub-heading class="text-center">Invite Someone to
-                        Join {{ $group->name }}</x-layout.sub-heading>
-                    <div class="mt-8 w-full flex justify-center">
-                        <div class="w-72">
-                            <livewire:group.invite-member :group="$group"/>
-                        </div>
-                    </div>
-                </div>
+                    <livewire:group.invite-member :group="$group"/>
                 @endif
 
-                <div class="pt-8">
-                    <x-layout.sub-heading class="text-center">Group Members</x-layout.sub-heading>
-                    <div class="mt-8 w-full flex justify-center">
-                        <livewire:group.member-list :group="$group"/>
-                    </div>
-                </div>
-
+                <livewire:group.member-list :group="$group"/>
             @endif
 
 

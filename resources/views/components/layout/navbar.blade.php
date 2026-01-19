@@ -58,22 +58,28 @@
                     <div class="ml-4 md:flex-shrink-0 flex items-center">
 
                         <div class="relative ml-3">
-                            <div class="flex items-center">
+                            <div class="flex items-center gap-1">
+                                {{-- My Stats nav item with hover/active states --}}
                                 <a
-                                    class="mr-2 flex relative items-center px-4 py-1.5 sm:py-2 text-sm font-semibold green-nav-link bg-transparent rounded-md hover:text-wordle-yellow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
                                     href="{{ route('account.home') }}"
+                                    class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
                                 >
                                     My Stats
                                 </a>
+
+                                {{-- User dropdown trigger with chevron --}}
                                 <x-layout.dropdown
                                     name="user-dropdown"
                                     width="w-56"
                                     dropdown-custom="right-0 sm:left-1/2 sm:transform sm:-translate-x-1/2"
-                                    button-class="w-8 h-8 rounded-full text-green-800 bg-green-50 hover:bg-wordle-yellow flex items-center justify-center font-semibold text-xl shadow-sm"
+                                    button-class="inline-flex items-center gap-1.5 h-10 px-2 rounded-full text-white hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
                                 >
                                     <x-slot name="buttonSlot">
                                         <span class="sr-only">Open user menu</span>
-                                        <x-icon-solid.circle-user class="h-6 w-6 fill-current"/>
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-green-50 text-green-800 font-semibold text-sm shadow-sm">
+                                            {{ substr($user->name, 0, 1) }}
+                                        </span>
+                                        <x-icon-regular.chevron-down class="w-4 h-4 opacity-70"/>
                                     </x-slot>
 
                                     <ul class="py-1">

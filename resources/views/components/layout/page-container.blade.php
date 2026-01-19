@@ -23,14 +23,12 @@
             @endif
         @endif
 
-        <div class="@if($topPadding) mt-10 @endif text-gray-900">
+        <div class="@if($topPadding) mt-4 @endif text-gray-900">
             {{ $slot }}
         </div>
-
-        <x-layout.hr class="mt-16 mb-6"/>
-
-        <x-layout.footer/>
     </div>
+
+    <x-layout.footer/>
 
     @push('title') {{ $title }} @endpush
 </div>

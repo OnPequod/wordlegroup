@@ -15,9 +15,9 @@
             {{ $attributes }}
             id="{{ $name }}"
             name="{{ $name }}"
-            class="block w-full border-0 px-1 pt-2.5 pb-1.5 @if($selectedValue) text-gray-900 @else text-gray-400 @endif placeholder-gray-400 focus:ring-0 sm:text-sm"
+            class="block w-full border-0 px-1 pt-2.5 pb-1.5 @if($selectedValue) text-gray-900 @else text-gray-500 @endif placeholder-gray-500 focus:ring-0 sm:text-sm"
             x-model="selectedValue"
-            :class="{ 'text-gray-400' : selectedValue == '' , 'text-gray-900' : selectedValue != '' }"
+            :class="{ 'text-gray-500' : selectedValue == '' , 'text-gray-900' : selectedValue != '' }"
         >
             @foreach($options as $option)
                 <option

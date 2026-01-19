@@ -35,7 +35,7 @@
     {{-- Desktop: pill segmented control --}}
     <div class="hidden sm:flex sm:justify-center">
         <nav
-            class="inline-flex items-center h-11 rounded-full bg-zinc-200/50 p-1 gap-0.5"
+            class="inline-flex items-center h-11 rounded-full bg-zinc-200/50 p-1 gap-1"
             aria-label="Tabs"
         >
             @foreach($pages as $pageName => $page)

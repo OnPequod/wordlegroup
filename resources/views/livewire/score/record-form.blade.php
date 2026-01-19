@@ -1,22 +1,17 @@
-<div x-data="{ show: 'haveBoard' }">
+<div x-data="{ activeMethod: 'paste' }">
     @once
         @push('meta')
 {{--            <meta name="turbo-cache-control" content="no-cache">--}}
         @endpush
     @endonce
 
-    <div
-        class="grid grid-cols-1 @if($quick) gap-y-6 @else gap-y-8 divide-y divide-gray-200 @endif"
-    >
-
+    {{-- Email prompt (only on full page, not quick mode) --}}
+    @unless($quick)
         @unless($user->dismissed_email_notification || $hideEmail)
-            <div class="col-span-1">
-
-                <h2 class="text-base font-semibold text-zinc-900">
-                    Email Your Scores
-                </h2>
-                <x-score.email-prompt class="mt-3 text-sm text-zinc-500"/>
-                <div class="mt-4">
+            <div class="rounded-xl border border-zinc-200 bg-zinc-50/50 p-5 mb-6">
+                <h3 class="text-sm font-semibold text-zinc-900">Email Your Scores</h3>
+                <x-score.email-prompt class="mt-2 text-sm text-zinc-600"/>
+                <div class="mt-3">
                     <livewire:score.dismiss-email-prompt-notification
                         :user="$user"
                         class="text-xs text-zinc-500 hover:text-zinc-700"
@@ -25,27 +20,16 @@
                 </div>
             </div>
         @endunless
+    @endunless
 
-        <div
-            class="col-span-1"
-            @if($quick)
-            x-show="show === 'haveBoard'"
-            @endif
-        >
-            <form wire:submit.prevent="recordScoreFromBoard" class="@unless($quick) mt-8 @endunless mb-0">
-                @unless($quick)
-                    <h2 class="mb-4 text-base font-semibold text-zinc-900">
-                        @if($recordingForSelf)
-                            I Have My Board
-                        @else
-                            I Have The Board
-                        @endif
-                    </h2>
-                @endunless
-
-                <div>
+    {{-- Quick mode: Toggle between methods --}}
+    @if($quick)
+        <div class="space-y-5">
+            {{-- Paste board section (quick mode) --}}
+            <div x-show="activeMethod === 'paste'">
+                <form wire:submit.prevent="recordScoreFromBoard" class="mb-0">
                     @if($group && $isGroupAdmin)
-                        <div class="mb-5">
+                        <div class="mb-4">
                             <x-group.user-select
                                 name="user"
                                 wire:model="recordForUserId"
@@ -54,93 +38,62 @@
                             />
                         </div>
                     @endif
-                    <div>
-                        <x-form.input.textarea
-                            :errors="$errors"
-                            name="board"
-                            label="Board"
-                            :rows="7"
-                            :tip="$quick ? '' : 'Just paste in your board and we\'ll figure out the dare and score and save your board.'"
-                            placeholder="Wordle 250 3/6..."
-                            wire:model.blur="board"
-                            class="font-system"
-                        />
-                    </div>
-
-                    <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                        <x-form.input.button
-                            loading-action="recordScoreFromBoard" class="w-44 font-semibold" :primary="! $quick"
-                        >
+                    <x-form.input.textarea
+                        :errors="$errors"
+                        name="board"
+                        label="Board"
+                        :rows="6"
+                        placeholder="Wordle 250 3/6..."
+                        wire:model.blur="board"
+                        class="font-mono text-xs"
+                    />
+                    <div class="mt-4 flex items-center justify-between">
+                        <x-form.input.button loading-action="recordScoreFromBoard" class="w-36" :primary="false">
                             Record Score
                         </x-form.input.button>
-                        @if($quick)
-                            <button
-                                type="button"
-                                class="text-sm font-medium text-green-700 hover:text-green-800"
-                                @click="show = 'manual'"
-                            >I don't have the board.
-                            </button>
-                        @endif
+                        <button
+                            type="button"
+                            class="text-sm font-medium text-green-700 hover:text-green-800"
+                            @click="activeMethod = 'manual'"
+                        >
+                            I don't have the board
+                        </button>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div
-            class="col-span-1"
-            @if($quick)
-            x-show="show === 'manual'"
-            x-cloak
-            @endif
-        >
-            <form wire:submit.prevent="recordScoreManually" class="@unless($quick) mt-8 @endunless mb-0">
+                </form>
+            </div>
 
-                @unless($quick)
-                    <h2 class="text-base font-semibold text-zinc-900">
-                        @if($recordingForSelf)
-                            I Don't Have My Board
-                        @else
-                            I Don't Have The Board
+            {{-- Manual entry section (quick mode) --}}
+            <div x-show="activeMethod === 'manual'" x-cloak>
+                <form wire:submit.prevent="recordScoreManually" class="mb-0">
+                    <div class="space-y-4">
+                        @if($group && $isGroupAdmin)
+                            <x-group.user-select
+                                name="user"
+                                wire:model="recordForUserId"
+                                :group="$group"
+                                :selected-user-id="$user->id"
+                            />
                         @endif
-                    </h2>
-                @endunless
-
-                <div class="grid grid-cols-a @if($quick) gap-y-5 @else gap-y-8 mt-8 @endif">
-                    @if($group && $isGroupAdmin)
-                        <x-group.user-select
-                            name="user"
-                            wire:model="recordForUserId"
-                            :group="$group"
-                            :selected-user-id="$user->id"
-                        />
-                    @endif
-                    <div class="col-span-1">
-                        <x-form.input.date
-                            :errors="$errors"
-                            name="date"
-                            label="Date"
-                            :placeholder="$date"
-                            :options="['defaultDate' => $date]"
-                            wire:model="date"
-                        />
-    {{--                    <div class="col-span-1 pt-2 pb-4">--}}
-    {{--                        <span class="text-gray-500 italic">or</span>--}}
-    {{--                    </div>--}}
-                    </div>
-                        <div class="col-span-1">
+                        <div class="grid grid-cols-2 gap-4">
+                            <x-form.input.date
+                                :errors="$errors"
+                                name="date"
+                                label="Date"
+                                :placeholder="$date"
+                                :options="['defaultDate' => $date]"
+                                wire:model="date"
+                            />
                             <x-form.input.text
                                 :errors="$errors"
                                 name="boardNumber"
                                 type="number"
-                                label="Wordle Board Number"
-                                tip="The date is ignored if a board number is entered."
+                                label="Board #"
                                 placeholder="123"
                                 min="1"
                                 max="10000"
                                 wire:model.blur="boardNumber"
                             />
                         </div>
-
-                    <div class="col-span-1">
                         <x-form.input.text
                             :errors="$errors"
                             name="score"
@@ -151,50 +104,164 @@
                             max="6"
                             wire:model.blur="score"
                         />
-                        <div class="@if($errors->has('score')) mt-4 @else mt-1 @endif text-sm text-zinc-500">
-                            Click the checkbox below if you missed.
-                        </div>
-
-                        <div class="mt-4">
+                        <div class="flex items-center gap-6">
                             <x-form.input.checkbox
                                 name="bricked"
-                                label="X/6"
+                                label="X/6 (Missed)"
                                 wire:model="bricked"
-                                tip="Oops, I bricked out."
                             />
-                        </div>
-
-                        <div class="mt-4">
                             <x-form.input.checkbox
                                 name="hardMode"
                                 label="Hard Mode"
                                 wire:model="hardMode"
                             />
                         </div>
-
                     </div>
-
-                    <div class="col-span-1 flex items-center justify-between">
-                        <x-form.input.button
-                            loading-action="recordScoreManually" class="w-44  font-semibold" :primary="! $quick"
-                        >
-                            @if($recordingForSelf)
-                                Record My Score
-                            @else
-                                Record Score
-                            @endif
+                    <div class="mt-4 flex items-center justify-between">
+                        <x-form.input.button loading-action="recordScoreManually" class="w-36" :primary="false">
+                            Record Score
                         </x-form.input.button>
-                        @if($quick)
-                            <button
-                                type="button"
-                                class="text-sm text-green-700 hover:text-green-800"
-                                @click="show = 'haveBoard'"
-                            >I have the board.
-                            </button>
-                        @endif
+                        <button
+                            type="button"
+                            class="text-sm font-medium text-green-700 hover:text-green-800"
+                            @click="activeMethod = 'paste'"
+                        >
+                            I have the board
+                        </button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
+    @else
+        {{-- Full page mode: Two distinct section cards --}}
+        <div class="space-y-6">
+            {{-- Section 1: Paste board --}}
+            <div class="rounded-xl border border-zinc-200 bg-white p-6">
+                <div class="mb-5">
+                    <h3 class="text-base font-semibold text-zinc-900">Paste Your Board</h3>
+                    <p class="mt-1 text-sm text-zinc-600">Copy the share text from Wordle and paste it below. We'll parse the date, score, and board automatically.</p>
+                </div>
+
+                <form wire:submit.prevent="recordScoreFromBoard" class="mb-0">
+                    <div class="space-y-4">
+                        @if($group && $isGroupAdmin)
+                            <x-group.user-select
+                                name="user"
+                                wire:model="recordForUserId"
+                                :group="$group"
+                                :selected-user-id="$user->id"
+                                label="Recording for"
+                            />
+                        @endif
+
+                        <x-form.input.textarea
+                            :errors="$errors"
+                            name="board"
+                            label="Wordle Share Text"
+                            :rows="7"
+                            placeholder="Wordle 1,234 4/6
+
+⬜⬜⬜⬜⬜
+⬜⬜⬜⬜⬜
+⬜⬜⬜⬜⬜
+⬜⬜⬜⬜⬜"
+                            wire:model.blur="board"
+                            class="font-mono text-xs"
+                        />
+                    </div>
+
+                    <div class="mt-5 flex justify-end">
+                        <x-form.input.button
+                            loading-action="recordScoreFromBoard"
+                            class="w-40"
+                            :primary="true"
+                        >
+                            Record Score
+                        </x-form.input.button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Section 2: Manual entry --}}
+            <div class="rounded-xl border border-zinc-200 bg-white p-6">
+                <div class="mb-5">
+                    <h3 class="text-base font-semibold text-zinc-900">Enter Manually</h3>
+                    <p class="mt-1 text-sm text-zinc-600">Don't have your board? Enter the date and score manually.</p>
+                </div>
+
+                <form wire:submit.prevent="recordScoreManually" class="mb-0">
+                    <div class="space-y-4">
+                        @if($group && $isGroupAdmin)
+                            <x-group.user-select
+                                name="user"
+                                wire:model="recordForUserId"
+                                :group="$group"
+                                :selected-user-id="$user->id"
+                                label="Recording for"
+                            />
+                        @endif
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <x-form.input.date
+                                :errors="$errors"
+                                name="date"
+                                label="Date"
+                                :placeholder="$date"
+                                :options="['defaultDate' => $date]"
+                                wire:model="date"
+                            />
+                            <x-form.input.text
+                                :errors="$errors"
+                                name="boardNumber"
+                                type="number"
+                                label="Wordle Board Number"
+                                tip="Overrides date if provided"
+                                placeholder="1234"
+                                min="1"
+                                max="10000"
+                                wire:model.blur="boardNumber"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <x-form.input.text
+                                :errors="$errors"
+                                name="score"
+                                type="number"
+                                label="Score (1-6)"
+                                placeholder="4"
+                                min="1"
+                                max="6"
+                                wire:model.blur="score"
+                            />
+                            <div class="flex items-end pb-3">
+                                <div class="flex items-center gap-6">
+                                    <x-form.input.checkbox
+                                        name="bricked"
+                                        label="X/6 (Missed)"
+                                        wire:model="bricked"
+                                    />
+                                    <x-form.input.checkbox
+                                        name="hardMode"
+                                        label="Hard Mode"
+                                        wire:model="hardMode"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 flex justify-end">
+                        <x-form.input.button
+                            loading-action="recordScoreManually"
+                            class="w-40"
+                            :primary="true"
+                        >
+                            Record Score
+                        </x-form.input.button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
 </div>

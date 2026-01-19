@@ -1,83 +1,95 @@
-<div>
-    <div class="flex flex-col">
-        <div class="overflow-x-auto">
-            <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                <table class="min-w-full divide-y divide-gray-300 border-b border-gray-300">
-                    <thead>
-                    <tr>
-                        <th
-                            scope="col"
-                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 md:pl-0"
-                        >Name
-                        </th>
-                        <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 text-right">
-                            Games
-                        </th>
-                        <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 text-right">
-                            Mean
-                        </th>
-                        <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 text-right">
-                            Median
-                        </th>
-                        <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 text-right">
-                            Mode
-                        </th>
-                        @if($group->isAdmin(Auth::user()))
-                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6 md:pr-0">
-                                <span class="sr-only">Edit</span>
-                            </th>
-                        @endif
-                    </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                    @foreach($group->memberships as $membership)
-                        <tr>
-                            <td class="whitespace-nowrap py-4 text-sm pl-4 pr-3 text-sm sm:pl-6 md:pl-0">
-                                <div class="font-semibold text-gray-900">
-                                    {{ $membership->user->name }}
-                                </div>
-
-                                @if($group->isAdmin(Auth::user()))
-                                <div class="flex items-center py-1">
-                                @endif
-                                @if(Auth::user()->id !== $membership->user->id && $membership->user->canBeNudged())
-
-                                        <button
-                                            type="button"
-                                            title="Send user a reminder to record their scores."
-                                            class="text-sm mr-2 last:mr-0 text-green-700 hover:text-green-800 font-medium focus:ring-2 rounded focus:ring-offset-2 focus:ring-green-500"
-                                            onclick="confirm('This will email {{ $membership->user->name }} a reminder to record their scores. Are you sure you want to continue?') || event.stopImmediatePropagation()"
-                                            wire:click="nudge({{ $membership->user->id }})"
-                                        >
-                                            Nudge
-                                        </button>
-                                @endif
-                                @if(Auth::user()->id !== $membership->user->id)
-                                        <button
-                                            type="button"
-                                            title="Send user a reminder to record their scores."
-                                            class="text-sm mr-2 last:mr-0 text-red-700 hover:text-red-800 font-medium focus:ring-2 rounded focus:ring-offset-2 focus:ring-red-500"
-                                            onclick="confirm('This will remove {{ $membership->user->name }} from this group. Are you sure you want to continue?') || event.stopImmediatePropagation()"
-                                            wire:click="remove({{ $membership->user->id }})"
-                                        >
-                                            Remove
-                                        </button>
-                                @endif
-                                @if($group->isAdmin(Auth::user()))
-                                </div>
-                                @endif
-                            </td>
-                            <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500 text-right">{{ $membership->user->daily_scores_recorded }}</td>
-                            <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500 text-right">{{ number_format($membership->user->daily_score_mean, 2) }}</td>
-                            <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500 text-right">{{ number_format($membership->user->daily_score_median, 2) }}</td>
-                            <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500 text-right">{{ number_format($membership->user->daily_score_mode, 2) }}</td>
-                        </tr>
-                    @endforeach
-
-                    <!-- More people... -->
-                    </tbody>
-                </table>
-            </div>
+<div class="rounded-2xl bg-white border border-zinc-200 shadow-sm overflow-hidden">
+    {{-- Header --}}
+    <div class="flex items-center justify-between px-6 py-5 border-b border-zinc-100">
+        <div>
+            <h3 class="text-lg font-semibold text-zinc-900">Group Members</h3>
+            <p class="text-sm text-zinc-500 mt-0.5">{{ $group->memberships->count() }} {{ Str::plural('member', $group->memberships->count()) }}</p>
         </div>
+    </div>
+
+    {{-- Table --}}
+    <div class="overflow-x-auto">
+        <table class="min-w-full">
+            <thead class="bg-zinc-50/50 sticky top-0">
+                <tr>
+                    <th scope="col" class="py-3 pl-6 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        Name
+                    </th>
+                    <th scope="col" class="px-3 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        Games
+                    </th>
+                    <th scope="col" class="px-3 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        Mean
+                    </th>
+                    <th scope="col" class="px-3 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        Median
+                    </th>
+                    <th scope="col" class="py-3 pl-3 pr-6 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        Mode
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100">
+                @foreach($group->memberships as $membership)
+                    <tr class="hover:bg-zinc-50/50 transition">
+                        <td class="py-4 pl-6 pr-3">
+                            <div class="flex items-center gap-3">
+                                {{-- Avatar --}}
+                                <div class="flex-shrink-0 h-9 w-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-semibold text-sm">
+                                    {{ substr($membership->user->name, 0, 1) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-medium text-zinc-900 text-sm">{{ $membership->user->name }}</span>
+                                        @if(Auth::id() === $membership->user->id)
+                                            <span class="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">You</span>
+                                        @endif
+                                        @if($group->admin_id === $membership->user->id)
+                                            <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Admin</span>
+                                        @endif
+                                    </div>
+                                    @if($group->isAdmin(Auth::user()) && Auth::id() !== $membership->user->id)
+                                        <div class="flex items-center gap-3 mt-1">
+                                            @if($membership->user->canBeNudged())
+                                                <button
+                                                    type="button"
+                                                    title="Send a reminder to record scores"
+                                                    class="text-xs text-zinc-500 hover:text-green-700 transition"
+                                                    onclick="confirm('Send {{ $membership->user->name }} a reminder to record their scores?') || event.stopImmediatePropagation()"
+                                                    wire:click="nudge({{ $membership->user->id }})"
+                                                >
+                                                    Nudge
+                                                </button>
+                                            @endif
+                                            <button
+                                                type="button"
+                                                title="Remove from group"
+                                                class="text-xs text-zinc-500 hover:text-red-600 transition"
+                                                onclick="confirm('Remove {{ $membership->user->name }} from this group?') || event.stopImmediatePropagation()"
+                                                wire:click="remove({{ $membership->user->id }})"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-600 text-right tabular-nums">
+                            {{ number_format($membership->user->daily_scores_recorded) }}
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-600 text-right tabular-nums">
+                            {{ number_format($membership->user->daily_score_mean, 2) }}
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-600 text-right tabular-nums">
+                            {{ number_format($membership->user->daily_score_median, 2) }}
+                        </td>
+                        <td class="whitespace-nowrap py-4 pl-3 pr-6 text-sm text-zinc-600 text-right tabular-nums">
+                            {{ number_format($membership->user->daily_score_mode, 2) }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>

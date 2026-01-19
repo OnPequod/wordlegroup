@@ -29,8 +29,9 @@
             x-on:click="toggle()"
             :aria-expanded="open"
             :aria-controls="$id('{{ $name }}')"
+            aria-haspopup="menu"
             type="button"
-            class="{{ $buttonClass }} inline-flex items-center"
+            class="{{ $buttonClass }} inline-flex items-center cursor-pointer"
         >
             @if($buttonSlot)
                 {{ $buttonSlot }}
