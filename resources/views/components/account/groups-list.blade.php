@@ -1,7 +1,7 @@
-<div class="flex justify-center" >
-    <ul role="list" class="grid grid-cols-1 gap-5 sm:gap-6 w-full max-w-sm sm:max-w-md">
+<div>
+    <ul role="list" class="flex flex-col gap-4">
         @foreach($groups as $group)
-            <li class="col-span-1 flex shadow-sm rounded-md justify-center">
+            <li class="flex rounded-md shadow-sm">
                 <a
                     href="{{ route('group.home', $group) }}"
                     class="flex flex-grow overflow-hidden"
@@ -18,9 +18,9 @@
                     <div
                         class="flex-grow flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate"
                     >
-                      <div class="flex-1 px-4 py-2 truncate">
+                      <div class="flex-1 px-4 py-3 truncate">
                           @if($userIsAuthenticatedUser && $group->isAdmin($user))
-                              <div class="float-right">
+                              <div class="float-right ml-3">
                                   <x-group.admin-badge text-size="text-xs"/>
                               </div>
                           @endif

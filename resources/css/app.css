@@ -17,29 +17,29 @@
     --color-gold: #FFD700;
     --color-silver: #C0C0C0;
     --color-bronze: #CD7F32;
+    --color-surface: #f6f7f8;
+    --color-surface-strong: #ffffff;
+    --color-shadow: rgba(15, 23, 42, 0.08);
 }
 
 .link {
-    @apply hover:underline text-green-700 font-medium;
+    @apply text-green-700 font-semibold hover:text-green-800 underline underline-offset-4;
     text-decoration-color: var(--color-wordle-yellow);
     text-decoration-thickness: 2px;
 }
 
 .gray-link {
-    @apply hover:underline text-gray-500;
+    @apply text-gray-500 hover:text-gray-600 underline underline-offset-4;
+    text-decoration-color: var(--color-wordle-yellow);
+    text-decoration-thickness: 2px;
 }
 
 .green-nav-link {
-    @apply text-green-50 hover:underline;
-    text-decoration-color: var(--color-wordle-yellow);
-    text-decoration-thickness: 2px;
+    @apply text-green-50/90 hover:text-white transition;
 }
 
 .green-nav-link-underline {
-    @apply underline;
-    text-decoration-color: var(--color-wordle-yellow);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 1px;
+    @apply text-wordle-yellow;
 }
 
 [x-cloak] { display: none !important; }

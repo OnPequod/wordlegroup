@@ -1,37 +1,28 @@
 <div>
     <div
-        class="relative border @if($errors->has($name)) border-red-600 @else border-gray-300 @endif rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-green-700 focus-within:border-green-600"
+        class="relative rounded-md border @if($errors->has($name)) border-red-600 @else border-zinc-300 @endif bg-white px-4 py-3 focus-within:ring-2 focus-within:ring-green-700/20 focus-within:border-green-700"
     >
         @if($label)
             <label
-                for="name"
-                class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-sm font-semibold text-gray-600"
+                for="{{ $name }}"
+                class="absolute -top-2 left-3 -mt-px inline-block px-1 bg-white text-[11px] font-semibold text-zinc-600"
             >{{ $label }}</label>
         @endif
-            <textarea
-                {{ $attributes->merge([
-                    'name' => $name,
-                     'id' => $name,
-                     'placeholder' => $placeholder,
-                     'class' => 'max-w-xl block w-full border-0 px-1 pt-2.5 pb-1.5 text-gray-900 placeholder-gray-400 focus:ring-0 sm:text-sm'
-                   ]) }}
-                rows="{{ $rows }}"
-            ></textarea>
-{{--        <input--}}
-{{--            {{ $attributes->merge([--}}
-{{--                'class' => 'block w-full border-0 px-1 pt-2.5 pb-1.5 text-gray-900 placeholder-gray-400 focus:ring-0 sm:text-sm',--}}
-{{--                'type' => $attributes->get('type') ?? 'text' ,--}}
-{{--                'name' => $name,--}}
-{{--                'id' => $name,--}}
-{{--                'placeholder' => $placeholder--}}
-{{--            ]) }}--}}
-{{--        >--}}
+        <textarea
+            {{ $attributes->merge([
+                'name' => $name,
+                'id' => $name,
+                'placeholder' => $placeholder,
+                'class' => 'block w-full border-0 bg-transparent px-0 pt-2 text-sm text-zinc-900 placeholder-zinc-400 focus:ring-0'
+            ]) }}
+            rows="{{ $rows }}"
+        ></textarea>
     </div>
     @if($tip)
-        <p class="mt-2 text-sm text-gray-500">{{ $tip }}</p>
+        <p class="mt-2 text-xs text-zinc-500">{{ $tip }}</p>
     @endif
     @error($name)
-    <div class="text-red-600 text-sm mt-1">{!! $message !!}</div>
+        <div class="text-red-600 text-sm mt-1">{!! $message !!}</div>
     @enderror
 </div>
 

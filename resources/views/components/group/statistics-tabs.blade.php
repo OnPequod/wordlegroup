@@ -32,7 +32,7 @@
             @keydown.end.prevent.stop="$focus.last()"
             @keydown.page-down.prevent.stop="$focus.last()"
             role="tablist"
-            class="-mb-px flex items-stretch justify-center"
+            class="flex flex-wrap items-center justify-center gap-2 rounded-full border border-gray-100 bg-white p-1 shadow-sm"
             x-cloak
         >
             <!-- Tab -->
@@ -45,8 +45,8 @@
                     type="button"
                     :tabindex="isSelected($el.id) ? 0 : -1"
                     :aria-selected="isSelected($el.id)"
-                    :class="isSelected($el.id) ? 'border-gray-200 font-bold text-green-700 bg-white' : 'border-transparent'"
-                    class="inline-flex px-5 border-t border-l border-r py-2.5 rounded-t-md text-sm md:text-base"
+                    :class="isSelected($el.id) ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                    class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium transition"
                     role="tab"
                 >All Time
                 </button>
@@ -61,8 +61,8 @@
                     type="button"
                     :tabindex="isSelected($el.id) ? 0 : -1"
                     :aria-selected="isSelected($el.id)"
-                    :class="isSelected($el.id) ? 'border-gray-200 font-bold text-green-700 bg-white' : 'border-transparent'"
-                    class="inline-flex px-5 py-2.5 border-t border-l border-r rounded-t-md text-sm md:text-base"
+                    :class="isSelected($el.id) ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                    class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium transition"
                     role="tab"
                 >This Month
                 </button>
@@ -78,8 +78,8 @@
                     type="button"
                     :tabindex="isSelected($el.id) ? 0 : -1"
                     :aria-selected="isSelected($el.id)"
-                    :class="isSelected($el.id) ? 'border-gray-200 font-bold text-green-700 bg-white' : 'border-transparent'"
-                    class="inline-flex px-5 py-2.5 border-t border-l border-r rounded-t-md text-sm md:text-base"
+                    :class="isSelected($el.id) ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                    class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium transition"
                     role="tab"
                 >This Week
                 </button>
@@ -87,13 +87,13 @@
         </ul>
 
         <!-- Panels -->
-        <div role="tabpanels" class="bg-white border border-gray-200 rounded-b-md">
+        <div role="tabpanels" class="mt-6 rounded-2xl border border-gray-100 bg-white p-1 shadow-sm">
             <!-- Panel -->
             <section
                 x-show="isSelected($id('tab', whichChild($el, $el.parentElement)))"
                 :aria-labelledby="$id('tab', whichChild($el, $el.parentElement))"
                 role="tabpanel"
-                class="p-5"
+                class="p-6"
                 x-cloak
             >
                 <x-layout.heading-divider class="mb-6 mt-2">Leaderboard</x-layout.heading-divider>
@@ -125,7 +125,7 @@
                 x-show="isSelected($id('tab', whichChild($el, $el.parentElement)))"
                 :aria-labelledby="$id('tab', whichChild($el, $el.parentElement))"
                 role="tabpanel"
-                class="p-5"
+                class="p-6"
             >
                 <x-layout.heading-divider class="mb-6 mt-2">Leaderboard</x-layout.heading-divider>
 
@@ -158,7 +158,7 @@
                 x-show="isSelected($id('tab', whichChild($el, $el.parentElement)))"
                 :aria-labelledby="$id('tab', whichChild($el, $el.parentElement))"
                 role="tabpanel"
-                class="p-5"
+                class="p-6"
                 x-cloak
             >
 

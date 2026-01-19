@@ -2,8 +2,8 @@
 <div class="flex flex-col">
     <div class="overflow-x-auto -my-2 sm:-mx-6 lg:-mx-8">
         <div class="inline-block py-2 min-w-full align-middle sm:px-6 lg:px-8">
-            <div class="overflow-hidden">
-                <table class="min-w-full border-b divide-y divide-gray-200">
+            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+                <table class="min-w-full divide-y divide-gray-100">
                     <thead>
                     <tr>
                         <th scope="col" class="py-1 pr-3 pl-1 w-16 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase sm:px-4 sm:py-2"><span class="inline sm:hidden">Place</span><span class="hidden sm:inline">Place</span></th>
@@ -14,14 +14,14 @@
                     </thead>
                     <tbody>
                     @foreach($leaderboard->leaderboard as $position)
-                    <tr class="bg-white">
+                    <tr class="bg-white even:bg-gray-50/50">
                         <td class="text-center pl-1 pr-3 py-2 sm:px-4 sm:py-2 whitespace-nowrap @if(isset($leaderboard->leaderboard[$loop->index + 1]['place']) && $leaderboard->leaderboard[$loop->index + 1]['place'] != $position['place']) border-b border-gray-200 @endif">
                             @if($position['place'] === 1)
-                                <span class="inline-flex justify-center items-center w-6 h-6 text-sm font-extrabold text-black rounded-full md:h-10 md:w-10 md:text-xl bg-gold">{{ $position['place'] }}</span>
+                                <span class="inline-flex justify-center items-center w-7 h-7 text-sm font-extrabold text-black rounded-full md:h-10 md:w-10 md:text-xl bg-gold shadow-sm">{{ $position['place'] }}</span>
                             @elseif($position['place'] === 2)
-                                <span class="inline-flex justify-center items-center w-6 h-6 text-sm font-bold text-black rounded-full md:h-10 md:w-10 md:text-lg bg-silver">{{ $position['place'] }}</span>
+                                <span class="inline-flex justify-center items-center w-7 h-7 text-sm font-bold text-black rounded-full md:h-10 md:w-10 md:text-lg bg-silver shadow-sm">{{ $position['place'] }}</span>
                             @elseif($position['place'] === 3)
-                                <span class="inline-flex justify-center items-center w-6 h-6 text-sm font-bold text-black rounded-full md:h-10 md:w-10 md:text-lg bg-bronze">{{ $position['place'] }}</span>
+                                <span class="inline-flex justify-center items-center w-7 h-7 text-sm font-bold text-black rounded-full md:h-10 md:w-10 md:text-lg bg-bronze shadow-sm">{{ $position['place'] }}</span>
                             @else
                                 <span class="text-sm font-medium">{{ $position['place'] }}</span>
                             @endif

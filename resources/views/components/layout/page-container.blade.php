@@ -1,4 +1,4 @@
-<div {{ $attributes }}>
+<div {{ $attributes->merge(['class' => 'min-h-screen bg-gradient-to-b from-zinc-50 to-zinc-200']) }}>
     @if($errorMessage && count($errorMessage) > 0)
         <x-layout.flash-message type="error">{{ $errorMessage[0] }}</x-layout.flash-message>
     @elseif (session()->has('message') && session('message'))
@@ -9,7 +9,7 @@
         <x-layout.flash-message type="error">{{ session('errorMessage') }}</x-layout.flash-message>
     @endif
 
-    <div class="mx-auto w-full py-12 px-6 @if($wide) max-w-6xl @else max-w-xl @endif">
+    <div class="mx-auto w-full py-10 sm:py-12 px-4 sm:px-6 lg:px-10 @if($wide) max-w-6xl @else max-w-2xl @endif">
 
         @if($heading)
             <x-layout.heading :wide="$wide" :text-color="$headingTextColor" :heading-class="$headingClass">{{ $heading }}</x-layout.heading>
@@ -23,7 +23,7 @@
             @endif
         @endif
 
-        <div class="@if($topPadding) mt-8 @endif text-gray-900">
+        <div class="@if($topPadding) mt-10 @endif text-gray-900">
             {{ $slot }}
         </div>
 

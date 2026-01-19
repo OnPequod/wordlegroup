@@ -14,6 +14,7 @@
                 init() {
                 Chart.register(ChartDataLabels);
 
+                const colors = this.labels.map((label) => label === 'Missed' ? '#a1a1aa' : '#166534')
 
                 let chart = new Chart(this.$refs.canvas.getContext('2d'), {
                     type: 'bar',
@@ -21,8 +22,8 @@
                         labels: this.labels,
                         datasets: [{
                             data: this.values,
-                            backgroundColor: '#16803C',
-                            borderColor: '#16803C',
+                            backgroundColor: colors,
+                            borderColor: colors,
                         }],
                     },
                     options: {

@@ -1,7 +1,7 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
-<nav class="bg-green-700">
-    <div class="px-4 mx-auto max-w-2xl sm:px-6 lg:px-8">
-        <div class="flex justify-between h-14 sm:h-16">
+<nav class="bg-gradient-to-b from-green-800 to-green-700 shadow-sm">
+    <div class="px-4 mx-auto max-w-6xl sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
             <div class="flex">
                 <a
                     href="{{ Auth::check() ? route('account.home') : route('home') }}"
@@ -11,12 +11,12 @@
                     @mouseout="hover = false"
                 >
                     <span
-                        class="flex justify-center items-center h-6 w-6 sm:w-10 sm:h-10 font-serif text-lg sm:text-2xl font-extrabold rounded-md"
+                        class="flex justify-center items-center h-8 w-8 sm:w-10 sm:h-10 font-serif text-xl sm:text-2xl font-extrabold rounded-lg shadow-sm"
                         :class="hover ? 'bg-wordle-yellow text-white' : 'bg-green-50 text-green-800 '"
                         x-transition:fade
                     >W</span>
                     <span
-                        class="px-2 sm:px-3 font-semibold font-serif text-lg sm:text-xl"
+                        class="px-2 sm:px-3 font-semibold font-serif text-lg sm:text-xl tracking-tight transition"
                         :class="{ 'green-nav-link-underline' : hover }"
                     >
                         Wordle Group
@@ -38,7 +38,7 @@
                     @if(Auth::check())
                     @else
                         <a
-                            class="flex relative items-center px-4 py-1.5 sm:py-2 text-sm font-medium text-white bg-transparent rounded-md hover:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
+                            class="flex relative items-center px-3 py-2 text-sm font-semibold text-white/90 hover:text-white rounded-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
                             href="{{ route('login') }}"
                             x-data="{hover: false}"
                             @mouseover="hover = true"
@@ -51,7 +51,7 @@
                             </span>
                         </a>
                         <a
-                            class="ml-2 flex relative items-center px-4 py-1.5 sm:py-2 text-sm font-medium text-white bg-transparent rounded-md border-2 border-white hover:border-wordle-yellow  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
+                            class="ml-2 flex relative items-center px-4 py-2 text-sm font-semibold text-white rounded-md border border-white/70 hover:border-wordle-yellow hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
                             href="{{ route('group.create') }}"
                         >
                             <x-icon-solid.plus class="w-4 h-4 mr-2 -ml-1"/>
@@ -66,7 +66,7 @@
                         <div class="relative ml-3">
                             <div class="flex items-center">
                                 <a
-                                    class="mr-2 flex relative items-center px-4 py-1.5 sm:py-2 text-sm font-medium green-nav-link bg-transparent rounded-md hover:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
+                                    class="mr-2 flex relative items-center px-4 py-1.5 sm:py-2 text-sm font-semibold green-nav-link bg-transparent rounded-md hover:text-wordle-yellow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
                                     href="{{ route('account.home') }}"
                                 >
                                     My Stats
@@ -75,7 +75,7 @@
                                     name="user-dropdown"
                                     width="w-56"
                                     dropdown-custom="right-0 sm:left-1/2 sm:transform sm:-translate-x-1/2"
-                                    button-class="w-7 h-7 rounded-full text-green-800 bg-green-50 hover:bg-wordle-yellow text-green-700 flex items-center justify-center font-semibold text-xl"
+                                    button-class="w-8 h-8 rounded-full text-green-800 bg-green-50 hover:bg-wordle-yellow flex items-center justify-center font-semibold text-xl shadow-sm"
                                 >
                                     <x-slot name="buttonSlot">
                                         <span class="sr-only">Open user menu</span>

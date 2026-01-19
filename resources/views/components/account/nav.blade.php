@@ -5,7 +5,7 @@
         <select
             id="tabs"
             name="tabs"
-            class="block w-full focus:ring-green-700 focus:border-green-500 border-gray-300 rounded-md"
+            class="block w-full rounded-md border-zinc-200 focus:border-green-700 focus:ring-green-700"
             x-data="{selected: '{{ $activePage }}', routeMap: {{ json_encode($routeMap, JSON_HEX_APOS) }} }"
             x-on:change="Turbo.visit(routeMap[$event.target.value])"
         >
@@ -32,14 +32,14 @@
         </select>
     </div>
     <div class="hidden sm:block">
-        <nav class="flex space-x-4" aria-label="Tabs">
+        <nav class="flex flex-wrap gap-2" aria-label="Tabs">
             @foreach($pages as $pageName => $page)
                 @if(Auth::check() && $pageName === 'userGroups')
                     <x-layout.dropdown
                         label="My Groups"
                         name="userGroups"
                         width="w-72"
-                        :button-class="'px-3 py-2 font-medium text-sm rounded-md ' . ($activePage === 'groups' ? 'bg-wordle-yellow text-white' : 'text-gray-500 hover:text-gray-700')"
+                        :button-class="'px-4 py-2 text-sm font-medium rounded-md transition ' . ($activePage === 'groups' ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:text-zinc-700 hover:bg-zinc-50')"
                         :chevron-text-color="$activePage === 'groups' ? 'text-white' : 'text-gray-500'"
                     >
                         <ul>
@@ -58,7 +58,7 @@
 
                     <a
                         href="{{ $page['route'] }}"
-                        class="@if($activePage === $pageName) text-white bg-wordle-yellow font-semibold @else text-gray-500 hover:text-gray-700 font-medium @endif px-3 py-2  text-sm rounded-md"
+                        class="@if($activePage === $pageName) bg-zinc-100 text-zinc-900 font-medium @else text-zinc-500 hover:text-zinc-700 hover:bg-zinc-50 font-medium @endif px-3.5 py-2 text-sm rounded-md transition"
                         @if($activePage === $pageName) aria-current="page" @endif
                     > {{ $page['title'] }} </a>
                 @endif

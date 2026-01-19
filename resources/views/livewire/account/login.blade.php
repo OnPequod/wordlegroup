@@ -10,7 +10,7 @@
         @else
         wire:submit.prevent="send"
         @endif
-        class="grid grid-cols-1 gap-y-6 w-full max-w-sm w-full mx-auto"
+        class="grid grid-cols-1 gap-y-6 w-full max-w-lg mx-auto rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 shadow-[0_10px_30px_var(--color-shadow)]"
         x-data="{reminderSent: false}"
         @login-code-resent.window="reminderSent = true"
         @login-code-sent.window="document.getElementById('loginCode').focus()"

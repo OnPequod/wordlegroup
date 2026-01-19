@@ -1,24 +1,24 @@
 <x-layout.page-container heading="Register A Wordle Group Account" title="Register A Wordle Group Account">
-    <form wire:submit.prevent="store" class="mb-0   flex justify-center">
-        <div class="mt-4 py-8 grid grid-cols-1 gap-y-8 w-full max-w-sm ">
-
-            @unless(Auth::check())
-                <x-form.input.text
-                    wire:model="name" name="name" :errors="$errors" label="Your Name" placeholder="Your Name"
-                />
-                <x-form.input.text
-                    wire:model="email"
-                    name="email"
-                    :errors="$errors"
-                    type="email"
-                    label="Email Address"
-                    placeholder="my@email.com"
-                />
-            @endunless
-            <div>
-                <x-form.input.button loading-action="store">Register</x-form.input.button>
+    <form wire:submit.prevent="store" class="mb-0 flex justify-center">
+        <div class="w-full max-w-lg rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 shadow-[0_10px_30px_var(--color-shadow)]">
+            <div class="grid grid-cols-1 gap-y-6">
+                @unless(Auth::check())
+                    <x-form.input.text
+                        wire:model="name" name="name" :errors="$errors" label="Your Name" placeholder="Your Name"
+                    />
+                    <x-form.input.text
+                        wire:model="email"
+                        name="email"
+                        :errors="$errors"
+                        type="email"
+                        label="Email Address"
+                        placeholder="my@email.com"
+                    />
+                @endunless
+                <div>
+                    <x-form.input.button loading-action="store">Register</x-form.input.button>
+                </div>
             </div>
-        </div>
         </div>
     </form>
 </x-layout.page-container>
