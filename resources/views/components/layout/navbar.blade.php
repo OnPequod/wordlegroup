@@ -5,19 +5,13 @@
             <div class="flex">
                 <a
                     href="{{ Auth::check() ? route('account.home') : route('home') }}"
-                    class="flex flex-shrink-0 items-center text-white"
-                    x-data="{hover: false}"
-                    @mouseover="hover = true"
-                    @mouseout="hover = false"
+                    class="group flex flex-shrink-0 items-center text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700 rounded-md"
                 >
                     <span
-                        class="flex justify-center items-center h-8 w-8 sm:w-10 sm:h-10 font-serif text-xl sm:text-2xl font-extrabold rounded-lg shadow-sm"
-                        :class="hover ? 'bg-wordle-yellow text-white' : 'bg-green-50 text-green-800 '"
-                        x-transition:fade
+                        class="flex justify-center items-center h-8 w-8 sm:w-10 sm:h-10 font-serif text-xl sm:text-2xl font-extrabold rounded-lg shadow-sm bg-green-50 text-green-800 transition group-hover:bg-wordle-yellow group-hover:text-white"
                     >W</span>
                     <span
-                        class="px-2 sm:px-3 font-semibold font-serif text-lg sm:text-xl tracking-tight transition"
-                        :class="{ 'green-nav-link-underline' : hover }"
+                        class="px-2 sm:px-3 font-semibold font-serif text-lg sm:text-xl tracking-tight text-white"
                     >
                         Wordle Group
                     </span>

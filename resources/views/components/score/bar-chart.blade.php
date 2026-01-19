@@ -40,34 +40,34 @@
                                 },
                                 ticks: {
                                     font: {
-                                        size: 14,
+                                        size: 12,
                                         weight: 500,
                                     },
+                                    color: '#71717a',
                                 },
-                                 title: {
+                                title: {
                                     display: false,
-                                    text: 'Score'
-                                  }
+                                }
                             },
                             x: {
                                 beginAtZero: true,
                                 grid: {
-                                    display: false,
+                                    display: true,
+                                    color: '#f4f4f5',
                                 },
                                 ticks: {
                                     stepSize: {{ $stepSize }},
                                     font: {
-                                        size: 14,
-                                        weight: 500,
+                                        size: 11,
+                                        weight: 400,
                                     },
-        {{--                            color: '#C8B458',--}}
+                                    color: '#a1a1aa',
                                 },
-                                 title: {
-                                    display: true,
-                                    text: 'Count'
-                              }
+                                title: {
+                                    display: false,
+                                }
                             }
-                         },
+                        },
                         plugins: {
                             datalabels: {
                                 color: 'black',

@@ -48,7 +48,7 @@
             x-on:click.outside="close($refs.button)"
             :id="$id('{{ $name }}')"
             style="display: none;"
-            class="z-50 @if($dropdownCustom) {{ $dropdownCustom }} @elseif($alignDropdown === 'left') left-0 @elseif($alignDropdown === 'left') right-0 @else left-1/2 transform -translate-x-1/2 @endif absolute mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none {{$width}}"
+            class="z-50 @if($dropdownCustom) {{ $dropdownCustom }} @elseif($alignDropdown === 'left') left-0 @elseif($alignDropdown === 'left') right-0 @else left-1/2 transform -translate-x-1/2 @endif absolute mt-2 rounded-md shadow-lg bg-white ring-1 ring-black/5 focus:outline-none {{$width}}"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="{{ $name }}"

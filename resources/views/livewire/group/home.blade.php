@@ -68,7 +68,7 @@
             </div>
             @if($memberOfGroup)
                 @if($group->public)
-                <div class="pt-8">
+                <div class="pt-8 pb-4">
                     <x-layout.sub-heading class="text-center">Share</x-layout.sub-heading>
                     <x-group.share-links :group="$group" class="mt-6" />
                 </div>
@@ -86,25 +86,24 @@
                     </div>
                 @endunless
                 <div class="pt-8">
-                    <x-layout.sub-heading class="text-center">Record A Score</x-layout.sub-heading>
-                    @if($user->daily_scores_recorded === 0)
-                        <div class="text-gray-600 text-sm text-center mt-4">
-                            <p>
-                                You have not yet recorded any scores.
-                            </p>
-                            <p class="mt-4">
-                                To get started, just paste your board in the below text box.
-                            </p>
+                    <div class="bg-white rounded-xl border border-zinc-200/70 shadow-sm shadow-zinc-900/5 p-8">
+                        <x-layout.sub-heading>Record A Score</x-layout.sub-heading>
+                        @if($user->daily_scores_recorded === 0)
+                            <div class="text-zinc-500 text-sm mt-2">
+                                <p>You have not yet recorded any scores. Paste your board below to get started.</p>
+                            </div>
+                        @else
+                            <p class="mt-1 text-sm text-zinc-500">Paste your Wordle board to save it.</p>
+                        @endif
+                        <div class="mt-5">
+                            <livewire:score.record-form :quick="true" :user="$user" :group="$group" :hide-email="true"/>
                         </div>
-                    @endif
-                    <div class="mt-4">
-                        <livewire:score.record-form :quick="true" :user="$user" :group="$group" :hide-email="true"/>
+                        @if($user->dismissed_email_notification)
+                            <div class="mt-5 text-center text-xs text-zinc-500">
+                                <x-account.email-scores-message/>
+                            </div>
+                        @endif
                     </div>
-                    @if($user->dismissed_email_notification)
-                        <div class="mt-8 text-center text-xs text-gray-500">
-                            <x-account.email-scores-message/>
-                        </div>
-                    @endif
                 </div>
             @endif
             @if($group->scores_recorded > 0)

@@ -3,7 +3,7 @@
 
     <x-account.home-layout page="home">
 
-        <div class="flex flex-col gap-8 py-6">
+        <div class="flex flex-col gap-8 pb-12">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 class="text-2xl font-semibold text-zinc-900">My Stats</h1>

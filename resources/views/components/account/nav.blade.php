@@ -1,11 +1,11 @@
 <div>
+    {{-- Mobile: dropdown select --}}
     <div class="sm:hidden">
         <label for="tabs" class="sr-only">Select a tab</label>
-        <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
         <select
             id="tabs"
             name="tabs"
-            class="block w-full rounded-md border-zinc-200 focus:border-green-700 focus:ring-green-700"
+            class="block w-full rounded-full border-zinc-200 bg-white py-2 pl-4 pr-10 text-sm font-medium text-zinc-900 focus:border-green-600 focus:ring-green-600"
             x-data="{selected: '{{ $activePage }}', routeMap: {{ json_encode($routeMap, JSON_HEX_APOS) }} }"
             x-on:change="Turbo.visit(routeMap[$event.target.value])"
         >
@@ -31,21 +31,26 @@
             @endif
         </select>
     </div>
-    <div class="hidden sm:block">
-        <nav class="flex flex-wrap gap-2" aria-label="Tabs">
+
+    {{-- Desktop: pill segmented control --}}
+    <div class="hidden sm:flex sm:justify-center">
+        <nav
+            class="inline-flex items-center h-11 rounded-full bg-zinc-200/50 p-1 gap-0.5"
+            aria-label="Tabs"
+        >
             @foreach($pages as $pageName => $page)
                 @if(Auth::check() && $pageName === 'userGroups')
                     <x-layout.dropdown
                         label="My Groups"
                         name="userGroups"
                         width="w-72"
-                        :button-class="'px-4 py-2 text-sm font-medium rounded-md transition ' . ($activePage === 'groups' ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:text-zinc-700 hover:bg-zinc-50')"
-                        :chevron-text-color="$activePage === 'groups' ? 'text-white' : 'text-gray-500'"
+                        :button-class="'inline-flex items-center justify-center gap-2 h-9 rounded-full px-5 text-sm leading-none transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-100 ' . (str_starts_with($activePage, 'group') ? 'bg-white text-zinc-900 font-semibold shadow-sm' : 'text-zinc-600 font-medium hover:bg-white/70 hover:text-zinc-900')"
+                        chevron-class="size-4 opacity-60"
                     >
                         <ul>
                             @foreach($user->memberships as $membership)
                                 <li
-                                    class="block px-4 py-2 border-b border-gray-200 last:border-0 text-gray-500 hover:bg-gray-50 last:rounded-b-md"
+                                    class="block px-5 py-4 border-b border-zinc-100 last:border-0 text-zinc-600 hover:bg-zinc-50 first:rounded-t-md last:rounded-b-md"
                                 >
                                     <x-group.dropdown-list-item :group-membership="$membership" />
                                 </li>
@@ -55,12 +60,15 @@
                 @elseif(in_array($pageName, ['groups', 'placeholder']))
 
                 @else
-
                     <a
                         href="{{ $page['route'] }}"
-                        class="@if($activePage === $pageName) bg-zinc-100 text-zinc-900 font-medium @else text-zinc-500 hover:text-zinc-700 hover:bg-zinc-50 font-medium @endif px-3.5 py-2 text-sm rounded-md transition"
+                        @class([
+                            'inline-flex items-center justify-center h-9 rounded-full px-5 text-sm leading-none transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-100',
+                            'bg-white text-zinc-900 font-semibold shadow-sm' => $activePage === $pageName,
+                            'text-zinc-600 font-medium hover:bg-white/70 hover:text-zinc-900' => $activePage !== $pageName,
+                        ])
                         @if($activePage === $pageName) aria-current="page" @endif
-                    > {{ $page['title'] }} </a>
+                    >{{ $page['title'] }}</a>
                 @endif
             @endforeach
         </nav>

@@ -5,21 +5,20 @@
         @endif
     </div>
     <div class="font-bold text-green-700">{{ $groupMembership->group->name }}</div>
-    <div class="mt-1">
-        <ul class=" text-sm">
+    <div class="mt-2">
+        <ul class="text-sm text-zinc-600">
             @if(!empty($groupMembership->group->leaderboard) && isset($groupMembership?->group?->leaderboard?->first()['name']))
-                <li class="mt-0.5 first:mt-0">
-                    <span class="font-medium">Leader:</span>
-                    {{ $groupMembership->group->leaderboard->first()['name']  }}
-                    , {{ number_format($groupMembership->group->leaderboard->first()['stats']['mean'], 2) }}
+                <li class="mt-1 first:mt-0">
+                    <span class="font-semibold text-zinc-700">Leader:</span>
+                    {{ $groupMembership->group->leaderboard->first()['name']  }}, {{ number_format($groupMembership->group->leaderboard->first()['stats']['mean'], 2) }}
                 </li>
-                <li class="mt-0.5 first:mt-0">
-                    <span class="font-medium">Avg. Score:</span>
+                <li class="mt-1 first:mt-0">
+                    <span class="font-semibold text-zinc-700">Avg. Score:</span>
                     {{ number_format($groupMembership->group->score_mean, 2) }}
                 </li>
                 @if(!empty($groupMembership->group->leaderboard->firstWhere('user_id', $user->id)))
-                    <li class="mt-0.5 first:mt-0">
-                        <span class="font-medium">My Place:</span>
+                    <li class="mt-1 first:mt-0">
+                        <span class="font-semibold text-zinc-700">My Place:</span>
                         @if(!empty($groupMembership->group->activeLeaderboards->firstWhere('for', 'forever')))
                         {{ $groupMembership->group->activeLeaderboards->firstWhere('for', 'forever')->leaderboard->firstWhere('user_id', $user->id)['place'] }}/{{ $groupMembership->group->activeLeaderboards->firstWhere('for', 'forever')->leaderboard->pluck('place')->max() }} Overall,
                         @endif

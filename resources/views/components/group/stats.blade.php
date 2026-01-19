@@ -1,30 +1,31 @@
-<div class="relative">
-    <div class="absolute inset-0 h-1/2"></div>
-    <div class="relative max-w-7xl mx-auto px-4 px-6">
-        <div class="max-w-4xl mx-auto">
-            <dl class="rounded-lg bg-white grid grid-cols-3">
-                <div class="flex flex-col border-gray-100 px-6 py-4 text-center border-0 border-r">
-                    <dt class="order-2 mt-2 text-base leading-6 font-medium text-gray-500">Median</dt>
-                    <dd class="order-1 text-xl font-bold text-green-700">{{ $leaderboard->score_median }}</dd>
-                </div>
-                <div
-                    class="flex flex-col border-gray-100 px-6 py-4 text-center border-0 border-l border-r"
-                >
-                    <dt class="order-2 mt-2 text-base leading-6 font-medium text-gray-500">Mean</dt>
-                    <dd class="order-1 text-xl font-bold text-green-700">{{ $leaderboard->score_mean }}</dd>
-                </div>
-                <div class="flex flex-col border-gray-100 px-6 py-4 text-center border-0 border-l">
-                    <dt class="order-2 mt-2 text-base leading-6 font-medium text-gray-500">Mode</dt>
-                    <dd class="order-1 text-xl font-bold text-green-700">{{ $leaderboard->score_mode }}</dd>
-                </div>
-            </dl>
-        </div>
+<div class="rounded-2xl bg-white border border-zinc-200 shadow-sm p-6">
+    {{-- Header --}}
+    <div class="mb-5">
+        <h3 class="text-lg font-semibold text-zinc-900">Group Stats</h3>
+        <p class="text-sm text-zinc-500">{{ $leaderboard->scores_recorded }} {{ Str::plural('score', $leaderboard->scores_recorded) }} recorded</p>
     </div>
-    <div class="mt-6">
-        <div class="text-gray-500 text-sm text-center"><span class="font-semibold">{{ $leaderboard->scores_recorded }}</span>
-            {{ Str::plural('score', $leaderboard->scores_recorded ) }} recorded.</div>
+
+    {{-- KPI Row: Segmented strip --}}
+    <div class="rounded-xl bg-zinc-50 border border-zinc-200 overflow-hidden">
+        <dl class="grid grid-cols-3 divide-x divide-zinc-200">
+            <div class="px-4 py-4 text-center">
+                <dd class="text-3xl font-semibold text-zinc-900 tabular-nums">{{ $leaderboard->score_median }}</dd>
+                <dt class="mt-1 text-sm font-medium text-zinc-500">Median</dt>
+            </div>
+            <div class="px-4 py-4 text-center">
+                <dd class="text-3xl font-semibold text-zinc-900 tabular-nums">{{ $leaderboard->score_mean }}</dd>
+                <dt class="mt-1 text-sm font-medium text-zinc-500">Mean</dt>
+            </div>
+            <div class="px-4 py-4 text-center">
+                <dd class="text-3xl font-semibold text-zinc-900 tabular-nums">{{ $leaderboard->score_mode }}</dd>
+                <dt class="mt-1 text-sm font-medium text-zinc-500">Mode</dt>
+            </div>
+        </dl>
     </div>
-    <div class="mt-8">
+
+    {{-- Chart --}}
+    <div class="mt-5 rounded-xl bg-zinc-50/50 border border-zinc-200 p-4">
+        <div class="text-xs font-medium text-zinc-500 mb-3">Score Distribution</div>
         <x-score.bar-chart :score-distribution="$leaderboard->score_distribution" />
     </div>
 </div>

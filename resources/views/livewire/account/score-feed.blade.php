@@ -17,7 +17,7 @@
                 </li>
             @endforeach
         </ul>
-        <div class="flex justify-center mt-6">
+        <div class="mt-6">
             {{ $scores->links() }}
         </div>
     @else

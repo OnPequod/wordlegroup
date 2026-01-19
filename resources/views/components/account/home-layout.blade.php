@@ -1,9 +1,7 @@
 <div class="mx-auto w-full max-w-6xl">
-    <div class="flex justify-center">
+    <div class="pt-1 pb-8">
         <x-account.nav :active-page="$page" />
     </div>
-
-    <x-layout.hr class="my-5" />
 
     <div class="flex-grow">
         {{ $slot }}
