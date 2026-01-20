@@ -70,8 +70,9 @@
             </div>
         @endif
 
-        <div class="col-span-1 pt-6 text-sm">
-            <a class="link" href="{{ route('register') }}">Don't have an account? Register one here.</a>
-        </div>
     </form>
+
+    <div class="text-center mt-10 text-sm">
+        <a class="font-semibold text-zinc-600 hover:text-green-700 transition" href="{{ route('register') }}">Don't have an account? Register one here.</a>
+    </div>
 </x-layout.page-container>

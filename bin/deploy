@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+# Wordle Group deployment script
+# Usage: bin/deploy [staging|production]
+
+ENVIRONMENT="${1:-staging}"
+
+if [[ "$ENVIRONMENT" != "staging" && "$ENVIRONMENT" != "production" ]]; then
+    echo "Usage: bin/deploy [staging|production]"
+    exit 1
+fi
+
+echo "==> Deploying to $ENVIRONMENT..."
+
+# Set deploy destination flag
+if [[ "$ENVIRONMENT" == "production" ]]; then
+    DEST_FLAG="-d production"
+else
+    DEST_FLAG=""
+fi
+
+# Run kamal deploy
+~/.local/share/gem/ruby/3.4.0/bin/kamal deploy $DEST_FLAG
+
+echo "==> Deploy to $ENVIRONMENT complete!"

@@ -4,8 +4,8 @@
         :url="route('rules-and-faq')"
         description="Information on how scores are calculated and shared in a Wordle Group."
     />
-    <div class="prose">
-        <p>If something appears not to be working correctly or works differently from how you expect, please read the below question and answers. If we don't answer your question below, you disagree with how we do things, or something seems broken, please <a href="mailto:erikwestlund@hey.com">email us</a>.</p>
+    <div class="prose tracking-tight max-w-none rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 shadow-[0_10px_30px_var(--color-shadow)]">
+        <p>If something appears not to be working correctly or works differently from how you expect, please read the below question and answers. If we don't answer your question below, you disagree with how we do things, or something seems broken, please <a href="mailto:erik@pequod.sh">email us</a>.</p>
         <ul class="mt-8">
             <li>
                 <span class="font-bold leading-5">Can I submit scores from before I joined a group?</span>

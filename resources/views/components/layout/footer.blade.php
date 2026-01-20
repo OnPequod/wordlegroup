@@ -1,4 +1,4 @@
-<footer class="w-full bg-white/80 border-t border-zinc-200 mt-16">
+<footer class="w-full bg-white/80 border-t border-zinc-200">
     <div class="max-w-5xl mx-auto px-6 py-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             {{-- Primary actions --}}

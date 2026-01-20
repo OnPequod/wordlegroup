@@ -32,21 +32,14 @@
                     @if(Auth::check())
                     @else
                         <a
-                            class="flex relative items-center px-3 py-2 text-sm font-semibold text-white/90 hover:text-white rounded-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
                             href="{{ route('login') }}"
-                            x-data="{hover: false}"
-                            @mouseover="hover = true"
-                            @mouseout="hover = false"
+                            class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
                         >
-                            <span
-                                :class="{'green-nav-link-underline' : hover}"
-                            >
-                                Log In
-                            </span>
+                            Log In
                         </a>
                         <a
-                            class="ml-2 flex relative items-center px-4 py-2 text-sm font-semibold text-white rounded-md border border-white/70 hover:border-wordle-yellow hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-wordle-yellow"
                             href="{{ route('group.create') }}"
+                            class="ml-1 inline-flex items-center rounded-full px-4 py-2 text-sm font-medium bg-white/90 text-green-800 no-underline hover:bg-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
                         >
                             <x-icon-solid.plus class="w-4 h-4 mr-2 -ml-1"/>
                             <span class="hidden sm:inline">New Group</span>
@@ -122,7 +115,7 @@
                                             <a
                                                 class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
                                                 href="{{ route('logout') }}"
-                                            >Logout</a>
+                                            >Log Out</a>
                                         </li>
                                     </ul>
                                 </x-layout.dropdown>
