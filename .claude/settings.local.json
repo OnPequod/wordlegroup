@@ -9,7 +9,9 @@
       "Bash(timeout 5 curl:*)",
       "Bash(for url in \"/\" \"/login\" \"/register\" \"/group/create\" \"/about\" \"/contact\")",
       "Bash(do echo -n \"$url: \")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(curl -s https://wordlegroup.pequod.sh/build/assets/app-*.css)",
+      "Bash(curl:*)"
     ]
   }
 }
