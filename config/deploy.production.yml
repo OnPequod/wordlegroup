@@ -2,7 +2,6 @@
 # Deploy with: kamal deploy -d production
 
 builder:
-  remote: true
   cache:
     type: registry
     image: onpequod/wordlegroup:build-cache
