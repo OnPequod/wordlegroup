@@ -25,3 +25,9 @@ ansible/vault/secrets.yml
 *.pem
 .kamal/secrets-common
 .claude/
+
+# Claude settings (local)
+.claude/settings.local.json
+
+# PHPUnit cache
+.phpunit.cache/
