@@ -1,6 +1,11 @@
 # Kamal 2 production configuration
 # Deploy with: kamal deploy -d production
 
+ssh:
+  user: deploy
+  keys:
+    - ~/.ssh/id_ed25519
+
 builder:
   cache:
     type: registry
