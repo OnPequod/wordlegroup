@@ -54,6 +54,7 @@ env:
     MAIL_FROM_NAME: "Wordle Group"
     AWS_DEFAULT_REGION: us-east-1
     SENTRY_TRACES_SAMPLE_RATE: 0.05
+    SENTRY_LARAVEL_DSN: https://b4d5fcf4d3a742bc99f309c03ec65cc1@o1162154.ingest.sentry.io/6249034
   secret:
     - APP_KEY
     - DB_USERNAME
@@ -61,7 +62,6 @@ env:
     - REDIS_PASSWORD
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
-    - SENTRY_LARAVEL_DSN
 
 volumes:
   - /var/data/wordle-group/storage:/var/www/html/storage

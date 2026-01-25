@@ -56,7 +56,6 @@ jobs:
           REDIS_PASSWORD=${{ secrets.WORDLEGROUP_REDIS_PASSWORD }}
           AWS_ACCESS_KEY_ID=${{ secrets.WORDLEGROUP_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY=${{ secrets.WORDLEGROUP_AWS_SECRET_ACCESS_KEY }}
-          SENTRY_LARAVEL_DSN=${{ secrets.WORDLEGROUP_SENTRY_DSN || '' }}
           EOF
 
       - name: Deploy with Kamal
