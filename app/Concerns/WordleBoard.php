@@ -91,7 +91,7 @@ class WordleBoard
 
         $boardNumberCandidate = Str::replace(',', '', $matches[1][0]);
         $boardNumber = is_numeric($boardNumberCandidate ?? null)
-            ? $boardNumberCandidate
+            ? (int) $boardNumberCandidate
             : null;
 
         return $this->validateBoardNumber($boardNumber)

@@ -11,7 +11,18 @@
         x-data="{
                 labels: ['1', '2', '3', '4', '5', '6', 'Missed'],
                 values: @json($values),
+                chart: null,
                 init() {
+                this.waitForChart();
+            },
+            waitForChart() {
+                if (typeof Chart === 'undefined' || typeof ChartDataLabels === 'undefined') {
+                    setTimeout(() => this.waitForChart(), 50);
+                    return;
+                }
+                this.initChart();
+            },
+            initChart() {
                 Chart.register(ChartDataLabels);
 
                 const colors = this.labels.map((label) => label === 'Missed' ? '#a1a1aa' : '#166534')

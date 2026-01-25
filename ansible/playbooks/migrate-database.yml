@@ -1,0 +1,128 @@
+---
+# Migrate database from monolith.pequod.dev to new server
+#
+# Usage:
+#   cd ansible
+#   ansible-playbook playbooks/migrate-database.yml -i inventory/sources.yml -i inventory/production.yml -e target=production
+#   ansible-playbook playbooks/migrate-database.yml -i inventory/sources.yml -i inventory/staging.yml -e target=staging
+#
+# Options:
+#   -e import=true    Also import the dump on the target (default: false, just transfers)
+
+- name: Dump database on source server
+  hosts: monolith
+  gather_facts: false
+
+  vars:
+    dump_dir: /tmp
+
+  tasks:
+    - name: Set timestamp for this run
+      ansible.builtin.set_fact:
+        timestamp: "{{ lookup('pipe', 'date +%Y%m%d_%H%M%S') }}"
+
+    - name: Read .env file from app directory
+      ansible.builtin.slurp:
+        src: "{{ app_path }}/.env"
+      register: env_file
+
+    - name: Parse database credentials from .env
+      ansible.builtin.set_fact:
+        db_name: "{{ env_file.content | b64decode | regex_search('DB_DATABASE=[\"'']?([^\"''\\n]+)[\"'']?', '\\1') | first }}"
+        db_user: "{{ env_file.content | b64decode | regex_search('DB_USERNAME=[\"'']?([^\"''\\n]+)[\"'']?', '\\1') | first }}"
+        db_password: "{{ env_file.content | b64decode | regex_search('DB_PASSWORD=[\"'']?([^\"''\\n]+)[\"'']?', '\\1') | first }}"
+
+    - name: Display database being dumped
+      ansible.builtin.debug:
+        msg: "Dumping database '{{ db_name }}' from monolith"
+
+    - name: Create mysqldump
+      ansible.builtin.shell: |
+        mysqldump -u {{ db_user }} -p'{{ db_password }}' \
+          --single-transaction \
+          --routines \
+          --triggers \
+          {{ db_name }} > {{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql
+      args:
+        creates: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql"
+
+    - name: Compress dump file
+      ansible.builtin.shell: |
+        gzip -f {{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql
+      args:
+        creates: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql.gz"
+
+    - name: Set dump filename for later plays
+      ansible.builtin.set_fact:
+        dump_filename: "{{ db_name }}_{{ timestamp }}.sql.gz"
+        source_db_name: "{{ db_name }}"
+      delegate_to: localhost
+      delegate_facts: true
+
+    - name: Pull dump to local machine via rsync
+      ansible.posix.synchronize:
+        src: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql.gz"
+        dest: "/tmp/{{ db_name }}_{{ timestamp }}.sql.gz"
+        mode: pull
+
+    - name: Clean up dump file on source
+      ansible.builtin.file:
+        path: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql.gz"
+        state: absent
+
+
+- name: Transfer dump to target server
+  hosts: "{{ target }}"
+  gather_facts: false
+
+  vars:
+    import: false
+    dump_dest: /tmp
+
+  vars_files:
+    - ~/Projects/web-server-management/vault/secrets.yml
+    - ../vault/secrets.yml
+
+  tasks:
+    - name: Get dump filename from localhost facts
+      ansible.builtin.set_fact:
+        dump_filename: "{{ hostvars['localhost']['dump_filename'] }}"
+        source_db_name: "{{ hostvars['localhost']['source_db_name'] }}"
+
+    - name: Copy dump to target server
+      ansible.builtin.copy:
+        src: "/tmp/{{ dump_filename }}"
+        dest: "{{ dump_dest }}/{{ dump_filename }}"
+        mode: '0600'
+
+    - name: Display transfer complete message
+      ansible.builtin.debug:
+        msg: "Dump file transferred to {{ inventory_hostname }}:{{ dump_dest }}/{{ dump_filename }}"
+
+    - name: Import database on target
+      when: import | bool
+      block:
+        - name: Decompress dump file
+          ansible.builtin.shell: |
+            gunzip -kf {{ dump_dest }}/{{ dump_filename }}
+          args:
+            creates: "{{ dump_dest }}/{{ dump_filename | replace('.gz', '') }}"
+
+        - name: Import dump into target database
+          ansible.builtin.shell: |
+            mysql -u {{ db_user }} -p'{{ db_password }}' {{ db_name }} < {{ dump_dest }}/{{ dump_filename | replace('.gz', '') }}
+
+        - name: Display import complete message
+          ansible.builtin.debug:
+            msg: "Database imported into {{ db_name }} on {{ inventory_hostname }}"
+
+        - name: Clean up decompressed dump file
+          ansible.builtin.file:
+            path: "{{ dump_dest }}/{{ dump_filename | replace('.gz', '') }}"
+            state: absent
+
+    - name: Clean up local dump file
+      ansible.builtin.file:
+        path: "/tmp/{{ dump_filename }}"
+        state: absent
+      delegate_to: localhost

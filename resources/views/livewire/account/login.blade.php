@@ -11,27 +11,21 @@
         wire:submit.prevent="send"
         @endif
         class="grid grid-cols-1 gap-y-6 w-full max-w-lg mx-auto rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 shadow-[0_10px_30px_var(--color-shadow)]"
-        x-data="{reminderSent: false}"
-        @login-code-resent.window="reminderSent = true"
-        @login-code-sent.window="document.getElementById('loginCode').focus()"
+        x-data
+        x-init="$nextTick(() => { if (document.getElementById('loginCode')) document.getElementById('loginCode').focus() })"
     >
 
         @if($codeSent)
 
             <div
-                x-show="! reminderSent"
                 wire:key="emailSent"
                 class="bg-green-50 border border-green-700 mb-2 rounded text-sm px-3 py-2 text-green-800"
             >
-                We have emailed you a login code. Enter it below.
-            </div>
-
-            <div
-                x-show="reminderSent"
-                wire:key="reminderSent"
-                class="bg-green-50 border border-green-700 mb-2 rounded text-sm px-3 py-2 text-green-800"
-            >
-                We have sent you another login code. Enter it below.
+                @if($codeResent)
+                    We have sent you another login code. Enter it below.
+                @else
+                    We have emailed you a login code. Enter it below.
+                @endif
             </div>
 
             <x-form.input.text

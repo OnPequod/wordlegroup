@@ -1,0 +1,16 @@
+---
+all:
+  children:
+    staging:
+      hosts:
+        staging:
+          ansible_host: staging.hatchery.lan
+          ansible_user: deploy
+          ansible_ssh_private_key_file: ~/.ssh/scv
+          ansible_python_interpreter: /usr/bin/python3
+
+          # App settings
+          app_name: wordle-group
+          db_name: wordlegroup_staging
+          db_user: wordlegroup
+          web_root: /var/data

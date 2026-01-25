@@ -1,0 +1,13 @@
+---
+# Source server for database migration (current production on monolith)
+all:
+  children:
+    sources:
+      hosts:
+        monolith:
+          ansible_host: monolith.pequod.dev
+          ansible_user: root
+          ansible_ssh_private_key_file: ~/.ssh/erik_id_rsa_legacy
+          ansible_python_interpreter: /usr/bin/python3
+          # App path on monolith
+          app_path: /var/www/wordlegroup.com/current

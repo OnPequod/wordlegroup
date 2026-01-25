@@ -11,7 +11,21 @@
       "Bash(do echo -n \"$url: \")",
       "Bash(done)",
       "Bash(curl -s https://wordlegroup.pequod.sh/build/assets/app-*.css)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(ansible-vault view:*)",
+      "Bash(ansible-vault encrypt:*)",
+      "Bash(ansible-vault decrypt:*)",
+      "Bash(make ping-production:*)",
+      "Bash(make provision-production:*)",
+      "Bash(make:*)",
+      "Bash(kamal deploy:*)",
+      "Bash(ssh -i ~/.ssh/scv deploy@dockolith.pequod.dev \"curl -sS localhost/health\")",
+      "Bash(ssh:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(pkill:*)",
+      "Bash(ansible-playbook:*)",
+      "Bash(tee:*)"
     ]
   }
 }

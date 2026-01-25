@@ -17,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// SNS webhook for receiving emailed scores (no CSRF, no auth)
+Route::post('/score/email', \App\Http\Controllers\MailScoreMessageController::class)->name('api.score.email');

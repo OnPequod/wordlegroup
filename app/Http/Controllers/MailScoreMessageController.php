@@ -12,10 +12,17 @@ use Illuminate\Support\Facades\Http;
 
 class MailScoreMessageController extends Controller
 {
-//    #[\ReturnTypeWillChange]
     public function __invoke(Request $request)
     {
-        $message = Message::fromRawPostData();
+        // Use fromJsonString instead of fromRawPostData to avoid dependency
+        // on X-Amz-Sns-Message-Type header which may not pass through proxies
+        try {
+            $message = Message::fromJsonString($request->getContent());
+        } catch (\RuntimeException $e) {
+            // Invalid JSON or malformed request
+            abort(400, 'Invalid request');
+        }
+
         $validator = new MessageValidator();
 
         // Validate the message and log errors if invalid.
@@ -23,9 +30,7 @@ class MailScoreMessageController extends Controller
             $validator->validate($message);
         } catch (InvalidSnsMessageException $e) {
             // Pretend we're not here if the message is invalid.
-            http_response_code(404);
-            error_log('SNS Message Validation Error: ' . $e->getMessage());
-            die();
+            abort(404);
         }
 
         // Check the type of the message and handle the subscription.

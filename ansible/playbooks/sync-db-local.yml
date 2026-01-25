@@ -1,0 +1,127 @@
+---
+# Sync production database to local development environment
+#
+# Usage:
+#   cd ansible && make sync-db
+#
+# This will:
+#   1. Dump the database from monolith.pequod.dev
+#   2. Download to local machine
+#   3. Import into local Docker MySQL (wordlegroup_prod_copy)
+
+- name: Dump database on monolith
+  hosts: monolith
+  gather_facts: false
+
+  vars:
+    dump_dir: /tmp
+
+  tasks:
+    - name: Set timestamp for this run
+      ansible.builtin.set_fact:
+        timestamp: "{{ lookup('pipe', 'date +%Y%m%d_%H%M%S') }}"
+
+    - name: Read .env file from app directory
+      ansible.builtin.slurp:
+        src: "{{ app_path }}/.env"
+      register: env_file
+
+    - name: Parse database credentials from .env
+      ansible.builtin.set_fact:
+        db_name: "{{ env_file.content | b64decode | regex_search('DB_DATABASE=[\"'']?([^\"''\\n]+)[\"'']?', '\\1') | first }}"
+        db_user: "{{ env_file.content | b64decode | regex_search('DB_USERNAME=[\"'']?([^\"''\\n]+)[\"'']?', '\\1') | first }}"
+        db_password: "{{ env_file.content | b64decode | regex_search('DB_PASSWORD=[\"'']?([^\"''\\n]+)[\"'']?', '\\1') | first }}"
+
+    - name: Display database being dumped
+      ansible.builtin.debug:
+        msg: "Dumping database '{{ db_name }}' from monolith"
+
+    - name: Create mysqldump
+      ansible.builtin.shell: |
+        mysqldump -u {{ db_user }} -p'{{ db_password }}' \
+          --single-transaction \
+          --routines \
+          --triggers \
+          {{ db_name }} > {{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql
+      args:
+        creates: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql"
+
+    - name: Compress dump file
+      ansible.builtin.shell: |
+        gzip -f {{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql
+      args:
+        creates: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql.gz"
+
+    - name: Set dump filename for later plays
+      ansible.builtin.set_fact:
+        dump_filename: "{{ db_name }}_{{ timestamp }}.sql.gz"
+        source_db_name: "{{ db_name }}"
+      delegate_to: localhost
+      delegate_facts: true
+
+    - name: Pull dump to local machine
+      ansible.posix.synchronize:
+        src: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql.gz"
+        dest: "{{ playbook_dir }}/../../storage/app/dumps/{{ db_name }}_{{ timestamp }}.sql.gz"
+        mode: pull
+
+    - name: Create latest symlink info
+      ansible.builtin.set_fact:
+        local_dump_path: "{{ playbook_dir }}/../../storage/app/dumps/{{ db_name }}_{{ timestamp }}.sql.gz"
+      delegate_to: localhost
+      delegate_facts: true
+
+    - name: Clean up dump file on source
+      ansible.builtin.file:
+        path: "{{ dump_dir }}/{{ db_name }}_{{ timestamp }}.sql.gz"
+        state: absent
+
+
+- name: Import into local Docker MySQL
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    local_db_name: wordlegroup_prod_copy
+    local_db_user: wordlegroup
+    local_db_password: wordlegroup-dev-secret
+    local_db_port: 3307
+    docker_container: wordle-group-mysql
+
+  tasks:
+    - name: Get dump path from previous play
+      ansible.builtin.set_fact:
+        dump_path: "{{ hostvars['localhost']['local_dump_path'] }}"
+        dump_filename: "{{ hostvars['localhost']['dump_filename'] }}"
+
+    - name: Display import info
+      ansible.builtin.debug:
+        msg: "Importing {{ dump_filename }} into {{ local_db_name }}"
+
+    - name: Decompress dump file
+      ansible.builtin.shell: |
+        gunzip -kf {{ dump_path }}
+      args:
+        creates: "{{ dump_path | replace('.gz', '') }}"
+
+    - name: Import dump into local Docker MySQL
+      ansible.builtin.shell: |
+        docker exec -i {{ docker_container }} mysql -u{{ local_db_user }} -p'{{ local_db_password }}' {{ local_db_name }} < {{ dump_path | replace('.gz', '') }}
+      register: import_result
+
+    - name: Clean up decompressed file
+      ansible.builtin.file:
+        path: "{{ dump_path | replace('.gz', '') }}"
+        state: absent
+
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: |
+          Database synced successfully!
+
+          Source: monolith.pequod.dev
+          Target: {{ local_db_name }} (local Docker)
+          Dump saved: storage/app/dumps/{{ dump_filename }}
+
+          To use: Update .env with DB_DATABASE={{ local_db_name }}

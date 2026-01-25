@@ -28,7 +28,9 @@ Route::get('/group/{group}/verify-email', \App\Http\Livewire\Group\VerifyEmailNo
 Route::get('/group/{groupId}/verify', \App\Http\Livewire\Group\Verify::class)->name('group.verify');
 Route::get('/group/invitation/{invitationId}', \App\Http\Livewire\Group\Invitation::class)->name('group.invitation');
 
-Route::post('/score/email', \App\Http\Controllers\MailScoreMessageController::class)->name('score.email');
+Route::post('/score/email', \App\Http\Controllers\MailScoreMessageController::class)
+    ->name('score.email')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 Route::get('/score/{score}', \App\Http\Livewire\Score\SharePage::class)->name('score.share-page');
 
 Route::get('/group/{group}', \App\Http\Livewire\Group\Home::class)->name('group.home');

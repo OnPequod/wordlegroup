@@ -95,3 +95,53 @@ docker exec -i wordle-group-mysql mysql -uroot -pwordlegroup-dev-secret wordlegr
 - `wire:model` is deferred by default (use `.live` for real-time)
 - `wire:model.blur` replaces old `wire:model.lazy`
 - Config cached for PHP-FPM compatibility
+
+## Production Deployment
+
+### Infrastructure
+- **Server:** dockolith.pequod.dev (managed by ~/Projects/web-server-management)
+- **Domain:** wordlegroup.pequod.dev (temporary), eventually wordlegroup.com
+- **Deploy tool:** Kamal 2
+
+### Ansible Setup
+App-specific provisioning lives in `ansible/` directory:
+- `ansible/inventory/production.yml` - Server connection details
+- `ansible/playbooks/provision.yml` - Creates DB, user, storage dirs
+- `ansible/playbooks/generate-secrets.yml` - Generates .kamal/secrets
+- `ansible/vault/secrets.yml` - App secrets (encrypted)
+
+### Deployment Workflow
+```bash
+# First time: provision app resources on server
+cd ansible
+make provision-production
+
+# Generate Kamal secrets (pulls from both WSM and app vaults)
+make secrets
+
+# Deploy with Kamal (from project root)
+cd ..
+kamal deploy -d production
+```
+
+### Database Migration (from monolith.pequod.dev)
+```bash
+cd ansible
+
+# Transfer dump only
+make migrate-db-production
+
+# Transfer and import
+make migrate-db-production import=true
+```
+
+### Kamal Config Files
+- `config/deploy.yml` - Staging (default)
+- `config/deploy.production.yml` - Production overrides
+
+### Secrets
+Shared secrets (mysql_root_password, redis_password, kamal_registry_*) come from:
+`~/Projects/web-server-management/vault/secrets.yml`
+
+App secrets (app_key, db_password, aws_*, sentry_*) come from:
+`ansible/vault/secrets.yml`

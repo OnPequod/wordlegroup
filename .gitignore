@@ -21,4 +21,7 @@ yarn-error.log
 
 # Deployment
 .kamal/secrets
+ansible/vault/secrets.yml
 *.pem
+.kamal/secrets-common
+.claude/

@@ -1,64 +1,233 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Wordle Group
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel application for tracking and sharing Wordle scores with friends and groups.
 
-## About Laravel
+**Production:** https://wordlegroup.com
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework:** Laravel 12.x with Livewire 4
+- **PHP:** 8.4
+- **Frontend:** Tailwind CSS, Alpine.js
+- **Database:** MySQL 8.4
+- **Cache/Queue:** Redis with Horizon
+- **Deployment:** Kamal 2
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Deployment
 
-## Learning Laravel
+### Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Docker with buildx
+- Kamal 2 (`gem install kamal`)
+- Ansible (`brew install ansible` or `pip install ansible`)
+- SSH access to target servers
+- GitHub Container Registry access
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Server Infrastructure
 
-## Laravel Sponsors
+Servers are provisioned using [web-server-management](https://github.com/onpequod/web-server-management) which sets up:
+- Docker
+- MySQL 8.4
+- Redis
+- kamal-proxy
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Initial Setup (New Server)
 
-### Premium Partners
+1. **Provision the server** (creates database, user, storage directories):
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+   ```bash
+   cd ansible
+   make provision-production
+   ```
 
-## Contributing
+2. **Generate Kamal secrets** (creates `.kamal/secrets-common`):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```bash
+   cd ansible
+   make secrets
+   ```
 
-## Code of Conduct
+3. **Deploy**:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   ```bash
+   kamal deploy -d production
+   ```
 
-## Security Vulnerabilities
+### Regular Deployments
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Automatic (recommended):** Push to `main` branch triggers GitHub Actions deployment.
 
-## License
+**Manual:**
+```bash
+kamal deploy -d production
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### GitHub Actions Setup
+
+The workflow at `.github/workflows/deploy.yml` auto-deploys on push to main.
+
+**Required GitHub Secrets** (Settings → Secrets → Actions):
+
+| Secret | Description |
+|--------|-------------|
+| `SSH_PRIVATE_KEY` | SSH key for accessing production server |
+| `APP_KEY` | Laravel APP_KEY |
+| `DB_USERNAME` | Database username |
+| `DB_PASSWORD` | Database password |
+| `REDIS_PASSWORD` | Redis password |
+| `AWS_ACCESS_KEY_ID` | AWS credentials for SES |
+| `AWS_SECRET_ACCESS_KEY` | AWS credentials for SES |
+| `SENTRY_LARAVEL_DSN` | Sentry DSN |
+
+`GITHUB_TOKEN` is automatically provided for GHCR access.
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `config/deploy.yml` | Staging deployment (default) |
+| `config/deploy.production.yml` | Production deployment |
+| `.kamal/secrets-common` | Secrets for Kamal (generated, not committed) |
+
+### Ansible Commands
+
+All commands run from the `ansible/` directory:
+
+```bash
+# View all available commands
+make help
+
+# Provision server (DB, user, storage)
+make provision-production
+
+# Generate Kamal secrets
+make secrets
+
+# Sync production database to local
+make sync-db
+
+# Migrate database to new server
+make migrate-db-production import=true
+
+# Edit vault secrets
+make vault-edit
+```
+
+### Database Operations
+
+**Sync production to local development:**
+
+```bash
+cd ansible
+make sync-db
+```
+
+This dumps production, transfers it locally, and imports into `wordlegroup_prod_copy`.
+
+**Migrate to new production server:**
+
+```bash
+cd ansible
+make migrate-db-production import=true
+```
+
+### Secrets Management
+
+Secrets are stored in Ansible Vault at `ansible/vault/secrets.yml`:
+
+```bash
+cd ansible
+make vault-edit    # Edit secrets
+make vault-view    # View secrets
+```
+
+Required secrets:
+- `app_key` - Laravel APP_KEY
+- `db_user` / `db_password` - Database credentials
+- `redis_password` - Redis password
+- `aws_access_key_id` / `aws_secret_access_key` - AWS credentials for SES
+- `sentry_dsn` - Sentry error tracking
+
+### Kamal Commands
+
+```bash
+# Deploy to production
+kamal deploy -d production
+
+# Deploy to staging
+kamal deploy
+
+# View logs
+kamal app logs -d production
+
+# Open Rails console equivalent
+kamal app exec -d production "php artisan tinker"
+
+# Run migrations
+kamal app exec -d production "php artisan migrate"
+
+# Rollback to previous version
+kamal rollback -d production
+```
+
+## Local Development
+
+See [CLAUDE.md](CLAUDE.md) for local development setup with Docker Compose.
+
+Quick start:
+
+```bash
+docker compose up -d
+```
+
+The app runs at http://localhost:8033
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Cloudflare                           │
+│                  (DNS + Proxy)                          │
+└─────────────────────┬───────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────┐
+│              dockolith.pequod.dev                       │
+│  ┌────────────────────────────────────────────────────┐ │
+│  │              kamal-proxy                           │ │
+│  │         (SSL termination)                          │ │
+│  └────────────────────┬───────────────────────────────┘ │
+│                       │                                 │
+│  ┌────────────────────▼───────────────────────────────┐ │
+│  │         wordle-group container                     │ │
+│  │  ┌─────────┐  ┌─────────┐  ┌─────────────────────┐ │ │
+│  │  │  nginx  │──│ PHP-FPM │  │  Horizon (worker)   │ │ │
+│  │  └─────────┘  └─────────┘  └─────────────────────┘ │ │
+│  └────────────────────────────────────────────────────┘ │
+│                       │                                 │
+│  ┌────────────────────▼───────────────────────────────┐ │
+│  │     MySQL 8.4          │       Redis               │ │
+│  │  (host.docker.internal)                            │ │
+│  └────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Directory Structure
+
+```
+ansible/                    # Deployment automation
+├── inventory/              # Server inventories
+├── playbooks/              # Ansible playbooks
+├── vault/                  # Encrypted secrets
+└── Makefile                # Convenience commands
+
+config/
+├── deploy.yml              # Kamal staging config
+└── deploy.production.yml   # Kamal production config
+
+docker/
+└── production/             # Production Docker configs
+    ├── Dockerfile
+    ├── nginx.conf
+    ├── supervisord.conf
+    └── ...
+```

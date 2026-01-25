@@ -1,0 +1,90 @@
+---
+# Provision wordle-group app on target server
+# Creates database, user, and storage directories
+#
+# Usage:
+#   cd ansible && ansible-playbook playbooks/provision.yml -i inventory/production.yml
+#   cd ansible && ansible-playbook playbooks/provision.yml -i inventory/staging.yml
+
+- name: Provision wordle-group application
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars_files:
+    - ~/Projects/web-server-management/vault/secrets.yml
+    - ../vault/secrets.yml
+
+  tasks:
+    - name: Create application directory
+      ansible.builtin.file:
+        path: "{{ web_root }}/{{ app_name }}"
+        state: directory
+        owner: deploy
+        group: deploy
+        mode: "0755"
+
+    - name: Create storage directories
+      ansible.builtin.file:
+        path: "{{ web_root }}/{{ app_name }}/storage/{{ item }}"
+        state: directory
+        owner: deploy
+        group: deploy
+        mode: "0775"
+      loop:
+        - app
+        - app/public
+        - framework
+        - framework/cache
+        - framework/cache/data
+        - framework/sessions
+        - framework/testing
+        - framework/views
+        - logs
+
+    - name: Create Laravel log file
+      ansible.builtin.file:
+        path: "{{ web_root }}/{{ app_name }}/storage/logs/laravel.log"
+        state: touch
+        owner: deploy
+        group: deploy
+        mode: "0664"
+      changed_when: false
+
+    - name: Create application database
+      community.mysql.mysql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+
+    - name: Create database user (Docker network access)
+      community.mysql.mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        host: "172.%"
+        priv: "{{ db_name }}.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+
+    - name: Create database user (localhost access)
+      community.mysql.mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        host: "localhost"
+        priv: "{{ db_name }}.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: |
+          Wordle Group provisioned on {{ inventory_hostname }}!
+
+          Storage: {{ web_root }}/{{ app_name }}/storage
+          Database: {{ db_name }}
+          DB User: {{ db_user }}
+
+          Next: Generate secrets and deploy with Kamal

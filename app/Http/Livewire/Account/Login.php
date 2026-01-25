@@ -20,6 +20,8 @@ class Login extends Component
 
     public $codeSent;
 
+    public $codeResent = false;
+
     public $user;
 
     public function mount(Request $request)
@@ -96,7 +98,7 @@ class Login extends Component
     {
         $this->send();
 
-        $this->dispatch('login-code-resent');
+        $this->codeResent = true;
     }
 
     public function render()

@@ -1,0 +1,55 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies (rebuilt in Docker)
+node_modules
+vendor
+
+# Build artifacts
+public/build
+public/hot
+
+# Development
+.env
+.env.*
+!.env.example
+docker-compose*.yml
+.phpunit.cache
+.phpunit.result.cache
+phpunit.xml
+tests
+storage/app/dumps
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Kamal/Ansible
+.kamal
+ansible
+
+# Claude
+.claude
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+storage/logs/*
+!storage/logs/.gitignore
+
+# Cache
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore
