@@ -1,84 +1,87 @@
-<div class="rounded-2xl bg-white border border-zinc-200 shadow-sm overflow-hidden">
-    {{-- Header row: title + filter --}}
-    <div class="flex items-center justify-between px-6 py-5 border-b border-zinc-100">
-        <div>
-            <h3 class="text-lg font-semibold text-zinc-900">Group Activity</h3>
-            <p class="text-sm text-zinc-500 mt-0.5">Recent scores from the group</p>
-        </div>
-        @if($isGroupMember)
-            <div class="flex items-center gap-3">
-                <div class="w-44">
-                    <x-group.user-select
-                        :default-empty="true"
-                        wire:model.live="filterByUserId"
-                        name="activityUsers"
-                        label="Filter by user"
-                        :group="$group"
-                    />
-                </div>
-                @if($filterByUserId)
-                    <button
-                        class="text-sm text-zinc-500 hover:text-zinc-900 transition"
-                        type="button"
-                        wire:click="clearUserFilter"
-                        x-data
-                        @click="$dispatch('cleared-activity-feed-filter')"
-                    >
-                        Clear
-                    </button>
-                @endif
+<div>
+    {{-- Score cards --}}
+    @if($scores->isNotEmpty())
+        @if($viewMode === 'tiles')
+            {{-- Tiles view --}}
+            <div class="p-6">
+                <ul role="list" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    @foreach($scores as $score)
+                        <x-score.card
+                            :score="$score"
+                            :show-user="true"
+                            :anonymize-private-users="$anonymizePrivateUsers"
+                        />
+                    @endforeach
+                </ul>
+            </div>
+        @else
+            {{-- List/accordion view --}}
+            <div class="divide-y divide-zinc-100">
+                @foreach($scores as $score)
+                    <div x-data="{ expanded: {{ $loop->index < 3 ? 'true' : 'false' }} }" class="group">
+                        <button
+                            type="button"
+                            @click="expanded = !expanded"
+                            class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-zinc-50 transition"
+                        >
+                            <div class="flex items-center gap-4">
+                                <div class="font-semibold text-zinc-900 tabular-nums">#{{ $score->board_number }}</div>
+                                <div class="text-sm text-zinc-500">{{ $score->date->format('M j') }}</div>
+                                <div class="font-semibold text-zinc-900">{{ $score->score === 7 ? 'X' : $score->score }}/6{{ $score->hard_mode ? '*' : '' }}</div>
+                                @if($anonymizePrivateUsers && !$score->user->public_profile)
+                                    <span class="text-sm text-zinc-400">Anonymous</span>
+                                @else
+                                    <span class="text-sm text-zinc-600">{{ $score->user->name }}</span>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-3">
+                                @if(($score->comments_count ?? 0) > 0)
+                                    <span class="text-xs text-zinc-400">{{ $score->comments_count }} {{ Str::plural('comment', $score->comments_count) }}</span>
+                                @endif
+                                <svg
+                                    class="w-5 h-5 text-zinc-400 transition-transform duration-200"
+                                    :class="{ 'rotate-180': expanded }"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </div>
+                        </button>
+                        <div
+                            x-show="expanded"
+                            x-collapse
+                            class="px-6 pb-4"
+                        >
+                            <a href="{{ route('score.share-page', $score) }}" class="block">
+                                <div class="flex justify-center py-4">
+                                    @if($score->board)
+                                        <x-score.board :score="$score"/>
+                                    @else
+                                        <div class="text-sm text-zinc-500">No board recorded.</div>
+                                    @endif
+                                </div>
+                            </a>
+                            <div class="flex items-center justify-between pt-2 border-t border-zinc-100">
+                                <div class="text-xs text-zinc-400">
+                                    {{ $score->created_at->diffForHumans() }}
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <livewire:score.share :icon-size="3" :score="$score" :key="'list-'.$score->id" :confirm="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         @endif
-    </div>
-
-    {{-- Activity list --}}
-    <ul role="list" class="divide-y divide-zinc-100">
-        @foreach($scores as $score)
-            <li>
-                <a
-                    href="{{ route('score.share-page', $score) }}"
-                    class="flex items-center gap-4 px-6 py-4 hover:bg-zinc-50/50 transition"
-                >
-                    {{-- Left: Avatar --}}
-                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-semibold text-sm">
-                        {{ substr($score->user->name, 0, 1) }}
-                    </div>
-
-                    {{-- Middle: Content --}}
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-zinc-900 leading-tight">
-                            @if($anonymizePrivateUsers && $score->user->private_profile)
-                                Anonymous User
-                            @else
-                                {{ $score->user->name }}
-                            @endif
-                            <span class="font-normal text-zinc-600">recorded a</span>
-                            <span class="font-semibold">{{ $score->score === 7 ? 'X' : $score->score }}/6{{ $score->hard_mode ? '*' : '' }}</span>
-                            <span class="font-normal text-zinc-600">on</span>
-                            <span class="font-semibold">Wordle {{ number_format($score->board_number) }}</span>
-                        </p>
-                        <p class="text-xs text-zinc-500 mt-0.5">{{ $score->created_at->diffForHumans() }}</p>
-                    </div>
-
-                    {{-- Right: Mini Wordle grid --}}
-                    <div class="flex-shrink-0 rounded-lg bg-zinc-50 border border-zinc-200 p-2">
-                        @if($score->boardCanBeSeenByUser($user))
-                            <div class="text-xs leading-none">
-                                <x-score.board :score="$score"/>
-                            </div>
-                        @else
-                            <div class="text-xs leading-none">
-                                <x-score.hidden-board :score="$score" />
-                            </div>
-                            <div class="flex items-center justify-center text-zinc-400 mt-1">
-                                <x-icon-solid.lock class="h-2.5 w-2.5" />
-                            </div>
-                        @endif
-                    </div>
-                </a>
-            </li>
-        @endforeach
-    </ul>
+    @else
+        <div class="p-6 text-center text-sm text-zinc-500">
+            No scores recorded yet.
+        </div>
+    @endif
 
     {{-- Pagination --}}
     @if($scores->hasPages())

@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Concerns\GetsUsersInSharedGroupsWithAuthenticatedUser;
 use App\Concerns\Tokens;
 use App\Concerns\WordleDate;
+use App\Jobs\UpdateDailySummariesJob;
+use App\Jobs\UpdatePublicLeaderboardsJob;
 use App\Mail\NudgeUser;
 use App\Mail\UserVerification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,9 +27,12 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'public_alias',
         'email',
         'password',
         'public_profile',
+        'show_on_public_leaderboard',
+        'show_name_on_public_leaderboard',
         'allow_digest_emails',
         'allow_reminder_emails',
         'last_reminded_at',
@@ -41,7 +46,10 @@ class User extends Authenticatable
         'daily_score_median',
         'daily_score_mode',
         'score_distribution',
+        'bot_skill_mean',
+        'bot_luck_mean',
         'dismissed_email_notification',
+        'onboarding_completed_at',
     ];
 
     protected $hidden = [
@@ -59,7 +67,47 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'auth_token_generated_at' => 'datetime',
         'login_code_generated_at' => 'datetime',
+        'onboarding_completed_at' => 'datetime',
+        'public_profile' => 'boolean',
+        'show_on_public_leaderboard' => 'boolean',
+        'show_name_on_public_leaderboard' => 'boolean',
+        'allow_reminder_emails' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::updated(function (User $user) {
+            if ($user->wasChanged('show_on_public_leaderboard')) {
+                UpdatePublicLeaderboardsJob::dispatch();
+
+                // Update daily summaries for user's recent boards
+                $recentBoardNumbers = $user->dailyScores()
+                    ->orderByDesc('scores.board_number')
+                    ->limit(30)
+                    ->pluck('scores.board_number')
+                    ->unique();
+
+                foreach ($recentBoardNumbers as $boardNumber) {
+                    UpdateDailySummariesJob::dispatch($boardNumber);
+                }
+            }
+        });
+    }
+
+    public function hasCompletedOnboarding(): bool
+    {
+        return $this->onboarding_completed_at !== null;
+    }
+
+    public function markOnboardingComplete(): void
+    {
+        $this->update(['onboarding_completed_at' => now()]);
+    }
+
+    public function getPublicDisplayNameAttribute(): string
+    {
+        return $this->public_alias ?: $this->name;
+    }
 
     public function canBeNudged()
     {
@@ -279,7 +327,27 @@ class User extends Authenticatable
             'daily_score_median'    => $this->getMedianDailyScore(),
             'daily_score_mode'      => $this->getModeDailyScore(),
             'score_distribution'    => $this->getScoreDistribution(),
+            'bot_skill_mean'        => $this->getBotSkillMean(),
+            'bot_luck_mean'         => $this->getBotLuckMean(),
         ]);
+    }
+
+    public function getBotSkillMean()
+    {
+        $scoresWithBotSkill = $this->dailyScores->whereNotNull('bot_skill_score');
+
+        return $scoresWithBotSkill->isNotEmpty()
+            ? (float) round($scoresWithBotSkill->average('bot_skill_score'), 1)
+            : null;
+    }
+
+    public function getBotLuckMean()
+    {
+        $scoresWithBotLuck = $this->dailyScores->whereNotNull('bot_luck_score');
+
+        return $scoresWithBotLuck->isNotEmpty()
+            ? (float) round($scoresWithBotLuck->average('bot_luck_score'), 1)
+            : null;
     }
 
     public function getMeanDailyScore()

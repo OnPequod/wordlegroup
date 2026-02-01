@@ -55,6 +55,10 @@ class GetsLeaderboards
 
                             $position['user']['public_name'] = $position['can_be_seen_by_viewing_user'] ? $position['user']->name : 'Anonymous User';
 
+                            // Add bot stats from user
+                            $position['stats']['bot_skill_mean'] = $position['user']->bot_skill_mean;
+                            $position['stats']['bot_luck_mean'] = $position['user']->bot_luck_mean;
+
                             return $position;
                         });
 

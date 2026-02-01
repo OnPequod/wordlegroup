@@ -65,4 +65,7 @@ jobs:
           printenv | grep -E '^(KAMAL_|APP_KEY|DB_|REDIS_|AWS_)' > .kamal/secrets.production
 
       - name: Deploy with Kamal
+        env:
+          KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: kamal deploy -d production

@@ -90,6 +90,8 @@ COPY docker/production/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY docker/production/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/production/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/production/crontab /etc/crontabs/www
+COPY docker/production/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy application from previous stages
 COPY --from=composer-deps /app/vendor ./vendor
@@ -130,4 +132,4 @@ RUN mkdir -p /run/nginx /var/log/supervisor /var/log/nginx
 
 EXPOSE 80
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

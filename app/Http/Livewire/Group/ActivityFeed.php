@@ -19,19 +19,15 @@ class ActivityFeed extends Component
 
     public $user;
 
-    public $isGroupMember;
+    public string $viewMode = 'list';
 
-    public function mount(Group $group, $anonymizePrivateUsers = false)
+    public function mount(Group $group, $anonymizePrivateUsers = false, string $viewMode = 'list', ?int $filterByUserId = null)
     {
         $this->group = $group;
         $this->anonymizePrivateUsers = $anonymizePrivateUsers;
+        $this->viewMode = $viewMode;
+        $this->filterByUserId = $filterByUserId;
         $this->user = Auth::check() ? Auth::user() : null;
-        $this->isGroupMember = $group->isMemberOf($this->user);
-    }
-
-    public function clearUserFilter()
-    {
-        $this->filterByUserId = null;
     }
 
     public function getScores()
@@ -43,10 +39,16 @@ class ActivityFeed extends Component
             $query = $query->where('scores.user_id', $this->filterByUserId);
         }
 
-        return $query->with('user')
+        $query = $query->with('user')
                      ->latest('created_at')
-                     ->latest('date')
-                     ->paginate(6);
+                     ->latest('date');
+
+        // Only load comments count in tiles view (expensive subquery)
+        if ($this->viewMode === 'tiles') {
+            $query = $query->withCount('comments');
+        }
+
+        return $query->paginate(10)->withPath(route('group.home', $this->group));
 
     }
 

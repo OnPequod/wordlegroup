@@ -14,6 +14,10 @@ class Register extends Component
 
     public $email;
 
+    public $showOnPublicLeaderboard = false;
+
+    public $showNameOnPublicLeaderboard = false;
+
     public function getRules()
     {
         return [
@@ -22,6 +26,8 @@ class Register extends Component
                 'unique:users',
             ],
             'name'  => ['required'],
+            'showOnPublicLeaderboard' => ['boolean'],
+            'showNameOnPublicLeaderboard' => ['boolean'],
         ];
     }
 
@@ -39,6 +45,8 @@ class Register extends Component
         $user = User::create([
             'email' => $this->email,
             'name'  => $this->name,
+            'show_on_public_leaderboard' => $this->showOnPublicLeaderboard,
+            'show_name_on_public_leaderboard' => $this->showNameOnPublicLeaderboard,
         ]);
 
         event(new Registered($user));

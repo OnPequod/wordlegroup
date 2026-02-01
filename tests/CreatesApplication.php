@@ -17,6 +17,9 @@ trait CreatesApplication
 
         $app->make(Kernel::class)->bootstrap();
 
+        // Force tests to use the test database regardless of config cache
+        config(['database.connections.mysql.database' => 'wordlegroup_test']);
+
         return $app;
     }
 }

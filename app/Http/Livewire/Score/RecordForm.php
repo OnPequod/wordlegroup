@@ -39,6 +39,10 @@ class RecordForm extends Component
 
     public $score;
 
+    public $botSkillScore;
+
+    public $botLuckScore;
+
     public $user;
 
     public function mount(User $user, Group $group = null, $quick = false, $hideEmail = false)
@@ -69,11 +73,13 @@ class RecordForm extends Component
         $data = app(WordleBoard::class)->parse($this->board);
 
         $this->storeScore([
-            'score'       => $data['scoreNumber'],
-            'boardNumber' => $data['boardNumber'],
-            'date'        => $data['date'],
-            'board'       => $data['board'],
-            'hardMode'    => $data['hardMode'] ?? null,
+            'score'         => $data['scoreNumber'],
+            'boardNumber'   => $data['boardNumber'],
+            'date'          => $data['date'],
+            'board'         => $data['board'],
+            'hardMode'      => $data['hardMode'] ?? null,
+            'botSkillScore' => $data['botScores']['skill'] ?? null,
+            'botLuckScore'  => $data['botScores']['luck'] ?? null,
         ]);
     }
 
@@ -89,6 +95,8 @@ class RecordForm extends Component
             'board_number'      => $data['boardNumber'],
             'board'             => $data['board'] ?? null,
             'hard_mode'         => $data['hardMode'] ?? null,
+            'bot_skill_score'   => $data['botSkillScore'] ?? null,
+            'bot_luck_score'    => $data['botLuckScore'] ?? null,
         ]);
 
         $this->dispatch('scoreRecorded')->toParent();
@@ -103,10 +111,12 @@ class RecordForm extends Component
         ]);
 
         $this->storeScore([
-            'score'       => $this->bricked ? 7 : $this->score,
-            'boardNumber' => $this->boardNumber ?? app(WordleBoard::class)->getBoardNumberFromDate($this->date),
-            'date'        => $this->date,
-            'hardMode'    => $this->hardMode ?? false,
+            'score'        => $this->bricked ? 7 : $this->score,
+            'boardNumber'  => $this->boardNumber ?? app(WordleBoard::class)->getBoardNumberFromDate($this->date),
+            'date'         => $this->date,
+            'hardMode'     => $this->hardMode ?? false,
+            'botSkillScore' => $this->botSkillScore ?: null,
+            'botLuckScore'  => $this->botLuckScore ?: null,
         ]);
 
         $this->dispatch('scoreRecorded')->toParent();

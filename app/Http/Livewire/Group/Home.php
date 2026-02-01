@@ -28,8 +28,9 @@ class Home extends Component
 
     public function mount(Group $group)
     {
+        $group->load('memberships.user');
         $this->group = $group;
-        $this->memberCount = $group->memberships()->count();
+        $this->memberCount = $group->member_count;
         $this->user = Auth::check() ? Auth::user() : null;
         $this->memberOfGroup = $this->user ? $this->group->isMemberOf($this->user) : false;
         $this->isAdmin = $this->memberOfGroup && $group->isAdmin($this->user);

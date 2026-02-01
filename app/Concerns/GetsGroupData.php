@@ -8,14 +8,11 @@ trait GetsGroupData
 {
     public function getGroupWithMemberships($group)
     {
-        $key = 'group-' . $group->id . '-with-memberships-' . $group->updated_at->timestamp;
+        // Only load if not already loaded
+        if (!$group->relationLoaded('memberships')) {
+            $group->load(['memberships.user']);
+        }
 
-        return Cache::remember(
-            $key,
-            60 * 60,
-            function() use($group) {
-                return $group->load(['memberships.user']);
-            },
-        );
+        return $group;
     }
 }

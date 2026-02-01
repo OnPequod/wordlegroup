@@ -32,9 +32,12 @@ class UserSelect extends Component
         $this->group = $group;
         $this->selectedUserId = $selectedUserId;
 
-        $this->options = $group->memberships()
-            ->with('user')
-            ->get()
+        // Reuse loaded memberships or load them once
+        if (!$group->relationLoaded('memberships')) {
+            $group->load('memberships.user');
+        }
+
+        $this->options = $group->memberships
             ->map(function ($membership) {
                 return [
                     'value' => $membership->user->id,

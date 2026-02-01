@@ -6,7 +6,7 @@
         <div class="flex flex-col gap-8 pb-12">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-2xl font-semibold text-zinc-900">My Stats</h1>
+                    <h1 class="text-2xl font-bold text-zinc-900 font-serif">My Stats</h1>
                     <p class="mt-1 text-sm text-zinc-500">{{ $user->daily_scores_recorded }} recorded scores</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
@@ -33,7 +33,7 @@
             @endif
 
             @if($user->daily_scores_recorded > 0)
-                <div class="bg-white rounded-xl border border-zinc-200/70 shadow-sm shadow-zinc-900/5 p-8">
+                <div class="bg-white rounded-xl border border-zinc-200/70 shadow-sm shadow-zinc-900/5 px-6 py-5">
                     <x-layout.sub-heading>Stats Summary</x-layout.sub-heading>
                     <p class="mt-1 text-sm text-zinc-500">Median, mean, mode, and distribution.</p>
                     <div class="mt-4">

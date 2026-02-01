@@ -9,6 +9,7 @@ use App\Concerns\UpdatesGroupStats;
 use App\Concerns\UpdatesLeaderboards;
 use App\Concerns\WordleBoard;
 use App\Concerns\WordleDate;
+use App\Jobs\UpdateDailySummariesJob;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,9 +25,31 @@ class Score extends Model
 
     protected $guarded = [];
 
+    protected static function booted(): void
+    {
+        static::saved(function (Score $score) {
+            // Always update daily summaries (includes WG-wide stats for all users)
+            UpdateDailySummariesJob::dispatch($score->board_number);
+        });
+    }
+
     public function getBoardAttribute($value)
     {
         return Str::replace('⬛', '⬜', $value);
+    }
+
+    public function getBoardHtmlAttribute()
+    {
+        $board = $this->board;
+
+        // Replace emoji with styled spans
+        $board = Str::replace('🟩', '<span class="inline-block w-4 h-4 m-0.5 rounded-sm bg-green-600"></span>', $board);
+        $board = Str::replace('🟨', '<span class="inline-block w-4 h-4 m-0.5 rounded-sm bg-yellow-500"></span>', $board);
+        $board = Str::replace('⬜', '<span class="inline-block w-4 h-4 m-0.5 rounded-sm bg-zinc-300"></span>', $board);
+        $board = Str::replace("\r\n", '<br>', $board);
+        $board = Str::replace("\n", '<br>', $board);
+
+        return $board;
     }
 
     public function getBoardShareTextAttribute()
@@ -184,6 +207,26 @@ class Score extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function hasBotScore()
+    {
+        return $this->bot_skill_score !== null || $this->bot_luck_score !== null;
+    }
+
+    public function getBotSkillDisplayAttribute()
+    {
+        return $this->bot_skill_score !== null ? $this->bot_skill_score . '/99' : null;
+    }
+
+    public function getBotLuckDisplayAttribute()
+    {
+        return $this->bot_luck_score !== null ? $this->bot_luck_score . '/99' : null;
     }
 
     public function scopeBetweenBoards($query, $startBoard, $endBoard)

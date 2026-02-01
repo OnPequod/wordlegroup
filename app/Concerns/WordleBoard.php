@@ -60,11 +60,39 @@ class WordleBoard
         $boardNumber = $this->getBoardNumberFromBoard($board);
         $date = $this->wordleDate->getDateFromBoardNumber($boardNumber);
         $hardMode = $this->getHardModeFromBoard($board);
+        $botScores = $this->getBotScoresFromBoard($board);
         $board = $this->extractBoard($board, $scoreNumber);
 
         $valid = $score !== null && $boardNumber !== null && $date !== null;
 
-        return compact('score', 'scoreNumber', 'boardNumber', 'date', 'hardMode', 'valid', 'board');
+        return compact('score', 'scoreNumber', 'boardNumber', 'date', 'hardMode', 'valid', 'board', 'botScores');
+    }
+
+    public function getBotScoresFromBoard($board)
+    {
+        $botSkillScore = null;
+        $botLuckScore = null;
+
+        // Match WordleBot skill score: "Skill 93/99" or "Skill: 93"
+        if (preg_match('/Skill[:\s]+(\d+)(?:\/\d+)?/i', $board, $matches)) {
+            $botSkillScore = (int) $matches[1];
+            if ($botSkillScore < 0 || $botSkillScore > 99) {
+                $botSkillScore = null;
+            }
+        }
+
+        // Match WordleBot luck score: "Luck 83/99" or "Luck: 83"
+        if (preg_match('/Luck[:\s]+(\d+)(?:\/\d+)?/i', $board, $matches)) {
+            $botLuckScore = (int) $matches[1];
+            if ($botLuckScore < 0 || $botLuckScore > 99) {
+                $botLuckScore = null;
+            }
+        }
+
+        return [
+            'skill' => $botSkillScore,
+            'luck' => $botLuckScore,
+        ];
     }
 
     public function getScoreFromBoard($board)

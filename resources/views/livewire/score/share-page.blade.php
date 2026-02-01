@@ -87,6 +87,30 @@
         </span>
     </div>
 
+    @if($score->hasBotScore())
+        <x-layout.hr class="mt-8 mb-8" />
+        <div class="flex justify-center gap-8 text-center">
+            @if($score->bot_skill_score !== null)
+                <div>
+                    <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Bot Skill</div>
+                    <div class="mt-1 text-xl font-bold text-green-700">{{ $score->botSkillDisplay }}</div>
+                </div>
+            @endif
+            @if($score->bot_luck_score !== null)
+                <div>
+                    <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Bot Luck</div>
+                    <div class="mt-1 text-xl font-bold text-green-700">{{ $score->botLuckDisplay }}</div>
+                </div>
+            @endif
+        </div>
+    @endif
+
+    <x-layout.hr class="mt-8 mb-8" />
+
+    <div class="max-w-xl mx-auto">
+        <livewire:score.comments :score="$score" />
+    </div>
+
 
     @if(! Auth::check())
         <x-layout.hr class="my-16"/>

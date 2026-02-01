@@ -2,8 +2,8 @@
 
 namespace App\Concerns;
 
-use App\Models\Leaderboard;
 use App\Models\User;
+use App\Services\AuthenticatedUserService;
 use Illuminate\Support\Facades\Auth;
 
 class GetsUserGroupsWithRelationshipsLoaded
@@ -25,12 +25,24 @@ class GetsUserGroupsWithRelationshipsLoaded
 
     public function setGroups(User $user = null)
     {
-        if(! $user) {
+        if (!$user) {
             $this->groups = collect();
             return;
         }
 
-        $this->user->load(['memberships.group.memberships.user', 'memberships.group.activeLeaderboards']);
-        $this->groups = $this->user->memberships->pluck('group');
+        // If this is the authenticated user, use the pre-loaded instance from the service
+        $authUser = app(AuthenticatedUserService::class)->get();
+        if ($authUser && $authUser->id === $user->id) {
+            $this->user = $authUser;
+            $this->groups = $authUser->memberships->pluck('group');
+            return;
+        }
+
+        // For other users, load relationships only if not already loaded
+        if (!$user->relationLoaded('memberships')) {
+            $user->load(['memberships.group.memberships.user', 'memberships.group.activeLeaderboards']);
+        }
+
+        $this->groups = $user->memberships->pluck('group');
     }
 }

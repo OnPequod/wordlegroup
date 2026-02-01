@@ -1,3 +1,5 @@
+@props(['name', 'label' => null, 'placeholder' => '', 'tip' => null, 'errors', 'value' => null])
+
 <div>
     <div
         class="relative rounded-md border @if($errors->has($name)) border-red-600 @else border-zinc-300 @endif bg-white px-4 py-3 focus-within:ring-2 focus-within:ring-green-700/20 focus-within:border-green-700"    >
@@ -13,8 +15,11 @@
                 'type' => $attributes->get('type') ?? 'text' ,
                 'name' => $name,
                 'id' => $name,
-                'placeholder' => $placeholder
+                'placeholder' => $placeholder,
             ]) }}
+            @if($value && !$attributes->has('wire:model') && !$attributes->has('wire:model.live') && !$attributes->has('wire:model.blur'))
+                value="{{ $value }}"
+            @endif
         >
     </div>
     @if($tip)

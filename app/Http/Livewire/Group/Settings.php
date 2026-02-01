@@ -3,34 +3,27 @@
 namespace App\Http\Livewire\Group;
 
 use App\Models\Group;
-use App\Models\User;
 use App\Rules\TransferGroupAdministratorConfirmed;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Settings extends Component
 {
+    public Group $group;
 
-    public $name;
-
-    public $heading;
-
-    public $public;
-
-    public $group;
-
-    public $initialAdminUserId;
-
-    public $confirmTransfer;
+    public string $name = '';
+    public int $adminUserId;
+    public bool $public = false;
+    public int $initialAdminUserId;
+    public bool $confirmTransfer = false;
 
     public function getRules()
     {
         return [
-            'group.name'          => ['required'],
-            'group.admin_user_id' => ['required'],
-            'group.public'        => [],
-            'confirmTransfer'     => new TransferGroupAdministratorConfirmed($this->group->admin_user_id,
-                $this->initialAdminUserId),
+            'name'          => ['required'],
+            'adminUserId'   => ['required'],
+            'public'        => [],
+            'confirmTransfer' => new TransferGroupAdministratorConfirmed($this->adminUserId, $this->initialAdminUserId),
         ];
     }
 
@@ -41,18 +34,22 @@ class Settings extends Component
         }
 
         $this->group = $group;
-        $this->heading = $group->name . ' Group Settings';
-
-        $this->initialAdminUserId = $this->group->admin_user_id;
+        $this->name = $group->name;
+        $this->adminUserId = $group->admin_user_id;
+        $this->public = (bool) $group->public;
+        $this->initialAdminUserId = $group->admin_user_id;
     }
 
     public function update()
     {
         $this->validate();
 
+        $this->group->name = $this->name;
+        $this->group->admin_user_id = $this->adminUserId;
+        $this->group->public = $this->public;
         $this->group->save();
 
-        if ($this->initialAdminUserId !== $this->group->admin_user_id) {
+        if ($this->initialAdminUserId !== $this->adminUserId) {
             session()->flash('message',
                 'Settings saved. ' . $this->group->fresh()->admin->name . ' is now the administrator of ' . $this->group->name . '.');
 

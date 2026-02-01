@@ -21,6 +21,7 @@ class UserFactory extends Factory
             'auth_token' => app(Tokens::class)->generate(),
             'auth_token_generated_at' => now(),
             'remember_token' => Str::random(10),
+            'onboarding_completed_at' => now(),
         ];
     }
 
@@ -38,6 +39,15 @@ class UserFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'auth_token_generated_at' => now()->subMinutes(2 * config('settings.unverified_user_expires_minutes')),
+            ];
+        });
+    }
+
+    public function needsOnboarding()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'onboarding_completed_at' => null,
             ];
         });
     }
