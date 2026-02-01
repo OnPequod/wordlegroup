@@ -31,3 +31,13 @@ ansible/vault/secrets.yml
 
 # PHPUnit cache
 .phpunit.cache/
+
+# AI tool files
+.codex/
+.opencode/
+
+# Database data files (generated)
+database/data/
+
+# Test environment
+.env.testing
