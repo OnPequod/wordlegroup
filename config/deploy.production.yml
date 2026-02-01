@@ -4,7 +4,7 @@
 ssh:
   user: deploy
   keys:
-    - ~/.ssh/id_ed25519
+    - ~/.ssh/scv
 
 builder:
   cache:

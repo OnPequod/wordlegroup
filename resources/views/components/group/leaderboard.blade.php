@@ -23,7 +23,7 @@
                         @endif
                     </td>
                     <td class="px-3 py-3 whitespace-nowrap {{ $position['place'] <= 3 ? 'font-semibold text-zinc-900' : 'font-medium text-zinc-700' }}" title="{{ $position['name'] }}">
-                        @if($anonymizePrivateUsers && $position['user'] && $position['user']->private_profile)
+                        @if($anonymizePrivateUsers && $position['user'] instanceof \App\Models\User && $position['user']->private_profile)
                             Anonymous User
                         @else
                             {{ $position['name'] }}

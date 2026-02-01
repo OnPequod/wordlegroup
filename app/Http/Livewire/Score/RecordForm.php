@@ -99,7 +99,7 @@ class RecordForm extends Component
             'bot_luck_score'    => $data['botLuckScore'] ?? null,
         ]);
 
-        $this->dispatch('scoreRecorded')->toParent();
+        $this->dispatch('scoreRecorded');
     }
 
     public function recordScoreManually()
@@ -119,7 +119,7 @@ class RecordForm extends Component
             'botLuckScore'  => $this->botLuckScore ?: null,
         ]);
 
-        $this->dispatch('scoreRecorded')->toParent();
+        $this->dispatch('scoreRecorded');
     }
 
     public function updatedDate($date)

@@ -10,6 +10,8 @@ use Livewire\Component;
 
 class PendingInvitations extends Component
 {
+    public Group $group;
+
     public function mount(Group $group)
     {
         $this->group = $group;
