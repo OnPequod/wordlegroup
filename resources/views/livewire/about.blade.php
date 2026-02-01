@@ -87,17 +87,7 @@
             </div>
         </div>
 
-        {{-- Links --}}
-        <div class="flex flex-wrap gap-4 text-sm">
-            <a href="{{ route('board') }}" class="text-green-700 hover:text-green-800 font-medium">
-                Today's Puzzle &rarr;
-            </a>
-            <a href="{{ route('leaderboard') }}" class="text-green-700 hover:text-green-800 font-medium">
-                Public Leaderboard &rarr;
-            </a>
-            <a href="{{ route('group.create') }}" class="text-green-700 hover:text-green-800 font-medium">
-                Create a Group &rarr;
-            </a>
-        </div>
+        {{-- Quick Links --}}
+        <x-layout.quick-links />
     </div>
 </x-layout.page-container>

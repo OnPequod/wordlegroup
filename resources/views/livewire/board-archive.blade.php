@@ -20,7 +20,7 @@
             {{-- Year filter --}}
             <select
                 wire:model.live="year"
-                class="rounded-lg border border-zinc-200 bg-white pl-3 pr-8 py-2 text-sm text-zinc-700 focus:border-green-500 focus:ring-green-500"
+                class="rounded-lg border border-zinc-200 bg-white pl-3 pr-8 py-2 text-sm text-zinc-700 focus:border-green-600 focus:ring-green-600"
             >
                 <option value="">All Years</option>
                 @foreach($this->availableYears as $y)
@@ -32,7 +32,7 @@
             @if($year)
                 <select
                     wire:model.live="month"
-                    class="rounded-lg border border-zinc-200 bg-white pl-3 pr-8 py-2 text-sm text-zinc-700 focus:border-green-500 focus:ring-green-500"
+                    class="rounded-lg border border-zinc-200 bg-white pl-3 pr-8 py-2 text-sm text-zinc-700 focus:border-green-600 focus:ring-green-600"
                 >
                     <option value="">All Months</option>
                     @foreach($this->availableMonths as $m => $name)
@@ -153,15 +153,8 @@
             </p>
         </div>
 
-        {{-- Links --}}
-        <div class="flex flex-wrap gap-4 text-sm">
-            <a href="{{ route('board') }}" class="text-green-700 hover:text-green-800 font-medium">
-                Today's Puzzle &rarr;
-            </a>
-            <a href="{{ route('leaderboard') }}" class="text-green-700 hover:text-green-800 font-medium">
-                Public Leaderboard &rarr;
-            </a>
-        </div>
+        {{-- Quick Links --}}
+        <x-layout.quick-links />
     </div>
 
 </x-layout.page-container>

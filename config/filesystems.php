@@ -53,13 +53,13 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
-        's3-backups' => [
+        'backblaze' => [
             'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BACKUP_BUCKET'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'key' => env('BACKBLAZE_KEY_ID'),
+            'secret' => env('BACKBLAZE_SECRET'),
+            'region' => env('BACKBLAZE_REGION', 'us-east-005'),
+            'bucket' => env('BACKBLAZE_BUCKET', 'wordlegroup-backup'),
+            'endpoint' => env('BACKBLAZE_ENDPOINT', 'https://s3.us-east-005.backblazeb2.com'),
         ],
 
     ],

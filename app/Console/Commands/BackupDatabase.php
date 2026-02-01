@@ -13,7 +13,7 @@ class BackupDatabase extends Command
                             {type=daily : Backup type (daily, weekly, monthly)}
                             {--cleanup : Clean up old backups based on retention policy}';
 
-    protected $description = 'Backup the database to S3';
+    protected $description = 'Backup the database to Backblaze B2';
 
     protected array $retention = [
         'daily' => 7,
@@ -30,10 +30,10 @@ class BackupDatabase extends Command
             return self::FAILURE;
         }
 
-        $disk = Storage::disk('s3-backups');
+        $disk = Storage::disk('backblaze');
 
-        if (!config('filesystems.disks.s3-backups.bucket')) {
-            $this->error('S3 backup bucket not configured. Set AWS_BACKUP_BUCKET in environment.');
+        if (!config('filesystems.disks.backblaze.key')) {
+            $this->error('Backblaze not configured. Set BACKBLAZE_KEY_ID and BACKBLAZE_SECRET in environment.');
             return self::FAILURE;
         }
 
@@ -78,14 +78,14 @@ class BackupDatabase extends Command
         $fileSize = $this->formatBytes(filesize($tempFile));
         $this->info("Backup created: {$fileSize}");
 
-        // Upload to S3
-        $this->info("Uploading to S3: {$s3Path}");
+        // Upload to Backblaze
+        $this->info("Uploading to Backblaze: {$s3Path}");
 
         try {
             $disk->put($s3Path, fopen($tempFile, 'r'));
             $this->info("Upload complete.");
         } catch (\Exception $e) {
-            $this->error("S3 upload failed: " . $e->getMessage());
+            $this->error("Backblaze upload failed: " . $e->getMessage());
             @unlink($tempFile);
             return self::FAILURE;
         }

@@ -291,7 +291,7 @@
                                 wire:model="newComment"
                                 placeholder="Share your thoughts on today's puzzle..."
                                 rows="2"
-                                class="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm focus:border-green-500 focus:ring-green-500 resize-none"
+                                class="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm focus:border-green-600 focus:ring-green-600 resize-none"
                             ></textarea>
                             @error('newComment')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -333,10 +333,11 @@
                                     <span class="font-medium text-zinc-900 text-sm">{{ $comment->user->name }}</span>
                                     <span class="text-xs text-zinc-400">{{ $comment->created_at->diffForHumans() }}</span>
                                     @if($comment->canBeDeletedBy(Auth::user()))
+                                        <span class="text-zinc-300">&middot;</span>
                                         <button
                                             wire:click="deleteComment({{ $comment->id }})"
                                             wire:confirm="Are you sure you want to delete this comment?"
-                                            class="text-xs text-zinc-400 hover:text-red-600 transition"
+                                            class="text-xs text-zinc-400 hover:text-red-600 cursor-pointer transition"
                                         >
                                             Delete
                                         </button>
@@ -352,12 +353,8 @@
             @endif
         </div>
 
-        {{-- Link to leaderboard --}}
-        <div class="text-center">
-            <a href="{{ route('leaderboard') }}" class="text-sm text-zinc-500 hover:text-zinc-700 transition">
-                View Public Leaderboard &rarr;
-            </a>
-        </div>
+        {{-- Quick Links --}}
+        <x-layout.quick-links />
     </div>
 
 </x-layout.page-container>
