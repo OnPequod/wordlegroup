@@ -59,7 +59,7 @@
                     </a>
 
                     @auth
-                        <span class="w-px h-5 bg-white/20 mx-1"></span>
+                        <span class="w-px h-5 bg-white/20 mx-5"></span>
                         <a
                             href="{{ route('account.home') }}"
                             @class([
@@ -113,23 +113,12 @@
                                 </ul>
                             </x-layout.dropdown>
                         @endif
-
-                        <a
-                            href="{{ route('account.record-score') }}"
-                            @class([
-                                'inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
-                                'text-white bg-white/15' => request()->routeIs('account.record-score'),
-                                'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('account.record-score'),
-                            ])
-                        >
-                            Record Score
-                        </a>
                     @endauth
                 </div>
             </div>
 
             {{-- Right: User menu (fixed width to prevent layout shift) --}}
-            <div class="hidden sm:flex flex-none items-center justify-end min-w-[140px]">
+            <div class="hidden sm:flex flex-none items-center justify-end">
                 @guest
                     <a
                         href="{{ route('login') }}"
@@ -145,13 +134,6 @@
                         New Group
                     </a>
                 @else
-                    <a
-                        href="{{ route('account.settings') }}"
-                        class="inline-flex items-center rounded-full px-3 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
-                    >
-                        My Settings
-                    </a>
-
                     {{-- User dropdown --}}
                     <x-layout.dropdown
                         name="user-dropdown"
