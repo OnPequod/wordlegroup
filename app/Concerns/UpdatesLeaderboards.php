@@ -18,7 +18,7 @@ class UpdatesLeaderboards
         $this->date = app(WordleDate::class);
     }
 
-    public function update(Group $group, Carbon $when = null)
+    public function update(Group $group, ?Carbon $when = null)
     {
         if (!$when) {
             $when = app(WordleDate::class)->getActiveBoardEndTime();

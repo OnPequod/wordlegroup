@@ -196,7 +196,7 @@ class User extends Authenticatable
         return $this->hasMany(GroupMembershipInvitation::class, 'email', 'email');
     }
 
-    public function profileCannotBeSeenBy(User $viewingUser = null)
+    public function profileCannotBeSeenBy(?User $viewingUser = null)
     {
         return !$this->profileCanBeSeenBy($viewingUser);
     }
@@ -227,7 +227,7 @@ class User extends Authenticatable
         );
     }
 
-    public function profileCanBeSeenBy(User $viewingUser = null)
+    public function profileCanBeSeenBy(?User $viewingUser = null)
     {
         // If it's public
         if ($this->public_profile) {

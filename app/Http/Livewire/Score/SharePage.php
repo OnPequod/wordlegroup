@@ -38,7 +38,7 @@ class SharePage extends Component
         $this->title = $this->getTitle($score);
     }
 
-    public function getBeingViewedByOwner(User $user, User $viewingUser = null)
+    public function getBeingViewedByOwner(User $user, ?User $viewingUser = null)
     {
 
         if(! $viewingUser) {

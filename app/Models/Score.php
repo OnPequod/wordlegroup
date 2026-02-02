@@ -132,12 +132,12 @@ class Score extends Model
         return $query->orderByRaw("FIELD(recording_user_id, '{$userId}') DESC");
     }
 
-    public function scoreCannotBeSeenByUser(User $viewingUser = null)
+    public function scoreCannotBeSeenByUser(?User $viewingUser = null)
     {
         return !$this->scoreCanBeSeenByUser($viewingUser);
     }
 
-    public function scoreCanBeSeenByUser(User $viewingUser = null)
+    public function scoreCanBeSeenByUser(?User $viewingUser = null)
     {
         // If it's public
         if ($this->public) {
@@ -167,12 +167,12 @@ class Score extends Model
         return $query->where('board_number', app(WordleDate::class)->activeBoardNumber);
     }
 
-    public function boardCannotBeSeenByUser(User $viewingUser = null)
+    public function boardCannotBeSeenByUser(?User $viewingUser = null)
     {
         return !$this->boardCanBeSeenByUser($viewingUser);
     }
 
-    public function boardCanBeSeenByUser(User $viewingUser = null)
+    public function boardCanBeSeenByUser(?User $viewingUser = null)
     {
         // If score has been actively shared.
         if ($this->public) {

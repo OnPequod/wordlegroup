@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class UpdatesPublicLeaderboards
 {
-    public function update(Carbon $when = null): void
+    public function update(?Carbon $when = null): void
     {
         if (!$when) {
             $when = now();
