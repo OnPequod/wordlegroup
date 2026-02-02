@@ -38,10 +38,11 @@ class UpdateLeaderboards extends Command
 
     public function updateCurrent()
     {
-        Group::all()
-             ->each(function (Group $group) {
-                 $group->updateLeaderboards(now());
-             });
+        Group::chunk(50, function ($groups) {
+            foreach ($groups as $group) {
+                $group->updateLeaderboards(now());
+            }
+        });
 
         $this->info('Group leaderboards updated.');
     }
@@ -54,21 +55,21 @@ class UpdateLeaderboards extends Command
         $months = $this->getMonths($years, $earliestPossible);
         $weeks = $this->getWeeks($years, $earliestPossible);
 
-        Group::all()
-             ->each(function ($group) use ($years, $months, $weeks) {
+        Group::chunk(50, function ($groups) use ($years, $months, $weeks) {
+            foreach ($groups as $group) {
+                // Update Forever.
+                app(UpdatesLeaderboards::class)->updateForever($group);
 
-                 // Update Forever.
-                 app(UpdatesLeaderboards::class)->updateForever($group);
+                // Update Years
+                $years->each(fn($year) => app(UpdatesLeaderboards::class)->updateYear($group, $year));
 
-                 // Update Years
-                 $years->each(fn($year) => app(UpdatesLeaderboards::class)->updateYear($group, $year));
+                // Update Months
+                $months->each(fn($month) => app(UpdatesLeaderboards::class)->updateMonth($group, $month));
 
-                 // Update Months
-                 $months->each(fn($month) => app(UpdatesLeaderboards::class)->updateMonth($group, $month));
-
-                 // Update Weeks
-                 $weeks->each(fn($week) => app(UpdatesLeaderboards::class)->updateWeek($group, $week));
-             });
+                // Update Weeks
+                $weeks->each(fn($week) => app(UpdatesLeaderboards::class)->updateWeek($group, $week));
+            }
+        });
     }
 
     public function getYears(Carbon $earliestPossible)
