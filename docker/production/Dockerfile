@@ -126,10 +126,9 @@ RUN chown -R www:www /var/www/html \
 # Create required directories
 RUN mkdir -p /run/nginx /var/log/supervisor /var/log/nginx
 
-# Health check
-# HEALTHCHECK disabled temporarily for debugging
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-#     CMD curl -f http://localhost/health || exit 1
+# Health check - auto-restart via autoheal if unhealthy
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
 
 EXPOSE 80
 

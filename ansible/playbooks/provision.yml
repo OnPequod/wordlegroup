@@ -49,6 +49,20 @@
         line: "/swapfile none swap sw 0 0"
         state: present
 
+    # === Autoheal (restarts unhealthy containers) ===
+    - name: Start autoheal container
+      community.docker.docker_container:
+        name: autoheal
+        image: willfarrell/autoheal:latest
+        state: started
+        restart_policy: always
+        env:
+          AUTOHEAL_CONTAINER_LABEL: all
+          AUTOHEAL_INTERVAL: "60"
+          AUTOHEAL_START_PERIOD: "120"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+
     # === Application Setup ===
     - name: Create application directory
       ansible.builtin.file:
