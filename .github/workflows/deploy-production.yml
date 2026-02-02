@@ -33,21 +33,21 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H dockolith.pequod.dev >> ~/.ssh/known_hosts 2>/dev/null || true
 
       - name: Create Kamal secrets
         run: |
-          cat > .kamal/secrets << 'EOF'
+          cat > .kamal/secrets.production << EOF
           KAMAL_REGISTRY_USERNAME=${{ github.actor }}
           KAMAL_REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }}
-          APP_KEY=${{ secrets.APP_KEY }}
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
-          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          APP_KEY=${{ secrets.WORDLEGROUP_APP_KEY }}
+          DB_USERNAME=${{ secrets.WORDLEGROUP_DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.WORDLEGROUP_DB_PASSWORD }}
+          REDIS_PASSWORD=${{ secrets.WORDLEGROUP_REDIS_PASSWORD }}
+          AWS_ACCESS_KEY_ID=${{ secrets.WORDLEGROUP_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.WORDLEGROUP_AWS_SECRET_ACCESS_KEY }}
           BACKBLAZE_KEY_ID=${{ secrets.BACKBLAZE_KEY_ID }}
           BACKBLAZE_SECRET=${{ secrets.BACKBLAZE_SECRET }}
           EOF
