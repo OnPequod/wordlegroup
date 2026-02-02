@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\UpdateGroupStatsJob;
 use App\Models\Score;
 
 class ScoreObserver
@@ -21,6 +22,10 @@ class ScoreObserver
         $score->syncToDailyScores();
         $score->syncToGroupMemberships();
         $score->user->updateStats();
-        $score->user->memberships->each(fn($membership) => $membership->group->updateStats());
+
+        // Queue group stats updates instead of running synchronously
+        $score->user->memberships->each(function ($membership) {
+            UpdateGroupStatsJob::dispatch($membership->group);
+        });
     }
 }
