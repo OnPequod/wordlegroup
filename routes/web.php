@@ -25,6 +25,9 @@ Route::get('/board/{boardNumber?}', \App\Http\Livewire\DailyBoard::class)
     ->name('board')
     ->where('boardNumber', '[0-9]+');
 Route::get('/boards', \App\Http\Livewire\BoardArchive::class)->name('board.archive');
+Route::get('/puzzle/{boardNumber?}', \App\Http\Livewire\DailyPuzzle::class)
+    ->name('puzzle')
+    ->where('boardNumber', '[0-9]+');
 Route::get('/rules-and-frequently-asked-questions', \App\Http\Livewire\RulesAndFrequentlyAskedQuestions::class)->name('rules-and-faq');
 
 Route::get('/group/create', \App\Http\Livewire\Group\Create::class)->name('group.create');

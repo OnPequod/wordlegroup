@@ -17,25 +17,24 @@ class UpdateDailySummaries extends Command
     {
         $updater = app(UpdatesDailySummariesConcern::class);
 
-        if ($this->option('board')) {
-            $boardNumber = (int) $this->option('board');
-            $this->info("Updating summary for board #{$boardNumber}...");
-            $updater->updateForBoardNumber($boardNumber);
-            $this->info("Summary for board #{$boardNumber} updated successfully.");
-            return Command::SUCCESS;
+        if ($board = $this->option('board')) {
+            $this->info("Updating summary for board #{$board}...");
+            $updater->updateForBoardNumber((int) $board);
+            $this->info('Done.');
+            return self::SUCCESS;
         }
 
         if ($this->option('rebuild')) {
             $this->info('Rebuilding all daily summaries...');
             $updater->rebuildAll();
-            $this->info('All daily summaries rebuilt successfully.');
-            return Command::SUCCESS;
+            $this->info('All summaries rebuilt.');
+            return self::SUCCESS;
         }
 
-        $this->info('Updating recent daily summaries...');
+        $this->info('Updating recent summaries (today + yesterday)...');
         $updater->updateRecent();
-        $this->info('Recent daily summaries updated successfully.');
+        $this->info('Done.');
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }
