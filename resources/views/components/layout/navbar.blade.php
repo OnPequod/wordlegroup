@@ -29,6 +29,30 @@
             </div>
             <div class="flex items-center">
                 <div class="flex items-center flex-shrink-0">
+                    <a
+                        href="{{ route('about') }}"
+                        class="hidden sm:inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                    >
+                        About
+                    </a>
+                    <a
+                        href="{{ route('board') }}"
+                        class="hidden sm:inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                    >
+                        Today
+                    </a>
+                    <a
+                        href="{{ route('board.archive') }}"
+                        class="hidden sm:inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                    >
+                        Archive
+                    </a>
+                    <a
+                        href="{{ route('leaderboard') }}"
+                        class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                    >
+                        Leaderboard
+                    </a>
                     @if(Auth::check())
                     @else
                         <a
@@ -97,13 +121,13 @@
                                             <a
                                                 class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
                                                 href="{{ route('account.groups') }}"
-                                            >My Groups</a>
+                                            >Groups</a>
                                         </li>
                                         <li class="border-gray-100 border-b last:border-b-0">
                                             <a
                                                 class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
                                                 href="{{ route('account.settings') }}"
-                                            >My Settings</a>
+                                            >Settings</a>
                                         </li>
                                         <li class="border-gray-100 border-b last:border-b-0">
                                             <a

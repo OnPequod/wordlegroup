@@ -116,6 +116,33 @@
                                 wire:model="hardMode"
                             />
                         </div>
+
+                        {{-- Bot Scores (Quick Mode) --}}
+                        <div class="pt-3 border-t border-zinc-100">
+                            <p class="text-xs text-zinc-500 mb-2">WordleBot scores (optional)</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <x-form.input.text
+                                    :errors="$errors"
+                                    name="botSkillScore"
+                                    type="number"
+                                    label="Skill"
+                                    placeholder="0-99"
+                                    min="0"
+                                    max="99"
+                                    wire:model.blur="botSkillScore"
+                                />
+                                <x-form.input.text
+                                    :errors="$errors"
+                                    name="botLuckScore"
+                                    type="number"
+                                    label="Luck"
+                                    placeholder="0-99"
+                                    min="0"
+                                    max="99"
+                                    wire:model.blur="botLuckScore"
+                                />
+                            </div>
+                        </div>
                     </div>
                     <div class="mt-4 flex items-center justify-between">
                         <x-form.input.button loading-action="recordScoreManually" class="w-36" :primary="false">
@@ -136,8 +163,8 @@
         {{-- Full page mode: Two distinct section cards --}}
         <div class="space-y-6">
             {{-- Section 1: Paste board --}}
-            <div class="rounded-xl border border-zinc-200 bg-white p-6">
-                <div class="mb-5">
+            <div class="rounded-xl border border-zinc-200 bg-white p-8">
+                <div class="mb-6">
                     <h3 class="text-base font-semibold text-zinc-900">Paste Your Board</h3>
                     <p class="mt-1 text-sm text-zinc-600">Copy the share text from Wordle and paste it below. We'll parse the date, score, and board automatically.</p>
                 </div>
@@ -170,7 +197,7 @@
                         />
                     </div>
 
-                    <div class="mt-5 flex justify-end">
+                    <div class="mt-6 flex justify-end">
                         <x-form.input.button
                             loading-action="recordScoreFromBoard"
                             class="w-40"
@@ -183,8 +210,8 @@
             </div>
 
             {{-- Section 2: Manual entry --}}
-            <div class="rounded-xl border border-zinc-200 bg-white p-6">
-                <div class="mb-5">
+            <div class="rounded-xl border border-zinc-200 bg-white p-8">
+                <div class="mb-6">
                     <h3 class="text-base font-semibold text-zinc-900">Enter Manually</h3>
                     <p class="mt-1 text-sm text-zinc-600">Don't have your board? Enter the date and score manually.</p>
                 </div>
@@ -249,9 +276,41 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- Bot Scores Section --}}
+                        <div class="pt-4 border-t border-zinc-100">
+                            <div class="mb-3">
+                                <h4 class="text-sm font-medium text-zinc-700">WordleBot Scores (Optional)</h4>
+                                <p class="mt-1 text-xs text-zinc-500">If you use the NY Times WordleBot, you can record your skill and luck scores.</p>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <x-form.input.text
+                                    :errors="$errors"
+                                    name="botSkillScore"
+                                    type="number"
+                                    label="Skill Score"
+                                    tip="How well you played given the information available (0-99)"
+                                    placeholder="85"
+                                    min="0"
+                                    max="99"
+                                    wire:model.blur="botSkillScore"
+                                />
+                                <x-form.input.text
+                                    :errors="$errors"
+                                    name="botLuckScore"
+                                    type="number"
+                                    label="Luck Score"
+                                    tip="How favorable your guesses turned out to be (0-99)"
+                                    placeholder="72"
+                                    min="0"
+                                    max="99"
+                                    wire:model.blur="botLuckScore"
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mt-5 flex justify-end">
+                    <div class="mt-6 flex justify-end">
                         <x-form.input.button
                             loading-action="recordScoreManually"
                             class="w-40"

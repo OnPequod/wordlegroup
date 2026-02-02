@@ -36,6 +36,10 @@ it('returns a successful response for the rules and faq page', function () {
     $this->get('/rules-and-frequently-asked-questions')->assertOk();
 });
 
+it('returns a successful response for the public leaderboard page', function () {
+    $this->get('/leaderboard')->assertOk();
+});
+
 it('returns a successful response for the login page', function () {
     $this->get('/login')->assertOk();
 });

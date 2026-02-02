@@ -132,6 +132,37 @@ class Group extends Model
         return $this->hasMany(GroupMembership::class, 'group_id');
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function discussionPosts()
+    {
+        return $this->comments()->discussionPosts();
+    }
+
+    public function getUnreadDiscussionCountFor(?User $user): int
+    {
+        if (!$user) {
+            return 0;
+        }
+
+        $membership = $this->memberships()->where('user_id', $user->id)->first();
+
+        if (!$membership) {
+            return 0;
+        }
+
+        $query = $this->discussionPosts();
+
+        if ($membership->last_viewed_discussions_at) {
+            $query->where('created_at', '>', $membership->last_viewed_discussions_at);
+        }
+
+        return $query->count();
+    }
+
     public function scores()
     {
         return $this->belongsToMany(Score::class, 'group_membership_score');

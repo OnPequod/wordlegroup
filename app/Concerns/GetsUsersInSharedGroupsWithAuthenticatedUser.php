@@ -3,7 +3,7 @@
 namespace App\Concerns;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Services\AuthenticatedUserService;
 
 class GetsUsersInSharedGroupsWithAuthenticatedUser
 {
@@ -13,7 +13,7 @@ class GetsUsersInSharedGroupsWithAuthenticatedUser
 
     public function __construct()
     {
-        $this->user = Auth::user();
+        $this->user = app(AuthenticatedUserService::class)->get();
         $this->setUsers($this->user);
     }
 
@@ -30,8 +30,9 @@ class GetsUsersInSharedGroupsWithAuthenticatedUser
             return;
         }
 
-        $this->users = (new GetsUserGroupsWithRelationshipsLoaded($user))
-            ->groups
+        // User from AuthenticatedUserService already has memberships.group.memberships.user loaded
+        $this->users = $user->memberships
+            ->pluck('group')
             ->pluck('memberships')
             ->flatten()
             ->pluck('user');

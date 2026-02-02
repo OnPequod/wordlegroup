@@ -13,7 +13,10 @@ class MemberList extends Component
 
     public function mount(Group $group)
     {
-        $this->group = $group->load('memberships.user');
+        if (!$group->relationLoaded('memberships')) {
+            $group->load('memberships.user');
+        }
+        $this->group = $group;
     }
 
     public function nudge($userId)

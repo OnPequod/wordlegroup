@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Account;
 
-use Illuminate\Support\Facades\Auth;
+use App\Services\AuthenticatedUserService;
 use Livewire\Component;
 
 class Home extends Component
@@ -13,10 +13,7 @@ class Home extends Component
 
     public function mount()
     {
-        $this->user = Auth::user();
-
-        $this->user->load('memberships.group.admin');
-        $this->user->load('memberships');
+        $this->user = app(AuthenticatedUserService::class)->get();
     }
 
     public function scoreRecorded()

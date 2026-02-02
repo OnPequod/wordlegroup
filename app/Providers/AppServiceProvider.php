@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Concerns\GetsUserGroupsWithRelationshipsLoaded;
 use App\Concerns\GetsUsersInSharedGroupsWithAuthenticatedUser;
+use App\Services\AuthenticatedUserService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(AuthenticatedUserService::class, function ($app) {
+            return new AuthenticatedUserService();
+        });
     }
 
     /**

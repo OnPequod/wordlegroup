@@ -2,6 +2,7 @@
 
 namespace App\View\Components\Account;
 
+use App\Services\AuthenticatedUserService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Component;
 
@@ -17,7 +18,7 @@ class Nav extends Component
 
     public function __construct($activePage)
     {
-        $this->user = Auth::check() ? Auth::user()->load('memberships.group.activeLeaderboards') : null;
+        $this->user = app(AuthenticatedUserService::class)->get();
         $this->routeMap = $this->getRouteMap();
         $this->noneSelected = !in_array($activePage, array_keys($this->routeMap));
         $this->activePage = $this->noneSelected ? 'navigation' : $activePage;

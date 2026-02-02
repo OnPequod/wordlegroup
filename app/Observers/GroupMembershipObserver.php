@@ -13,11 +13,15 @@ class GroupMembershipObserver
 
     public function updated(GroupMembership $membership)
     {
-        $this->runEvents($membership);
-    }
+        // Skip expensive recalculation for non-score-related updates
+        $ignoredFields = ['last_viewed_discussions_at', 'updated_at'];
+        $changedFields = array_keys($membership->getChanges());
+        $relevantChanges = array_diff($changedFields, $ignoredFields);
 
-    public function saved(GroupMembership $membership)
-    {
+        if (empty($relevantChanges)) {
+            return;
+        }
+
         $this->runEvents($membership);
     }
 

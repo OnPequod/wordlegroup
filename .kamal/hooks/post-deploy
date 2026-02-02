@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+echo "Running post-deploy tasks..."
+
+# Determine destination flag
+DEST_FLAG=""
+if [ -n "$KAMAL_DESTINATION" ]; then
+  DEST_FLAG="-d $KAMAL_DESTINATION"
+fi
+
+# Run migrations only once (on web role)
+echo "Running migrations..."
+kamal app exec $DEST_FLAG --roles=web "php artisan migrate --force"
+
+# Clear and rebuild view cache (stored in mounted storage volume, shared across containers)
+# Config/route/event caches are handled at container startup via entrypoint.sh
+echo "Clearing old view cache..."
+kamal app exec $DEST_FLAG --roles=web "php artisan view:clear"
+
+echo "Caching views..."
+kamal app exec $DEST_FLAG --roles=web "php artisan view:cache"
+
+echo "Post-deploy tasks completed!"

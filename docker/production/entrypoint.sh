@@ -12,5 +12,10 @@ mkdir -p /var/www/html/storage/logs
 # Clear compiled views on startup (ensures fresh compilation)
 rm -rf /var/www/html/storage/framework/views/*
 
+# Cache config, routes, and events
+php artisan config:cache
+php artisan route:cache
+php artisan event:cache
+
 # Run the main command
 exec "$@"

@@ -11,7 +11,7 @@ class GroupMembership extends Model
 
     protected $guarded = [];
 
-    protected $dates = ['verified_at', 'token_generated_at'];
+    protected $dates = ['verified_at', 'token_generated_at', 'last_viewed_discussions_at', 'last_viewed_activity_at'];
 
     protected $hidden = ['token', 'token_generated_at'];
 
@@ -41,5 +41,10 @@ class GroupMembership extends Model
     {
         return $this->scores()
                     ->wherePivot('board_number', $boardNumber);
+    }
+
+    public function markDiscussionsAsViewed(): void
+    {
+        $this->update(['last_viewed_discussions_at' => now()]);
     }
 }

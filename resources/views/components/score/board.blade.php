@@ -1,1 +1,1 @@
-<div class="whitespace-nowrap whitespace-pre font-board">{!! $score->board !!}</div>
+<div class="leading-tight">{!! $score->boardHtml !!}</div>
