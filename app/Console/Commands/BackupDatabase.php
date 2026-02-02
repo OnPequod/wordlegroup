@@ -10,16 +10,9 @@ use Illuminate\Support\Facades\Storage;
 class BackupDatabase extends Command
 {
     protected $signature = 'backup:database
-                            {type=daily : Backup type (daily, weekly, monthly)}
-                            {--cleanup : Clean up old backups based on retention policy}';
+                            {type=daily : Backup type (daily, weekly, monthly)}';
 
     protected $description = 'Backup the database to Backblaze B2';
-
-    protected array $retention = [
-        'daily' => 7,
-        'weekly' => 4,
-        'monthly' => 12,
-    ];
 
     public function handle(): int
     {
@@ -39,9 +32,7 @@ class BackupDatabase extends Command
 
         $this->info("Starting {$type} database backup...");
 
-        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
-        $database = config('database.connections.mysql.database');
-        $filename = "{$database}_{$type}_{$timestamp}.sql.gz";
+        $filename = $this->getFilename($type);
         $s3Path = "backups/{$type}/{$filename}";
         $tempFile = storage_path("app/temp_{$filename}");
 
@@ -55,6 +46,7 @@ class BackupDatabase extends Command
         $port = config('database.connections.mysql.port');
         $username = config('database.connections.mysql.username');
         $password = config('database.connections.mysql.password');
+        $database = config('database.connections.mysql.database');
 
         $this->info("Dumping database: {$database}");
 
@@ -78,7 +70,7 @@ class BackupDatabase extends Command
         $fileSize = $this->formatBytes(filesize($tempFile));
         $this->info("Backup created: {$fileSize}");
 
-        // Upload to Backblaze
+        // Upload to Backblaze (overwrites existing file with same name)
         $this->info("Uploading to Backblaze: {$s3Path}");
 
         try {
@@ -93,41 +85,27 @@ class BackupDatabase extends Command
         // Clean up temp file
         @unlink($tempFile);
 
-        // Clean up old backups if requested
-        if ($this->option('cleanup')) {
-            $this->cleanupOldBackups($disk, $type);
-        }
-
         $this->info("{$type} backup completed successfully: {$filename}");
 
         return self::SUCCESS;
     }
 
-    protected function cleanupOldBackups($disk, string $type): void
+    /**
+     * Get filename based on backup type.
+     * - daily: weekday name (monday.sql.gz) - 7 rotating files
+     * - weekly: week of month (week-1.sql.gz) - 5 rotating files
+     * - monthly: month name (january.sql.gz) - 12 rotating files
+     */
+    protected function getFilename(string $type): string
     {
-        $retention = $this->retention[$type];
-        $path = "backups/{$type}";
+        $now = Carbon::now();
 
-        $this->info("Cleaning up old {$type} backups (keeping {$retention})...");
-
-        $files = collect($disk->files($path))
-            ->filter(fn($file) => str_ends_with($file, '.sql.gz'))
-            ->sortDesc()
-            ->values();
-
-        if ($files->count() <= $retention) {
-            $this->info("No cleanup needed. {$files->count()} backups exist.");
-            return;
-        }
-
-        $toDelete = $files->slice($retention);
-
-        foreach ($toDelete as $file) {
-            $disk->delete($file);
-            $this->info("Deleted old backup: " . basename($file));
-        }
-
-        $this->info("Cleanup complete. Deleted " . $toDelete->count() . " old backups.");
+        return match ($type) {
+            'daily' => strtolower($now->format('l')) . '.sql.gz',        // monday, tuesday, etc.
+            'weekly' => 'week-' . $now->weekOfMonth . '.sql.gz',         // week-1 to week-5
+            'monthly' => strtolower($now->format('F')) . '.sql.gz',      // january, february, etc.
+            default => $now->format('Y-m-d') . '.sql.gz',
+        };
     }
 
     protected function formatBytes(int $bytes): string
