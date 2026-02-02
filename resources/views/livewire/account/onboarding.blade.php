@@ -12,7 +12,7 @@
                     <x-form.input.button
                         type="submit"
                         loading-action="complete"
-                        class="w-36"
+                        class="whitespace-nowrap"
                         :primary="true"
                     >
                         Save & Continue
@@ -88,7 +88,7 @@
                 </div>
 
                 {{-- Public Leaderboard --}}
-                <div class="rounded-2xl bg-white border border-zinc-200 shadow-sm p-6 md:p-8">
+                <div class="rounded-2xl bg-white border border-zinc-200 shadow-sm p-6 md:p-8 overflow-hidden">
                     <div class="flex items-start justify-between pb-3 border-b border-zinc-100">
                         <div>
                             <h3 class="text-lg font-semibold text-zinc-900">Public Leaderboard</h3>
