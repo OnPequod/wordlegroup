@@ -132,7 +132,7 @@ jobs:
           file: docker/production/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/onpequod/wordlegroup:${{ github.sha }}
+            ghcr.io/onpequod/wordlegroup:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
