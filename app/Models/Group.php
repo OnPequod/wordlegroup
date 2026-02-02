@@ -94,17 +94,21 @@ class Group extends Model
     {
         [$startBoard, $endBoard] = app(WordleBoard::class)->getStartAndEndBoardsFromDates($startDate, $endDate);
 
-        $scores = $this->scores
+        // Use query builder to avoid loading all scores into memory
+        $scoresQuery = $this->scores()
             ->where('board_number', '>=', $startBoard)
             ->where('board_number', '<=', $endBoard);
 
+        $scoresCount = $scoresQuery->count();
+        $scoreValues = $scoresQuery->pluck('score');
+
         return [
             'member_count'       => $this->memberships()->count(),
-            'scores_recorded'    => $scores->count(),
-            'score_mean'         => $this->getMeanScore($scores),
-            'score_median'       => $this->getMedianScore($scores),
-            'score_mode'         => $this->getModeScore($scores),
-            'score_distribution' => $this->getScoreDistribution($scores),
+            'scores_recorded'    => $scoresCount,
+            'score_mean'         => $this->getMeanScore($scoreValues),
+            'score_median'       => $this->getMedianScore($scoreValues),
+            'score_mode'         => $this->getModeScore($scoreValues),
+            'score_distribution' => $this->getScoreDistribution($scoreValues),
         ];
     }
 
@@ -208,29 +212,32 @@ class Group extends Model
     {
         [$startBoard, $endBoard] = app(WordleBoard::class)->getStartAndEndBoardsFromDates($startDate, $endDate);
 
+        // Load memberships with users
         $this->loadMissing('memberships.user');
 
+        // Get all scores in range with a single query, grouped by user
+        $allScores = $this->scores()
+            ->where('board_number', '>=', $startBoard)
+            ->where('board_number', '<=', $endBoard)
+            ->get(['user_id', 'score'])
+            ->groupBy('user_id');
+
         $userScores = $this->memberships
-            ->map(function ($membership) use ($startBoard, $endBoard) {
-                $userScores = $this->scores
-                    ->where('user_id', $membership->user_id)
-                    ->where('board_number', '>=', $startBoard)
-                    ->where('board_number', '<=', $endBoard)
-                    ->pluck('score');
+            ->map(function ($membership) use ($allScores) {
+                $userScoreValues = $allScores->get($membership->user_id, collect())->pluck('score');
 
                 return [
                     'user_id' => $membership->user_id,
                     'name'    => $membership->user->name,
                     'stats'   => [
-                        'median' => $userScores->isNotEmpty() ? round($userScores->average(), 1) : null,
-                        'mean'   => $userScores->isNotEmpty() ? round($userScores->average(), 2) : null,
-                        'mode'   => $userScores->isNotEmpty() ? collect($userScores->mode())->min() : null,
-                        'count'  => $userScores->count(),
+                        'median' => $userScoreValues->isNotEmpty() ? round($userScoreValues->average(), 1) : null,
+                        'mean'   => $userScoreValues->isNotEmpty() ? round($userScoreValues->average(), 2) : null,
+                        'mode'   => $userScoreValues->isNotEmpty() ? collect($userScoreValues->mode())->min() : null,
+                        'count'  => $userScoreValues->count(),
                     ],
                 ];
             })
             ->reject(fn($userScore) => $userScore['stats']['count'] === 0);
-
 
         $placeNumbers = $userScores->pluck('stats.mean')
                                    ->unique()

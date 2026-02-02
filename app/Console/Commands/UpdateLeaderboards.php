@@ -38,7 +38,7 @@ class UpdateLeaderboards extends Command
 
     public function updateCurrent()
     {
-        Group::chunk(50, function ($groups) {
+        Group::chunk(10, function ($groups) {
             foreach ($groups as $group) {
                 $group->updateLeaderboards(now());
             }

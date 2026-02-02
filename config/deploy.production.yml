@@ -20,13 +20,13 @@ servers:
   job:
     hosts:
       - dockolith.pequod.dev
-    cmd: php artisan horizon
+    cmd: php -d memory_limit=2G artisan horizon
     options:
       add-host: host.docker.internal:host-gateway
   scheduler:
     hosts:
       - dockolith.pequod.dev
-    cmd: php artisan schedule:work
+    cmd: php -d memory_limit=2G artisan schedule:work
     options:
       add-host: host.docker.internal:host-gateway
 
