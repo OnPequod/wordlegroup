@@ -96,8 +96,8 @@ class Group extends Model
 
         // Use query builder to avoid loading all scores into memory
         $scoresQuery = $this->scores()
-            ->where('board_number', '>=', $startBoard)
-            ->where('board_number', '<=', $endBoard);
+            ->where('scores.board_number', '>=', $startBoard)
+            ->where('scores.board_number', '<=', $endBoard);
 
         $scoresCount = $scoresQuery->count();
         $scoreValues = $scoresQuery->pluck('score');
@@ -217,9 +217,9 @@ class Group extends Model
 
         // Get all scores in range with a single query, grouped by user
         $allScores = $this->scores()
-            ->where('board_number', '>=', $startBoard)
-            ->where('board_number', '<=', $endBoard)
-            ->get(['user_id', 'score'])
+            ->where('scores.board_number', '>=', $startBoard)
+            ->where('scores.board_number', '<=', $endBoard)
+            ->get(['scores.user_id', 'scores.score'])
             ->groupBy('user_id');
 
         $userScores = $this->memberships
