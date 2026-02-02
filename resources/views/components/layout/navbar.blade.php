@@ -55,7 +55,7 @@
                     </a>
                     @if(Auth::check())
                         @php
-                            $userGroups = Auth::user()->groups()->orderBy('name')->get();
+                            $userGroups = Auth::user()->load('memberships.group')->memberships->pluck('group')->sortBy('name');
                         @endphp
                         @if($userGroups->count() > 0)
                             <x-layout.dropdown

@@ -77,6 +77,9 @@ Passwordless auth via:
 
 Test user: `user@site.com` (in seeded test database)
 
+## Git Commits
+- Do NOT add "Co-Authored-By" lines to commits - the user is responsible for all code
+
 ## Common Commands
 ```bash
 # Clear all caches
