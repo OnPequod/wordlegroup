@@ -91,9 +91,19 @@ jobs:
         run: php artisan config:clear
 
       - name: Run migrations
+        env:
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: password
         run: php artisan migrate --force
 
       - name: Run tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: password
         run: php artisan test
 
   build:
