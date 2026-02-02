@@ -62,11 +62,11 @@
 
                 <h2>Features</h2>
                 <ul>
-                    <li><strong>Private Groups</strong> - Create groups and invite friends to compete</li>
-                    <li><strong>Leaderboards</strong> - See rankings across different time periods</li>
-                    <li><strong>Statistics</strong> - Track your average, streaks, and score distribution</li>
-                    <li><strong>Daily Puzzles</strong> - View community stats for each day's puzzle</li>
-                    <li><strong>Public Leaderboard</strong> - Opt in to see how you rank globally</li>
+                    <li><strong>Private Groups:</strong> Create groups and invite friends to compete</li>
+                    <li><strong>Leaderboards:</strong> See rankings across different time periods</li>
+                    <li><strong>Statistics:</strong> Track your average, streaks, and score distribution</li>
+                    <li><strong>Daily Puzzles:</strong> View community stats for each day's puzzle</li>
+                    <li><strong>Public Leaderboard:</strong> Opt in to see how you rank globally</li>
                 </ul>
 
                 <h2>About</h2>
