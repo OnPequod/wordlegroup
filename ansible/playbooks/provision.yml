@@ -49,6 +49,29 @@
         line: "/swapfile none swap sw 0 0"
         state: present
 
+    # === Erik User (admin access) ===
+    - name: Create erik user
+      ansible.builtin.user:
+        name: erik
+        shell: /bin/bash
+        groups: sudo,docker
+        append: true
+        state: present
+
+    - name: Add SSH key for erik
+      ansible.posix.authorized_key:
+        user: erik
+        key: "{{ lookup('file', '~/.ssh/erik.pub') }}"
+        state: present
+
+    - name: Allow erik passwordless sudo
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/erik
+        line: "erik ALL=(ALL) NOPASSWD:ALL"
+        create: true
+        mode: "0440"
+        validate: "visudo -cf %s"
+
     # === Autoheal (restarts unhealthy containers) ===
     - name: Start autoheal container
       community.docker.docker_container:

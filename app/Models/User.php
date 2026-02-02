@@ -9,6 +9,7 @@ use App\Jobs\UpdateDailySummariesJob;
 use App\Jobs\UpdatePublicLeaderboardsJob;
 use App\Mail\NudgeUser;
 use App\Mail\UserVerification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\SoftDeletes;

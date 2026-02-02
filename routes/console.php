@@ -28,17 +28,17 @@ Artisan::command('inspire', function () {
 Schedule::command('model:prune')->daily();
 
 // Database backups to S3
-Schedule::command('backup:database daily --cleanup')
+Schedule::command('backup:database daily')
     ->dailyAt('03:00')
     ->onOneServer()
     ->withoutOverlapping();
 
-Schedule::command('backup:database weekly --cleanup')
+Schedule::command('backup:database weekly')
     ->weeklyOn(0, '03:30') // Sunday at 3:30 AM
     ->onOneServer()
     ->withoutOverlapping();
 
-Schedule::command('backup:database monthly --cleanup')
+Schedule::command('backup:database monthly')
     ->monthlyOn(1, '04:00') // 1st of month at 4:00 AM
     ->onOneServer()
     ->withoutOverlapping();

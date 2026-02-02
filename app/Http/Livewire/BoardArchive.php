@@ -45,7 +45,7 @@ class BoardArchive extends Component
     public function getPuzzlesProperty()
     {
         $query = Puzzle::query()
-            ->where('board_number', '<', app(WordleDate::class)->activeBoardNumber)
+            ->where('board_number', '<=', app(WordleDate::class)->activeBoardNumber)
             ->orderByDesc('board_number');
 
         if ($this->year) {
@@ -60,7 +60,7 @@ class BoardArchive extends Component
 
     public function getTotalPuzzlesProperty(): int
     {
-        return Puzzle::where('board_number', '<', app(WordleDate::class)->activeBoardNumber)->count();
+        return Puzzle::where('board_number', '<=', app(WordleDate::class)->activeBoardNumber)->count();
     }
 
     public function getPageTitleProperty(): string
