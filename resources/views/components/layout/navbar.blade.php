@@ -54,6 +54,39 @@
                         Leaderboard
                     </a>
                     @if(Auth::check())
+                        @php
+                            $userGroups = Auth::user()->groups()->orderBy('name')->get();
+                        @endphp
+                        @if($userGroups->count() > 0)
+                            <x-layout.dropdown
+                                name="groups-dropdown"
+                                width="w-56"
+                                dropdown-custom="right-0"
+                                button-class="hidden sm:inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                            >
+                                <x-slot name="buttonSlot">
+                                    Groups
+                                    <x-icon-regular.chevron-down class="w-3 h-3 opacity-70"/>
+                                </x-slot>
+
+                                <ul class="py-1">
+                                    @foreach($userGroups as $group)
+                                        <li>
+                                            <a
+                                                class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
+                                                href="{{ route('group.home', $group) }}"
+                                            >{{ $group->name }}</a>
+                                        </li>
+                                    @endforeach
+                                    <li class="border-t border-gray-100">
+                                        <a
+                                            class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
+                                            href="{{ route('account.groups') }}"
+                                        >Manage Groups</a>
+                                    </li>
+                                </ul>
+                            </x-layout.dropdown>
+                        @endif
                     @else
                         <a
                             href="{{ route('login') }}"
