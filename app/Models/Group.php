@@ -175,33 +175,52 @@ class Group extends Model
     public function getMeanScore($scores = null)
     {
         $scores = $scores ?? $this->scores;
+        if ($scores->isEmpty()) {
+            return null;
+        }
 
-        return $scores->isNotEmpty() ? (float)round($scores->average('score'), 2) : null;
+        // Handle both flat collections (from pluck) and model collections
+        $isFlat = !($scores->first() instanceof Score);
+
+        return (float) round($isFlat ? $scores->avg() : $scores->average('score'), 2);
     }
 
     public function getMedianScore($scores = null)
     {
         $scores = $scores ?? $this->scores;
+        if ($scores->isEmpty()) {
+            return null;
+        }
 
-        return $scores->isNotEmpty() ? (float)round($scores->median('score'), 1) : null;
+        $isFlat = !($scores->first() instanceof Score);
+
+        return (float) round($isFlat ? $scores->median() : $scores->median('score'), 1);
     }
 
     public function getModeScore($scores = null)
     {
         $scores = $scores ?? $this->scores;
+        if ($scores->isEmpty()) {
+            return null;
+        }
 
-        return $scores->isNotEmpty() ? (int)collect($scores->mode('score'))->min() : null;
+        $isFlat = !($scores->first() instanceof Score);
+
+        return (int) collect($isFlat ? $scores->mode() : $scores->mode('score'))->min();
     }
 
     public function getScoreDistribution($scores = null)
     {
         $scores = $scores ?? $this->scores;
+        $isFlat = $scores->isNotEmpty() && !($scores->first() instanceof Score);
 
         return collect([1, 2, 3, 4, 5, 6, 7])
-            ->mapWithKeys(function ($number) use ($scores) {
-                return [
-                    ($number === 7 ? 'X' : $number) => $scores->where('score', $number)->count(),
-                ];
+            ->mapWithKeys(function ($number) use ($scores, $isFlat) {
+                $count = $isFlat
+                    ? $scores->filter(fn($v) => $v === $number)->count()
+                    : $scores->where('score', $number)->count();
+
+                return [($number === 7 ? 'X' : $number) => $count];
             });
     }
 
