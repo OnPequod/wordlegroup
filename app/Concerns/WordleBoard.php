@@ -39,7 +39,7 @@ class WordleBoard
     public function getBoardNumberFromDate($date)
     {
         $date = app(WordleDate::class)->get($date);
-        $boardNumber = $this->firstBoardStartTime->copy()->diffInDays($date);
+        $boardNumber = (int) $this->firstBoardStartTime->copy()->diffInDays($date);
 
         return $this->validateBoardNumber($boardNumber)
             ? $boardNumber

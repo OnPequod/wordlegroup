@@ -93,7 +93,7 @@ class WordleDate
 
     protected function getActiveBoardNumber(): int
     {
-        return $this->firstBoardStartTime->copy()->diffInDays($this->activeBoardStartTime);
+        return (int) $this->firstBoardStartTime->copy()->diffInDays($this->activeBoardStartTime);
     }
 
     public function get($date)
