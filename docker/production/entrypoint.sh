@@ -11,12 +11,13 @@ mkdir -p /var/www/html/storage/framework/sessions
 mkdir -p /var/www/html/storage/framework/views
 mkdir -p /var/www/html/storage/logs
 
-# Cache config, routes, and events
+# Clear all caches first (avoid stale cache conflicts)
+php artisan optimize:clear --quiet 2>/dev/null || true
+
+# Rebuild caches
 php artisan config:cache
 php artisan route:cache
 php artisan event:cache
-
-# Precompile views (don't delete - old container may still need them during deploy)
 php artisan view:cache
 
 # Run the main command

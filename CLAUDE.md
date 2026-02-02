@@ -416,3 +416,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - IMPORTANT: Always use `search-docs` tool for version-specific Tailwind CSS documentation and updated code examples. Never rely on training data.
 - IMPORTANT: Activate `tailwindcss-development` every time you're working with a Tailwind CSS or styling-related task.
 </laravel-boost-guidelines>
+
+## UI Improvements Needed
+
+- **Leaderboard settings**: "Participate" and "Display name" checkbox labels are unclear. Users may not understand what these options do. Consider more descriptive labels like "Include my scores on public leaderboard" and "Show my name (instead of Anonymous)".
