@@ -72,7 +72,7 @@
         group: deploy
         mode: "0755"
 
-    - name: Create storage directories
+    - name: Create storage directories (only persistent data - framework caches are container-local)
       ansible.builtin.file:
         path: "{{ web_root }}/{{ app_name }}/storage/{{ item }}"
         state: directory
@@ -82,12 +82,6 @@
       loop:
         - app
         - app/public
-        - framework
-        - framework/cache
-        - framework/cache/data
-        - framework/sessions
-        - framework/testing
-        - framework/views
         - logs
 
     - name: Create Laravel log file

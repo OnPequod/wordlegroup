@@ -80,4 +80,7 @@ env:
     - BACKBLAZE_SECRET
 
 volumes:
-  - /var/data/wordle-group/storage:/var/www/html/storage
+  # Only mount persistent data, NOT framework caches
+  # Each container gets its own framework/views, framework/cache, etc.
+  - /var/data/wordle-group/storage/app:/var/www/html/storage/app
+  - /var/data/wordle-group/storage/logs:/var/www/html/storage/logs
