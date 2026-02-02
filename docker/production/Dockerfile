@@ -126,9 +126,10 @@ RUN chown -R www:www /var/www/html \
 # Create required directories
 RUN mkdir -p /run/nginx /var/log/supervisor /var/log/nginx
 
-# Health check - auto-restart via autoheal if unhealthy
+# Health check - only for web containers (job/scheduler don't run nginx)
+# If nginx not running (job/scheduler), always healthy. If nginx running (web), check /health.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost/health || exit 1
+    CMD pgrep nginx > /dev/null || exit 0; curl -f http://localhost/health || exit 1
 
 EXPOSE 80
 
