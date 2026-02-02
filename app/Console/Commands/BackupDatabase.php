@@ -60,7 +60,7 @@ class BackupDatabase extends Command
 
         $result = Process::timeout(300)->run(
             "mysqldump -h {$host} -P {$port} -u {$username} -p'{$password}' " .
-            "--single-transaction --quick --lock-tables=false {$database} | gzip > {$tempFile}"
+            "--single-transaction --quick --lock-tables=false --ssl=false {$database} | gzip > {$tempFile}"
         );
 
         if (!$result->successful()) {
