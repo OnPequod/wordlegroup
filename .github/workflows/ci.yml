@@ -78,16 +78,17 @@ jobs:
 
       - name: Configure environment
         run: |
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=testing" >> .env
-          echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=password" >> .env
-          echo "REDIS_HOST=127.0.0.1" >> .env
-          echo "CACHE_DRIVER=redis" >> .env
-          echo "SESSION_DRIVER=redis" >> .env
-          echo "QUEUE_CONNECTION=redis" >> .env
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=testing/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=password/' .env
+          sed -i 's/REDIS_HOST=.*/REDIS_HOST=127.0.0.1/' .env
+          echo "CACHE_DRIVER=array" >> .env
+          echo "SESSION_DRIVER=array" >> .env
+          echo "QUEUE_CONNECTION=sync" >> .env
+
+      - name: Clear config cache
+        run: php artisan config:clear
 
       - name: Run migrations
         run: php artisan migrate --force
