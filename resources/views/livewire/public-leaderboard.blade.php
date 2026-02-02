@@ -52,7 +52,7 @@
                         >
                     </div>
 
-                    {{-- Participate in leaderboard --}}
+                    {{-- Show my scores on leaderboard --}}
                     <label
                         for="showOnPublicLeaderboard"
                         class="flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer hover:bg-zinc-50 transition border border-zinc-200"
@@ -63,10 +63,10 @@
                             wire:model.live="showOnPublicLeaderboard"
                             class="h-4 w-4 rounded border-zinc-300 text-green-700 focus:ring-green-600"
                         >
-                        <span class="text-sm text-zinc-700">Participate</span>
+                        <span class="text-sm text-zinc-700">Show my scores</span>
                     </label>
 
-                    {{-- Display name publicly --}}
+                    {{-- Show my name publicly --}}
                     <label
                         for="showNameOnPublicLeaderboard"
                         class="flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer hover:bg-zinc-50 transition border border-zinc-200 {{ !$showOnPublicLeaderboard ? 'opacity-50' : '' }}"
@@ -78,7 +78,7 @@
                             {{ !$showOnPublicLeaderboard ? 'disabled' : '' }}
                             class="h-4 w-4 rounded border-zinc-300 text-green-700 focus:ring-green-600"
                         >
-                        <span class="text-sm text-zinc-700">Display name</span>
+                        <span class="text-sm text-zinc-700">Show my name</span>
                     </label>
 
                     {{-- Save button --}}

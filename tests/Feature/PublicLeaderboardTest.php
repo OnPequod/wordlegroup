@@ -35,10 +35,12 @@ it('only includes opted-in users in public leaderboard', function () {
         'show_on_public_leaderboard' => true,
         'show_name_on_public_leaderboard' => true,
         'name' => 'Opted In User',
+        'created_at' => now()->subWeeks(2), // Must be registered for 1+ week
     ]);
     $optedOutUser = User::factory()->create([
         'show_on_public_leaderboard' => false,
         'name' => 'Opted Out User',
+        'created_at' => now()->subWeeks(2),
     ]);
 
     // Create scores for both users
@@ -78,6 +80,7 @@ it('uses public alias instead of name when set', function () {
         'show_name_on_public_leaderboard' => true,
         'name' => 'Real Name',
         'public_alias' => 'CoolAlias',
+        'created_at' => now()->subWeeks(2),
     ]);
 
     // Create score for user
@@ -109,6 +112,7 @@ it('uses real name when no public alias is set', function () {
         'show_name_on_public_leaderboard' => true,
         'name' => 'My Real Name',
         'public_alias' => null,
+        'created_at' => now()->subWeeks(2),
     ]);
 
     // Create score for user
@@ -139,11 +143,13 @@ it('shows name only when user enables show_name_on_public_leaderboard', function
         'show_on_public_leaderboard' => true,
         'show_name_on_public_leaderboard' => true,
         'name' => 'John Doe',
+        'created_at' => now()->subWeeks(2),
     ]);
     $hideNameUser = User::factory()->create([
         'show_on_public_leaderboard' => true,
         'show_name_on_public_leaderboard' => false,
         'name' => 'Jane Smith',
+        'created_at' => now()->subWeeks(2),
     ]);
 
     // Create scores for both users
@@ -198,6 +204,7 @@ it('can update leaderboard settings via inline form', function () {
         'show_on_public_leaderboard' => false,
         'show_name_on_public_leaderboard' => false,
         'public_alias' => null,
+        'created_at' => now()->subWeeks(2), // Must be registered for 1+ week
     ]);
 
     $this->actingAs($user);
@@ -285,6 +292,47 @@ it('defaults to not showing on public leaderboard', function () {
     // Database default is false - cast to bool for comparison
     expect((bool) $user->fresh()->show_on_public_leaderboard)->toBeFalse();
     expect((bool) $user->fresh()->show_name_on_public_leaderboard)->toBeFalse();
+});
+
+it('prevents new users from enabling public leaderboard participation', function () {
+    // New user (created now) cannot participate
+    $newUser = User::factory()->create([
+        'show_on_public_leaderboard' => false,
+        'created_at' => now(), // Just created
+    ]);
+
+    expect($newUser->canParticipateInPublicLeaderboard())->toBeFalse();
+    expect($newUser->daysUntilCanParticipateInPublicLeaderboard())->toBeGreaterThan(0);
+
+    // Try to enable via Livewire - should be prevented
+    $this->actingAs($newUser);
+
+    Livewire::test(\App\Http\Livewire\PublicLeaderboard::class)
+        ->set('showOnPublicLeaderboard', true)
+        ->call('saveSettings');
+
+    $newUser->refresh();
+    expect((bool) $newUser->show_on_public_leaderboard)->toBeFalse();
+});
+
+it('allows established users to enable public leaderboard participation', function () {
+    // User registered 2 weeks ago can participate
+    $oldUser = User::factory()->create([
+        'show_on_public_leaderboard' => false,
+        'created_at' => now()->subWeeks(2),
+    ]);
+
+    expect($oldUser->canParticipateInPublicLeaderboard())->toBeTrue();
+    expect($oldUser->daysUntilCanParticipateInPublicLeaderboard())->toBe(0);
+
+    $this->actingAs($oldUser);
+
+    Livewire::test(\App\Http\Livewire\PublicLeaderboard::class)
+        ->set('showOnPublicLeaderboard', true)
+        ->call('saveSettings');
+
+    $oldUser->refresh();
+    expect((bool) $oldUser->show_on_public_leaderboard)->toBeTrue();
 });
 
 /*

@@ -104,6 +104,27 @@ class User extends Authenticatable
         $this->update(['onboarding_completed_at' => now()]);
     }
 
+    /**
+     * Check if user can participate in public leaderboard.
+     * Requires at least 1 week of registration.
+     */
+    public function canParticipateInPublicLeaderboard(): bool
+    {
+        return $this->created_at <= now()->subWeek();
+    }
+
+    /**
+     * Get the number of days until user can participate in public leaderboard.
+     */
+    public function daysUntilCanParticipateInPublicLeaderboard(): int
+    {
+        if ($this->canParticipateInPublicLeaderboard()) {
+            return 0;
+        }
+
+        return (int) ceil(now()->diffInDays($this->created_at->addWeek(), false));
+    }
+
     public function getPublicDisplayNameAttribute(): string
     {
         return $this->public_alias ?: $this->name;

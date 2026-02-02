@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Account;
 
+use App\Rules\NoProfanity;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -23,10 +24,22 @@ class Settings extends Component
 
     public function getRules()
     {
-        return [
+        $rules = [
             'name'  => ['required'],
             'email' => ['required', 'email', 'unique:users,email,' . $this->user->id],
         ];
+
+        // Apply profanity filter to public alias
+        if ($this->publicAlias) {
+            $rules['publicAlias'] = ['nullable', 'string', 'max:50', new NoProfanity];
+        }
+
+        // Apply profanity filter to name if showing on public leaderboard
+        if ($this->showOnPublicLeaderboard && $this->showNameOnPublicLeaderboard) {
+            $rules['name'] = ['required', new NoProfanity];
+        }
+
+        return $rules;
     }
 
     public function mount(): void
@@ -50,6 +63,11 @@ class Settings extends Component
         if ($this->email !== $this->originalEmail && !$this->confirmEmailChange) {
             $this->confirmEmailChange = true;
             return;
+        }
+
+        // Prevent enabling public leaderboard if account is too new
+        if ($this->showOnPublicLeaderboard && !$this->user->canParticipateInPublicLeaderboard()) {
+            $this->showOnPublicLeaderboard = false;
         }
 
         $this->user->name = $this->name;

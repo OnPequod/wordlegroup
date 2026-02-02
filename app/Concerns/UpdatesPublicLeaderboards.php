@@ -70,8 +70,9 @@ class UpdatesPublicLeaderboards
 
     protected function calculateLeaderboard(?int $startBoard = null, ?int $endBoard = null)
     {
-        // Get opted-in users
+        // Get opted-in users who have been registered for at least 1 week
         $users = User::where('show_on_public_leaderboard', true)
+            ->where('created_at', '<=', now()->subWeek())
             ->with(['dailyScores' => function ($query) use ($startBoard, $endBoard) {
                 if ($startBoard !== null && $endBoard !== null) {
                     $query->whereBetween('scores.board_number', [$startBoard, $endBoard]);

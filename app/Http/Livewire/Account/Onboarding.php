@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Account;
 
+use App\Rules\NoProfanity;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -19,10 +20,22 @@ class Onboarding extends Component
 
     protected function rules(): array
     {
-        return [
+        $rules = [
             'name'  => ['required'],
             'email' => ['required', 'email', 'unique:users,email,' . $this->user->id],
         ];
+
+        // Apply profanity filter to public alias
+        if ($this->publicAlias) {
+            $rules['publicAlias'] = ['nullable', 'string', 'max:50', new NoProfanity];
+        }
+
+        // Apply profanity filter to name if showing on public leaderboard
+        if ($this->showOnPublicLeaderboard && $this->showNameOnPublicLeaderboard) {
+            $rules['name'] = ['required', new NoProfanity];
+        }
+
+        return $rules;
     }
 
     public function mount(): void
@@ -48,6 +61,12 @@ class Onboarding extends Component
         $this->validate();
 
         $user = Auth::user();
+
+        // Prevent enabling public leaderboard if account is too new
+        if ($this->showOnPublicLeaderboard && !$user->canParticipateInPublicLeaderboard()) {
+            $this->showOnPublicLeaderboard = false;
+        }
+
         $user->name = $this->name;
         $user->public_alias = $this->publicAlias;
         $user->email = $this->email;

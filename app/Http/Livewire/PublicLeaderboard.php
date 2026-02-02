@@ -6,6 +6,7 @@ use App\Concerns\WordleDate;
 use App\Models\DailySummary;
 use App\Models\Puzzle;
 use App\Models\PublicLeaderboard as PublicLeaderboardModel;
+use App\Rules\NoProfanity;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -34,7 +35,23 @@ class PublicLeaderboard extends Component
             return;
         }
 
+        // Validate public alias for profanity
+        $rules = [];
+        if ($this->publicAlias) {
+            $rules['publicAlias'] = ['nullable', 'string', 'max:50', new NoProfanity];
+        }
+
+        if (!empty($rules)) {
+            $this->validate($rules);
+        }
+
         $user = Auth::user();
+
+        // Prevent enabling public leaderboard if account is too new
+        if ($this->showOnPublicLeaderboard && !$user->canParticipateInPublicLeaderboard()) {
+            $this->showOnPublicLeaderboard = false;
+        }
+
         $user->public_alias = $this->publicAlias;
         $user->show_on_public_leaderboard = $this->showOnPublicLeaderboard;
         $user->show_name_on_public_leaderboard = $this->showNameOnPublicLeaderboard;
