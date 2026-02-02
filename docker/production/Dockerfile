@@ -43,6 +43,7 @@ FROM php:8.4-fpm-alpine AS production
 
 LABEL maintainer="Wordle Group"
 LABEL org.opencontainers.image.source="https://github.com/OnPequod/wordlegroup"
+LABEL service="wordle-group"
 
 # Install system dependencies
 RUN apk add --no-cache \
