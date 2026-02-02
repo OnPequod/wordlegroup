@@ -118,9 +118,9 @@
                         </div>
 
                         {{-- Bot Scores (Quick Mode) --}}
-                        <div class="pt-3 border-t border-zinc-100">
-                            <p class="text-xs text-zinc-500 mb-2">WordleBot scores (optional)</p>
-                            <div class="grid grid-cols-2 gap-3">
+                        <div class="pt-4 border-t border-zinc-100">
+                            <p class="text-xs text-zinc-500 mb-3">WordleBot scores (optional)</p>
+                            <div class="grid grid-cols-2 gap-4">
                                 <x-form.input.text
                                     :errors="$errors"
                                     name="botSkillScore"
@@ -278,12 +278,12 @@
                         </div>
 
                         {{-- Bot Scores Section --}}
-                        <div class="pt-4 border-t border-zinc-100">
-                            <div class="mb-3">
+                        <div class="pt-5 border-t border-zinc-100">
+                            <div class="mb-4">
                                 <h4 class="text-sm font-medium text-zinc-700">WordleBot Scores (Optional)</h4>
-                                <p class="mt-1 text-xs text-zinc-500">If you use the NY Times WordleBot, you can record your skill and luck scores.</p>
+                                <p class="mt-1.5 text-xs text-zinc-500">If you use the NY Times WordleBot, you can record your skill and luck scores.</p>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <x-form.input.text
                                     :errors="$errors"
                                     name="botSkillScore"
