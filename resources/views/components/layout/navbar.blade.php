@@ -1,102 +1,156 @@
 <nav x-data="{ mobileMenuOpen: false }" class="bg-gradient-to-b from-green-800 to-green-700 shadow-sm">
     <div class="px-4 mx-auto max-w-6xl sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            {{-- Logo --}}
-            <div class="flex min-w-0">
+        <div class="flex items-center h-16">
+            {{-- Left: Brand (fixed width) --}}
+            <div class="flex-none">
                 <a
                     href="{{ Auth::check() ? route('account.home') : route('home') }}"
-                    class="group flex items-center min-w-0 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700 rounded-md"
+                    class="group flex items-center text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700 rounded-md"
                 >
                     <span class="flex shrink-0 justify-center items-center h-8 w-8 sm:w-10 sm:h-10 font-serif text-xl sm:text-2xl font-extrabold rounded-lg shadow-sm bg-green-50 text-green-800 transition group-hover:bg-wordle-yellow group-hover:text-white">W</span>
-                    <span class="px-2 sm:px-3 font-semibold font-serif text-lg sm:text-xl tracking-tight text-white truncate">
+                    <span class="hidden md:block px-2 sm:px-3 font-semibold font-serif text-lg sm:text-xl tracking-tight text-white whitespace-nowrap">
                         Wordle Group
                     </span>
                 </a>
             </div>
 
-            {{-- Desktop nav --}}
-            <div class="hidden sm:flex items-center gap-1">
-                <a
-                    href="{{ route('about') }}"
-                    class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
-                >
-                    About
-                </a>
-                <a
-                    href="{{ route('board') }}"
-                    class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
-                >
-                    Today
-                </a>
-                <a
-                    href="{{ route('board.archive') }}"
-                    class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
-                >
-                    Archive
-                </a>
-                <a
-                    href="{{ route('leaderboard') }}"
-                    class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
-                >
-                    Leaderboard
-                </a>
+            {{-- Center: Nav cluster (grows to fill, content centered) --}}
+            <div class="hidden sm:flex flex-1 justify-center">
+                <div class="inline-flex items-center gap-0.5 max-w-[900px]">
+                    <a
+                        href="{{ route('about') }}"
+                        @class([
+                            'inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                            'text-white bg-white/15' => request()->routeIs('about'),
+                            'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('about'),
+                        ])
+                    >
+                        About
+                    </a>
+                    <a
+                        href="{{ route('board') }}"
+                        @class([
+                            'inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                            'text-white bg-white/15' => request()->routeIs('board'),
+                            'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('board'),
+                        ])
+                    >
+                        Today
+                    </a>
+                    <a
+                        href="{{ route('board.archive') }}"
+                        @class([
+                            'inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                            'text-white bg-white/15' => request()->routeIs('board.archive'),
+                            'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('board.archive'),
+                        ])
+                    >
+                        Archive
+                    </a>
+                    <a
+                        href="{{ route('leaderboard') }}"
+                        @class([
+                            'inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                            'text-white bg-white/15' => request()->routeIs('leaderboard'),
+                            'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('leaderboard'),
+                        ])
+                    >
+                        Leaderboard
+                    </a>
 
+                    @auth
+                        <span class="w-px h-5 bg-white/20 mx-1"></span>
+                        <a
+                            href="{{ route('account.home') }}"
+                            @class([
+                                'inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                                'text-white bg-white/15' => request()->routeIs('account.home'),
+                                'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('account.home'),
+                            ])
+                        >
+                            My Stats
+                        </a>
+
+                        {{-- My Groups dropdown --}}
+                        @php
+                            $userGroups = Auth::user()->load('memberships.group')->memberships->pluck('group')->sortBy('name');
+                        @endphp
+                        @if($userGroups->count() > 0)
+                            <x-layout.dropdown
+                                name="groups-dropdown"
+                                width="w-56"
+                                dropdown-custom="left-1/2 -translate-x-1/2"
+                                @class([
+                                    'inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                                    'text-white bg-white/15' => request()->routeIs('group.*'),
+                                    'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('group.*'),
+                                ])
+                                :button-class="implode(' ', [
+                                    'inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                                    request()->routeIs('group.*') ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10 hover:text-white',
+                                ])"
+                            >
+                                <x-slot name="buttonSlot">
+                                    My Groups
+                                    <x-icon-regular.chevron-down class="w-3 h-3 opacity-70"/>
+                                </x-slot>
+
+                                <ul class="py-1">
+                                    @foreach($userGroups as $group)
+                                        <li>
+                                            <a
+                                                class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
+                                                href="{{ route('group.home', $group) }}"
+                                            >{{ $group->name }}</a>
+                                        </li>
+                                    @endforeach
+                                    <li class="border-t border-gray-100">
+                                        <a
+                                            class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
+                                            href="{{ route('account.groups') }}"
+                                        >Manage Groups</a>
+                                    </li>
+                                </ul>
+                            </x-layout.dropdown>
+                        @endif
+
+                        <a
+                            href="{{ route('account.record-score') }}"
+                            @class([
+                                'inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700',
+                                'text-white bg-white/15' => request()->routeIs('account.record-score'),
+                                'text-white/90 hover:bg-white/10 hover:text-white' => !request()->routeIs('account.record-score'),
+                            ])
+                        >
+                            Record Score
+                        </a>
+                    @endauth
+                </div>
+            </div>
+
+            {{-- Right: User menu (fixed width to prevent layout shift) --}}
+            <div class="hidden sm:flex flex-none items-center justify-end min-w-[140px]">
                 @guest
                     <a
                         href="{{ route('login') }}"
-                        class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                        class="inline-flex items-center rounded-full px-3 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
                     >
                         Log In
                     </a>
                     <a
                         href="{{ route('group.create') }}"
-                        class="ml-1 inline-flex items-center rounded-full px-4 py-2 text-sm font-medium bg-white/90 text-green-800 no-underline hover:bg-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                        class="ml-1 inline-flex items-center rounded-full px-3 py-2 text-sm font-medium bg-white/90 text-green-800 no-underline hover:bg-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
                     >
-                        <x-icon-solid.plus class="w-4 h-4 mr-2 -ml-1"/>
+                        <x-icon-solid.plus class="w-4 h-4 mr-1.5 -ml-0.5"/>
                         New Group
                     </a>
                 @else
                     <a
-                        href="{{ route('account.home') }}"
-                        class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
+                        href="{{ route('account.settings') }}"
+                        class="inline-flex items-center rounded-full px-3 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
                     >
-                        My Stats
+                        My Settings
                     </a>
-
-                    {{-- My Groups dropdown --}}
-                    @php
-                        $userGroups = Auth::user()->load('memberships.group')->memberships->pluck('group')->sortBy('name');
-                    @endphp
-                    @if($userGroups->count() > 0)
-                        <x-layout.dropdown
-                            name="groups-dropdown"
-                            width="w-56"
-                            dropdown-custom="right-0"
-                            button-class="inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-white/90 no-underline hover:bg-white/10 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700"
-                        >
-                            <x-slot name="buttonSlot">
-                                My Groups
-                                <x-icon-regular.chevron-down class="w-3 h-3 opacity-70"/>
-                            </x-slot>
-
-                            <ul class="py-1">
-                                @foreach($userGroups as $group)
-                                    <li>
-                                        <a
-                                            class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
-                                            href="{{ route('group.home', $group) }}"
-                                        >{{ $group->name }}</a>
-                                    </li>
-                                @endforeach
-                                <li class="border-t border-gray-100">
-                                    <a
-                                        class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50"
-                                        href="{{ route('account.groups') }}"
-                                    >Manage Groups</a>
-                                </li>
-                            </ul>
-                        </x-layout.dropdown>
-                    @endif
 
                     {{-- User dropdown --}}
                     <x-layout.dropdown
@@ -120,10 +174,10 @@
                                 </span>
                             </li>
                             <li>
-                                <a class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50" href="{{ route('account.record-score') }}">Record Score</a>
+                                <a class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50" href="{{ route('account.home') }}">My Stats</a>
                             </li>
                             <li>
-                                <a class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50" href="{{ route('account.home') }}">My Stats</a>
+                                <a class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50" href="{{ route('account.record-score') }}">Record Score</a>
                             </li>
                             <li>
                                 <a class="text-sm px-3 py-2 block text-gray-600 hover:bg-gray-50" href="{{ route('account.groups') }}">Groups</a>
@@ -143,8 +197,7 @@
             </div>
 
             {{-- Mobile hamburger --}}
-            <div class="flex sm:hidden items-center shrink-0">
-                {{-- Hamburger button --}}
+            <div class="flex sm:hidden items-center ml-auto">
                 <button
                     @click="mobileMenuOpen = !mobileMenuOpen"
                     type="button"
