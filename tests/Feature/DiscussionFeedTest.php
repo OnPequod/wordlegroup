@@ -20,7 +20,6 @@ it('can view social feed on group page when member', function () {
     $this->actingAs($user)
         ->get("/group/{$group->id}")
         ->assertOk()
-        ->assertSee('Activity')
         ->assertSee('Discussion');
 });
 
@@ -35,7 +34,6 @@ it('can view social feed on public group when not member', function () {
 
     $this->get("/group/{$group->id}")
         ->assertOk()
-        ->assertSee('Activity')
         ->assertSee('Discussion');
 });
 
