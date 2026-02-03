@@ -10,4 +10,13 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    server: {
+        cors: true,
+        host: 'localhost',
+        port: 5178,
+        strictPort: true,
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });
