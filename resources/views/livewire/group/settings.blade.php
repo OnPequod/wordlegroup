@@ -17,7 +17,7 @@
                 </div>
             </div>
 
-            <div class="max-w-md mx-auto">
+            <div class="max-w-2xl mx-auto space-y-6">
                 <div class="bg-white rounded-xl border border-zinc-200/70 shadow-sm shadow-zinc-900/5 p-8">
                     <form type="PATCH" class="mb-0" wire:submit.prevent="update">
                         <div class="space-y-6">
@@ -65,6 +65,9 @@
                         </div>
                     </form>
                 </div>
+
+                {{-- Member List --}}
+                <livewire:group.member-list :group="$group"/>
             </div>
         </div>
 

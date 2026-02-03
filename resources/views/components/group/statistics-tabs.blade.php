@@ -96,7 +96,7 @@
         </ul>
 
         <!-- Panels -->
-        <div role="tabpanels" class="p-6">
+        <div role="tabpanels" class="px-6 pb-6">
             <!-- Panel: All Time -->
             <section
                 x-show="isSelected($id('tab', whichChild($el, $el.parentElement)))"
@@ -105,10 +105,6 @@
                 x-cloak
             >
                 @if($leaderboards->firstWhere('for', 'forever'))
-                    <div class="mb-4">
-                        <h3 class="text-sm font-medium text-zinc-700">Leaderboard</h3>
-                        <p class="text-sm text-zinc-500">All time rankings</p>
-                    </div>
                     <x-group.leaderboard
                         :group="$group"
                         :anonymize-private-users="$group->public && !$memberOfGroup"
@@ -122,7 +118,7 @@
                         />
                     </div>
                 @else
-                    <p class="text-sm text-zinc-500">No one in this group has recorded any scores.</p>
+                    <p class="text-sm text-zinc-500 pt-4 pb-2">No one in this group has recorded any scores.</p>
                 @endif
             </section>
 
@@ -133,10 +129,6 @@
                 role="tabpanel"
             >
                 @if($leaderboards->firstWhere('for', 'month'))
-                    <div class="mb-4">
-                        <h3 class="text-sm font-medium text-zinc-700">Leaderboard</h3>
-                        <p class="text-sm text-zinc-500">This month's rankings</p>
-                    </div>
                     <x-group.leaderboard
                         :group="$group"
                         :anonymize-private-users="$group->public && !$memberOfGroup"
@@ -150,7 +142,7 @@
                         />
                     </div>
                 @else
-                    <p class="text-sm text-zinc-500">No one in this group has recorded any scores this month.</p>
+                    <p class="text-sm text-zinc-500 pt-4 pb-2">No one in this group has recorded any scores this month.</p>
                 @endif
             </section>
 
@@ -162,10 +154,6 @@
                 x-cloak
             >
                 @if($leaderboards->firstWhere('for', 'week'))
-                    <div class="mb-4">
-                        <h3 class="text-sm font-medium text-zinc-700">Leaderboard</h3>
-                        <p class="text-sm text-zinc-500">This week's rankings</p>
-                    </div>
                     <x-group.leaderboard
                         :group="$group"
                         :anonymize-private-users="$group->public && !$memberOfGroup"
@@ -179,7 +167,7 @@
                         />
                     </div>
                 @else
-                    <p class="text-sm text-zinc-500">No one in this group has recorded any scores this week.</p>
+                    <p class="text-sm text-zinc-500 pt-4 pb-2">No one in this group has recorded any scores this week.</p>
                 @endif
             </section>
         </div>

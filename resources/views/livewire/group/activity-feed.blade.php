@@ -1,99 +1,73 @@
 <div>
     {{-- Score cards --}}
     @if($scores->isNotEmpty())
-        @if($viewMode === 'tiles')
-            {{-- Tiles view --}}
-            <div class="p-6">
-                <ul role="list" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    @foreach($scores as $score)
-                        <x-score.card
-                            :score="$score"
-                            :show-user="true"
-                            :anonymize-private-users="$anonymizePrivateUsers"
-                        />
-                    @endforeach
-                </ul>
-            </div>
-        @else
-            {{-- List/accordion view --}}
-            <div class="divide-y divide-zinc-100">
-                @foreach($scores as $score)
-                    <div x-data="{ expanded: {{ $loop->index < 3 ? 'true' : 'false' }} }" class="group">
-                        <button
-                            type="button"
-                            @click="expanded = !expanded"
-                            class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-zinc-50 transition"
-                        >
-                            <div class="flex items-center gap-4">
-                                <div class="font-semibold text-zinc-900 tabular-nums">#{{ $score->board_number }}</div>
-                                <div class="text-sm text-zinc-500">{{ $score->date->format('M j') }}</div>
-                                <div class="font-semibold text-zinc-900">{{ $score->score === 7 ? 'X' : $score->score }}/6{{ $score->hard_mode ? '*' : '' }}</div>
-                                @if($anonymizePrivateUsers && !$score->user->public_profile)
-                                    <span class="text-sm text-zinc-400">Anonymous</span>
-                                @else
-                                    <span class="text-sm text-zinc-600">{{ $score->user->name }}</span>
-                                @endif
-                            </div>
-                            <div class="flex items-center gap-3">
-                                @if(($score->comments_count ?? 0) > 0)
-                                    <span class="text-xs text-zinc-400">{{ $score->comments_count }} {{ Str::plural('comment', $score->comments_count) }}</span>
-                                @endif
-                                <svg
-                                    class="w-5 h-5 text-zinc-400 transition-transform duration-200"
-                                    :class="{ 'rotate-180': expanded }"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                >
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                            </div>
-                        </button>
-                        <div
-                            x-show="expanded"
-                            x-collapse
-                            class="px-6 pb-4"
-                        >
-                            <a href="{{ route('score.share-page', $score) }}" class="block">
-                                <div class="flex justify-center py-4">
-                                    @if($score->board)
-                                        <x-score.board :score="$score"/>
-                                    @else
-                                        <div class="text-sm text-zinc-500">No board recorded.</div>
-                                    @endif
-                                </div>
-                            </a>
-                            <div class="flex items-center justify-between pt-2 border-t border-zinc-100">
-                                <div class="text-xs text-zinc-400">
-                                    {{ $score->created_at->diffForHumans() }}
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <livewire:score.share :icon-size="3" :score="$score" :key="'list-'.$score->id" :confirm="true"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
+        <ul role="list" class="grid grid-cols-1 lg:grid-cols-2">
+            @foreach($scores as $score)
+                <x-score.card
+                    :score="$score"
+                    :show-user="true"
+                    :anonymize-private-users="$anonymizePrivateUsers"
+                    :flat="true"
+                />
+            @endforeach
+        </ul>
     @else
         <div class="p-6 text-center text-sm text-zinc-500">
             No scores recorded yet.
         </div>
     @endif
 
-    {{-- Pagination --}}
-    @if($scores->hasPages())
-        <div class="px-6 py-4 border-t border-zinc-100 bg-zinc-50/30">
-            <div class="flex items-center justify-between">
-                <p class="text-sm text-zinc-500">
-                    Showing {{ $scores->firstItem() }}–{{ $scores->lastItem() }} of {{ $scores->total() }} scores
-                </p>
+    {{-- Footer with filter and pagination --}}
+    <div class="px-6 py-4 border-t border-zinc-100 bg-zinc-50/30">
+        <div class="flex items-center justify-between gap-3">
+            {{-- Filter --}}
+            @if($this->isGroupMember)
+                <div x-data="{ open: false }" class="relative">
+                    <button
+                        type="button"
+                        @click="open = !open"
+                        class="p-1.5 rounded-md transition {{ $filterByUserId ? 'bg-green-50 text-green-700' : 'text-zinc-400 hover:text-zinc-600' }}"
+                        title="Filter by member"
+                    >
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                        </svg>
+                    </button>
+                    <div
+                        x-show="open"
+                        @click.outside="open = false"
+                        x-transition
+                        class="absolute left-0 bottom-full mb-2 w-48 bg-white rounded-lg border border-zinc-200 shadow-lg z-10 p-4"
+                    >
+                        <label class="block text-xs font-medium text-zinc-500 mb-3">Filter by user</label>
+                        <x-group.user-select
+                            :default-empty="true"
+                            wire:model.live="$parent.filterByUserId"
+                            name="activityFeedUsers"
+                            :group="$this->group"
+                        />
+                        @if($filterByUserId)
+                            <button
+                                class="mt-2 text-xs text-zinc-500 hover:text-zinc-900 transition"
+                                type="button"
+                                wire:click="$parent.clearUserFilter"
+                                @click="open = false"
+                            >
+                                Clear filter
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            @else
+                <div></div>
+            @endif
+
+            {{-- Pagination --}}
+            @if($scores->hasPages())
                 <div class="flex items-center gap-2">
                     {{ $scores->onEachSide(1)->links('vendor.pagination.simple-tailwind') }}
                 </div>
-            </div>
+            @endif
         </div>
-    @endif
+    </div>
 </div>

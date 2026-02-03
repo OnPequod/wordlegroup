@@ -24,7 +24,7 @@
     </div>
 
     {{-- Chart --}}
-    <div class="mt-4 rounded-xl bg-zinc-50/50 border border-zinc-100 p-3">
+    <div class="mt-4 rounded-xl bg-zinc-50/50 border border-zinc-100 p-3 pr-6">
         <div class="text-xs font-medium text-zinc-500 mb-2">Score Distribution</div>
         <x-score.bar-chart :score-distribution="$leaderboard->score_distribution" />
     </div>

@@ -8,7 +8,7 @@
                 <th scope="col" class="py-3 pl-3 pr-6 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">Games</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-zinc-100">
+        <tbody class="divide-y divide-zinc-100 border-b border-zinc-100">
             @foreach($leaderboard->leaderboard as $position)
                 <tr class="{{ $position['place'] === 1 ? 'bg-amber-50/40' : '' }}">
                     <td class="py-3 pl-6 pr-2 whitespace-nowrap">
