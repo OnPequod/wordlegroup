@@ -21,6 +21,8 @@ class ActivityFeed extends Component
 
     public string $viewMode = 'list';
 
+    public int $perPage = 6;
+
     public function mount(Group $group, $anonymizePrivateUsers = false, string $viewMode = 'list', ?int $filterByUserId = null)
     {
         $this->group = $group;
@@ -28,6 +30,11 @@ class ActivityFeed extends Component
         $this->viewMode = $viewMode;
         $this->filterByUserId = $filterByUserId;
         $this->user = Auth::check() ? Auth::user() : null;
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
     }
 
     public function getScores()
@@ -48,7 +55,7 @@ class ActivityFeed extends Component
             $query = $query->withCount('comments');
         }
 
-        return $query->paginate(10)->withPath(route('group.home', $this->group));
+        return $query->paginate($this->perPage)->withPath(route('group.home', $this->group));
 
     }
 
