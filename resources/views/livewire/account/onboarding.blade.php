@@ -63,7 +63,7 @@
                         <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">5</div>
                         <div>
                             <span class="font-semibold text-zinc-900 group-hover:text-green-700 transition">Skill & Luck Scores</span>
-                            <p class="text-sm text-zinc-600">See skill and luck metrics powered by the NYT WordleBot.</p>
+                            <p class="text-sm text-zinc-600">Share from the NYT WordleBot page to include your skill and luck scores.</p>
                         </div>
                     </a>
                     <a href="{{ route('account.home') }}" class="flex gap-4 group">
