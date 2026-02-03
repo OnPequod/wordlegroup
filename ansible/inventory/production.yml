@@ -14,3 +14,15 @@ all:
           db_name: wordlegroup_production
           db_user: wordlegroup
           web_root: /var/data
+
+          # Additional users for SSH access
+          additional_users:
+            - name: erik
+              groups: [sudo]
+              ssh_public_key_path: "~/.ssh/erik.pub"
+
+          # fail2ban whitelist
+          fail2ban_ignoreip:
+            - 127.0.0.1/8
+            - ::1
+            - erikwestlund.ddns.net

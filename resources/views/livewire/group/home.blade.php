@@ -56,10 +56,10 @@
                 <livewire:group.invite-member :group="$group"/>
             @endif
 
-            {{-- Main Two-Column Grid: Leaderboard + Activity/Discussion --}}
+            {{-- First Grid: Leaderboard + Scores/Discussion (mobile: leaderboard first, then scores, then discussion) --}}
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {{-- Left Column: Leaderboard/Stats (second on mobile) --}}
-                <div class="flex flex-col gap-6 order-2 lg:order-1">
+                {{-- Leaderboard/Stats --}}
+                <div class="order-1">
                     @if($group->scores_recorded > 0)
                         <x-group.statistics-tabs
                             :group="$group"
@@ -71,7 +71,47 @@
                             <p class="text-zinc-500 text-sm text-center">No one has recorded any scores yet. Invite some users below!</p>
                         </div>
                     @endif
+                </div>
 
+                {{-- Activity Feed (Scores) + Discussion --}}
+                <div class="flex flex-col gap-6 order-2">
+                    @if($memberOfGroup || $group->public)
+                        {{-- Activity Feed --}}
+                        <div class="rounded-2xl bg-white border border-zinc-200 shadow-sm overflow-hidden">
+                            @if($group->scores_recorded > 0)
+                                <livewire:group.activity-feed
+                                    :group="$group"
+                                    :anonymize-private-users="$group->public && !$memberOfGroup"
+                                    :key="'activity-feed-' . $group->id"
+                                />
+                            @else
+                                <div class="px-6 py-8 text-center">
+                                    <p class="text-sm text-zinc-500">No scores recorded yet. Be the first to record a score!</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Discussion Section --}}
+                        <div class="rounded-2xl bg-white border border-zinc-200 shadow-sm overflow-hidden">
+                            <div class="px-6 py-5 border-b border-zinc-100">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-zinc-900">Discussion</h3>
+                                    <p class="text-sm text-zinc-500 mt-0.5">Chat with your group members</p>
+                                </div>
+                            </div>
+                            <livewire:group.discussion-feed
+                                :group="$group"
+                                :key="'discussion-feed-' . $group->id"
+                            />
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Second Grid: Record Score + Invite/Share --}}
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                {{-- Left Column: Record Score + Export --}}
+                <div class="flex flex-col gap-6 order-2 lg:order-1">
                     @if($memberOfGroup)
                         {{-- Record a Score --}}
                         <div class="rounded-2xl bg-white border border-zinc-200 shadow-sm overflow-hidden">
@@ -84,18 +124,34 @@
                             </div>
                         </div>
 
-                        {{-- Invite Members --}}
-                        <livewire:group.invite-member :group="$group"/>
+                        @if($isAdmin)
+                            {{-- Export Group Scores --}}
+                            <div class="rounded-2xl bg-white border border-zinc-200 shadow-sm overflow-hidden">
+                                <div class="px-6 py-5 border-b border-zinc-100">
+                                    <h3 class="text-lg font-semibold text-zinc-900">Export Scores</h3>
+                                    <p class="text-sm text-zinc-500 mt-0.5">Download all group scores as CSV</p>
+                                </div>
+                                <div class="p-6">
+                                    <a
+                                        href="{{ route('group.export.scores.csv', $group) }}"
+                                        class="inline-flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        Download CSV
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
                     @endif
                 </div>
 
-                {{-- Right Column: Social Feed (first on mobile) --}}
+                {{-- Right Column: Invite + Share Links --}}
                 <div class="flex flex-col gap-6 order-1 lg:order-2">
-                    @if($memberOfGroup || $group->public)
-                        <livewire:group.social-feed
-                            :group="$group"
-                            :anonymize-private-users="$group->public && !$memberOfGroup"
-                        />
+                    @if($memberOfGroup)
+                        {{-- Invite Members --}}
+                        <livewire:group.invite-member :group="$group"/>
                     @endif
 
                     {{-- Share Links (for public groups) --}}

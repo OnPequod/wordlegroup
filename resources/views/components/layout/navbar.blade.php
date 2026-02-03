@@ -1,8 +1,8 @@
 <nav x-data="{ mobileMenuOpen: false }" class="bg-gradient-to-b from-green-800 to-green-700 shadow-sm">
     <div class="px-4 mx-auto max-w-6xl sm:px-6 lg:px-8">
         <div class="flex items-center h-16">
-            {{-- Left: Brand (fixed width) --}}
-            <div class="flex-none">
+            {{-- Left: Brand (fixed width to balance right side) --}}
+            <div class="flex-none w-40 md:w-48">
                 <a
                     href="{{ Auth::check() ? route('account.home') : route('home') }}"
                     class="group flex items-center text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-green-700 rounded-md"
@@ -117,8 +117,8 @@
                 </div>
             </div>
 
-            {{-- Right: User menu (fixed width to prevent layout shift) --}}
-            <div class="hidden sm:flex flex-none items-center justify-end">
+            {{-- Right: User menu (fixed width to balance left side and center nav) --}}
+            <div class="hidden sm:flex flex-none w-40 md:w-48 items-center justify-end">
                 @guest
                     <a
                         href="{{ route('login') }}"

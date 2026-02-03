@@ -160,6 +160,23 @@
                         </div>
                     </div>
 
+                    {{-- Export Data --}}
+                    <div class="rounded-2xl bg-white border border-zinc-200 shadow-sm p-6 md:p-8">
+                        <h3 class="text-lg font-semibold text-zinc-900 pb-3 border-b border-zinc-100">Export Data</h3>
+                        <div class="pt-5">
+                            <p class="text-sm text-zinc-600 mb-4">Download all your Wordle scores as a CSV file.</p>
+                            <a
+                                href="{{ route('account.export.scores.csv') }}"
+                                class="inline-flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                Download CSV
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </form>

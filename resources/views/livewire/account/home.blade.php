@@ -109,6 +109,24 @@
                     <livewire:account.score-feed :user="$user" :show-when-recorded-by-other-user="true"/>
                 </div>
             </div>
+
+            {{-- Export Scores --}}
+            <div>
+                <x-layout.hr class="mb-8" />
+                <h2 class="text-xl font-semibold text-zinc-900 text-center">Export Scores</h2>
+                <p class="mt-1 text-sm text-zinc-500 text-center">Download my scores in a CSV.</p>
+                <div class="mt-6 flex justify-center">
+                    <a
+                        href="{{ route('account.export.scores.csv') }}"
+                        class="inline-flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Download CSV
+                    </a>
+                </div>
+            </div>
         </div>
     </x-account.home-layout>
 

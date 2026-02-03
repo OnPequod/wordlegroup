@@ -68,6 +68,24 @@
 
                 {{-- Member List --}}
                 <livewire:group.member-list :group="$group"/>
+
+                {{-- Export Group Scores --}}
+                <div class="bg-white rounded-xl border border-zinc-200/70 shadow-sm shadow-zinc-900/5 p-8">
+                    <h3 class="text-lg font-semibold text-zinc-900 pb-3 border-b border-zinc-100">Export Group Scores</h3>
+                    <div class="pt-5">
+                        <p class="text-sm text-zinc-600 mb-2">Download all scores from this group as a CSV file.</p>
+                        <p class="text-xs text-zinc-500 mb-4">Each member is assigned a sequential ID based on when they joined the group.</p>
+                        <a
+                            href="{{ route('group.export.scores.csv', $group) }}"
+                            class="inline-flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download CSV
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 

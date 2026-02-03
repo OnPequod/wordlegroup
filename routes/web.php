@@ -53,7 +53,11 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureOnboardingComplete::class]
     Route::get('/account/groups', \App\Http\Livewire\Account\Groups::class)->name('account.groups');
     Route::get('/account/settings', \App\Http\Livewire\Account\Settings::class)->name('account.settings');
     Route::get('/account/record-score', \App\Http\Livewire\Account\RecordScore::class)->name('account.record-score');
+    Route::get('/account/export/scores.csv', [\App\Http\Controllers\ExportController::class, 'accountScoresCsv'])
+        ->name('account.export.scores.csv');
     Route::get('/group/{group}/settings', \App\Http\Livewire\Group\Settings::class)->name('group.settings');
+    Route::get('/group/{group}/export/scores.csv', [\App\Http\Controllers\ExportController::class, 'groupScoresCsv'])
+        ->name('group.export.scores.csv');
     Route::get('/group/{group}/not-verified', \App\Http\Livewire\Group\NotVerifiedNotification::class)->name('group.not-verified');
 
     // API-style routes for saving preferences
