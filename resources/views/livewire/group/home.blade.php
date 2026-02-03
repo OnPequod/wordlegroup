@@ -110,7 +110,7 @@
 
             {{-- Second Grid: Record Score + Invite/Share --}}
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {{-- Left Column: Record Score + Export --}}
+                {{-- Left Column: Record Score --}}
                 <div class="flex flex-col gap-6 order-2 lg:order-1">
                     @if($memberOfGroup)
                         {{-- Record a Score --}}
@@ -123,6 +123,14 @@
                                 <livewire:score.record-form :quick="true" :user="$user" :group="$group" :hide-email="true"/>
                             </div>
                         </div>
+                    @endif
+                </div>
+
+                {{-- Right Column: Invite + Export + Share Links --}}
+                <div class="flex flex-col gap-6 order-1 lg:order-2">
+                    @if($memberOfGroup)
+                        {{-- Invite Members --}}
+                        <livewire:group.invite-member :group="$group"/>
 
                         @if($isAdmin)
                             {{-- Export Group Scores --}}
@@ -144,14 +152,6 @@
                                 </div>
                             </div>
                         @endif
-                    @endif
-                </div>
-
-                {{-- Right Column: Invite + Share Links --}}
-                <div class="flex flex-col gap-6 order-1 lg:order-2">
-                    @if($memberOfGroup)
-                        {{-- Invite Members --}}
-                        <livewire:group.invite-member :group="$group"/>
                     @endif
 
                     {{-- Share Links (for public groups) --}}

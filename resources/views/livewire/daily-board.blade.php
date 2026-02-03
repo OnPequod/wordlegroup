@@ -95,37 +95,17 @@
         @endif
 
         @if($this->summary)
-            {{-- WordleGroup Stats --}}
+            {{-- Stats based on ALL WordleGroup users --}}
             @if($this->summary->wg_participant_count)
-                <div class="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 p-5">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-green-700 mb-1">WordleGroup Average</p>
-                            <p class="text-3xl font-bold text-green-900 tabular-nums">{{ $this->summary->wg_score_mean }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm text-green-700">{{ $this->summary->wg_participant_count }} {{ Str::plural('player', $this->summary->wg_participant_count) }}</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            {{-- Public Leaderboard Stats --}}
-            @if($this->summary->participant_count)
-                <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
                     <div class="rounded-xl bg-white border border-zinc-200 p-4">
-                        <p class="text-sm font-medium text-zinc-500">Public Players</p>
-                        <p class="mt-1 text-2xl font-semibold text-zinc-900 tabular-nums">{{ $this->summary->participant_count }}</p>
+                        <p class="text-sm font-medium text-zinc-500">Players</p>
+                        <p class="mt-1 text-2xl font-semibold text-zinc-900 tabular-nums">{{ $this->summary->wg_participant_count }}</p>
                     </div>
 
                     <div class="rounded-xl bg-white border border-zinc-200 p-4">
-                        <p class="text-sm font-medium text-zinc-500">Public Avg</p>
-                        <p class="mt-1 text-2xl font-semibold text-zinc-900 tabular-nums">{{ $this->summary->score_mean }}</p>
-                    </div>
-
-                    <div class="rounded-xl bg-white border border-zinc-200 p-4">
-                        <p class="text-sm font-medium text-zinc-500">Median</p>
-                        <p class="mt-1 text-2xl font-semibold text-zinc-900 tabular-nums">{{ $this->summary->score_median }}</p>
+                        <p class="text-sm font-medium text-zinc-500">Average</p>
+                        <p class="mt-1 text-2xl font-semibold text-zinc-900 tabular-nums">{{ $this->summary->wg_score_mean }}</p>
                     </div>
 
                     <div class="rounded-xl bg-white border border-zinc-200 p-4">
@@ -165,12 +145,12 @@
                 </div>
             @endif
 
-            {{-- Score distribution --}}
-            @if($this->summary->formattedDistribution)
+            {{-- Score distribution (based on all WordleGroup users) --}}
+            @if($this->summary->formattedWgDistribution)
                 <div class="rounded-xl bg-white border border-zinc-200 p-6">
                     <h2 class="text-lg font-semibold text-zinc-900 mb-4">Score Distribution</h2>
                     <div class="space-y-2">
-                        @foreach($this->summary->formattedDistribution as $score => $data)
+                        @foreach($this->summary->formattedWgDistribution as $score => $data)
                             <div class="flex items-center gap-3">
                                 <span class="w-6 text-sm font-medium text-zinc-600 text-right tabular-nums">{{ $score }}</span>
                                 <div class="flex-1 h-6 bg-zinc-100 rounded overflow-hidden">
@@ -189,11 +169,11 @@
                 </div>
             @endif
 
-            {{-- Boards grid --}}
+            {{-- Boards grid (only public leaderboard participants) --}}
             @if($this->summary->boards && $this->summary->boards->isNotEmpty())
                 <div class="rounded-xl bg-white border border-zinc-200 p-6">
                     <h2 class="text-lg font-semibold text-zinc-900 mb-4">
-                        Player Boards
+                        Public Leaderboard
                         @if($this->isCurrentPuzzle && !$this->canViewBoards)
                             <span class="text-sm font-normal text-zinc-500 ml-2">(Hidden until you record your score)</span>
                         @endif
