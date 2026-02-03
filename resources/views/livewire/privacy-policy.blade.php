@@ -4,6 +4,15 @@
         :url="route('privacy-policy')"
         description="Privacy Policy for Wordle Group."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'WebPage',
+        'name' => 'Privacy Policy',
+        'description' => 'Privacy Policy for Wordle Group.',
+        'url' => route('privacy-policy'),
+        'dateModified' => '2022-03-20',
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
     <div class="prose">
         <p>Last updated: March 20, 2022</p>
         <p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>

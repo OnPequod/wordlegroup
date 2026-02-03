@@ -37,6 +37,11 @@ class ActivityFeed extends Component
         $this->resetPage();
     }
 
+    public function updatedFilterByUserId(): void
+    {
+        $this->resetPage();
+    }
+
     public function getScores()
     {
         $query = $this->group

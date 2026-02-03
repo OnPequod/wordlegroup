@@ -8,6 +8,19 @@
         :url="route('score.share-page', $score)"
         description="{{ $score->boardShareText }}"
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'WebPage',
+        'name' => $title,
+        'description' => $score->boardShareText,
+        'url' => route('score.share-page', $score),
+        'datePublished' => $score->created_at->toIso8601String(),
+        'author' => [
+            '@type' => 'Person',
+            'name' => $score->user->name,
+        ],
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
 
     <div class="-mt-4 text-gray-500 text-base font-bold text-center ">
         by {{ $score->user->name }}

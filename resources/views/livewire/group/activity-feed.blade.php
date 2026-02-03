@@ -43,7 +43,7 @@
                             <label class="block text-xs font-medium text-zinc-500 mb-3">Filter by user</label>
                             <x-group.user-select
                                 :default-empty="true"
-                                wire:model.live="$parent.filterByUserId"
+                                wire:model.live="filterByUserId"
                                 name="activityFeedUsers"
                                 :group="$this->group"
                             />
@@ -51,7 +51,7 @@
                                 <button
                                     class="mt-2 text-xs text-zinc-500 hover:text-zinc-900 transition"
                                     type="button"
-                                    wire:click="$parent.clearUserFilter"
+                                    wire:click="$set('filterByUserId', null)"
                                     @click="open = false"
                                 >
                                     Clear filter
@@ -62,6 +62,7 @@
                 @endif
                 <select
                     wire:model.live="perPage"
+                    wire:change="$refresh"
                     class="text-xs border-zinc-200 rounded-md py-1 pl-2 pr-7 text-zinc-600 focus:ring-green-600 focus:border-green-600"
                 >
                     <option value="6">6</option>

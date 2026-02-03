@@ -6,9 +6,16 @@
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 class="text-2xl font-bold text-zinc-900 font-serif">What's New in Wordle Group</h1>
-                    <p class="mt-1 text-sm text-zinc-500">We've added some exciting features! Review your settings below.</p>
+                    <p class="mt-1 text-sm text-zinc-500">We've added some new features. Review your settings below.</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-wrap items-center gap-6">
+                    <button
+                        type="button"
+                        wire:click="dismiss"
+                        class="text-sm text-zinc-500 hover:text-zinc-700 transition"
+                    >
+                        Dismiss
+                    </button>
                     <x-form.input.button
                         type="submit"
                         loading-action="complete"
@@ -23,35 +30,49 @@
             {{-- What's New Section - Full Width --}}
             <div class="rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 shadow-sm p-6 md:p-8">
                 <h3 class="text-lg font-semibold text-green-900 pb-3 border-b border-green-200">New Features</h3>
-                <div class="pt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="flex gap-3">
+                <div class="pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-8">
+                    <a href="{{ route('leaderboard') }}" class="flex gap-4 group">
                         <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">1</div>
                         <div>
-                            <h4 class="font-semibold text-zinc-900">Public Leaderboard</h4>
-                            <p class="text-sm text-zinc-600">Compete with players worldwide!</p>
+                            <span class="font-semibold text-zinc-900 group-hover:text-green-700 transition">Public Leaderboard</span>
+                            <p class="text-sm text-zinc-600">Compete globally and see where you rank among all players.</p>
                         </div>
-                    </div>
-                    <div class="flex gap-3">
+                    </a>
+                    <a href="{{ route('board.archive') }}" class="flex gap-4 group">
                         <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">2</div>
                         <div>
-                            <h4 class="font-semibold text-zinc-900">Public Alias</h4>
-                            <p class="text-sm text-zinc-600">Use a nickname for privacy.</p>
+                            <span class="font-semibold text-zinc-900 group-hover:text-green-700 transition">Puzzle Archive</span>
+                            <p class="text-sm text-zinc-600">Browse past puzzles, answers, and daily statistics.</p>
                         </div>
-                    </div>
-                    <div class="flex gap-3">
+                    </a>
+                    <a href="{{ route('board') }}" class="flex gap-4 group">
                         <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">3</div>
                         <div>
-                            <h4 class="font-semibold text-zinc-900">Group Discussions</h4>
-                            <p class="text-sm text-zinc-600">Chat with group members!</p>
+                            <span class="font-semibold text-zinc-900 group-hover:text-green-700 transition">Daily Puzzle Report</span>
+                            <p class="text-sm text-zinc-600">See today's answer, score distribution, and public discussion.</p>
                         </div>
-                    </div>
-                    <div class="flex gap-3">
+                    </a>
+                    <a href="{{ route('account.home') }}" class="flex gap-4 group">
                         <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">4</div>
                         <div>
-                            <h4 class="font-semibold text-zinc-900">Skill & Luck Scores</h4>
-                            <p class="text-sm text-zinc-600">New scoring metrics.</p>
+                            <span class="font-semibold text-zinc-900 group-hover:text-green-700 transition">Group Discussions</span>
+                            <p class="text-sm text-zinc-600">Chat with your group members on each group's page.</p>
                         </div>
-                    </div>
+                    </a>
+                    <a href="{{ route('board') }}" class="flex gap-4 group">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">5</div>
+                        <div>
+                            <span class="font-semibold text-zinc-900 group-hover:text-green-700 transition">Skill & Luck Scores</span>
+                            <p class="text-sm text-zinc-600">See skill and luck metrics powered by the NYT WordleBot.</p>
+                        </div>
+                    </a>
+                    <a href="{{ route('account.home') }}" class="flex gap-4 group">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">6</div>
+                        <div>
+                            <span class="font-semibold text-zinc-900 group-hover:text-green-700 transition">Export Scores</span>
+                            <p class="text-sm text-zinc-600">Download your complete score history as a CSV file.</p>
+                        </div>
+                    </a>
                 </div>
             </div>
 

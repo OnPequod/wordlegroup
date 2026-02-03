@@ -4,6 +4,14 @@
         :url="route('about')"
         description="WordleGroup is a free tool for tracking and sharing Wordle scores with friends and family."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'AboutPage',
+        'name' => 'About Wordle Group',
+        'description' => 'WordleGroup is a free tool for tracking and sharing Wordle scores with friends and family.',
+        'url' => route('about'),
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
 
     <div class="flex flex-col gap-8 pb-12">
         {{-- Header --}}

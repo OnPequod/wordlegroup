@@ -3,7 +3,11 @@
     heading="Log In To Wordle Group"
     title="Log In To Wordle Group"
 >
-    <x-layout.social-meta/>
+    <x-layout.social-meta
+        title="Log In - Wordle Group"
+        :url="route('login')"
+        description="Log in to your Wordle Group account to track scores, join groups, and compete with friends."
+    />
     <form
         @if($codeSent)
         wire:submit.prevent="attemptLoginWithCode"

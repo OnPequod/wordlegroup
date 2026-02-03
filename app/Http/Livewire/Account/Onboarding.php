@@ -83,6 +83,14 @@ class Onboarding extends Component
         return redirect()->to(route('account.home'));
     }
 
+    public function dismiss(): mixed
+    {
+        $user = Auth::user();
+        $user->markOnboardingComplete();
+
+        return redirect()->to(route('account.home'));
+    }
+
     public function render()
     {
         return view('livewire.account.onboarding');

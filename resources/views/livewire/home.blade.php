@@ -4,6 +4,34 @@
         :url="route('home')"
         description="A free and easy way to keep score with friends when playing Wordle. Create a group, invite friends, and see who climbs the leaderboard each day."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            [
+                '@type' => 'WebSite',
+                '@id' => url('/') . '#website',
+                'url' => url('/'),
+                'name' => 'Wordle Group',
+                'description' => 'A free and easy way to keep score with friends when playing Wordle.',
+                'publisher' => ['@id' => url('/') . '#organization'],
+            ],
+            [
+                '@type' => 'Organization',
+                '@id' => url('/') . '#organization',
+                'name' => 'Wordle Group',
+                'url' => url('/'),
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => url('/images/og-image-wide.jpg'),
+                    'width' => 1200,
+                    'height' => 630,
+                ],
+                'sameAs' => [
+                    'https://twitter.com/wordabordle',
+                ],
+            ],
+        ],
+    ]" />
     <div class="w-full mt-4 space-y-10">
         <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
             <span

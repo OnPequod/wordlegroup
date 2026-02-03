@@ -89,9 +89,10 @@ class UpdatesDailySummaries
             ? round($botLuckScores->average('bot_luck_score'), 1)
             : null;
 
-        // Difficulty delta (positive = harder than average)
-        $difficultyDelta = ($scoreMean !== null && $allTimeMean !== null)
-            ? round($scoreMean - $allTimeMean, 2)
+        // Difficulty delta (positive = harder than average) - based on ALL WG users
+        $wgScoreMean = $allScores->isNotEmpty() ? round($allScores->average('score'), 2) : null;
+        $difficultyDelta = ($wgScoreMean !== null && $allTimeMean !== null)
+            ? round($wgScoreMean - $allTimeMean, 2)
             : null;
 
         // Build boards array for opted-in users

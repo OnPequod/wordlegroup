@@ -5,6 +5,14 @@
         :url="route('leaderboard')"
         description="See how you rank against other Wordle players worldwide."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'WebPage',
+        'name' => 'Wordle Public Leaderboard',
+        'description' => 'See how you rank against other Wordle players worldwide.',
+        'url' => route('leaderboard'),
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
 
     <div class="flex flex-col gap-8 pb-12">
         {{-- Header --}}

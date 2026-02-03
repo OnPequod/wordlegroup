@@ -4,6 +4,14 @@
         :url="route('contact')"
         description="Information on how to contact the creator of Wordle Group."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'ContactPage',
+        'name' => 'Contact Wordle Group',
+        'description' => 'Information on how to contact the creator of Wordle Group.',
+        'url' => route('contact'),
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
     <div class="prose tracking-tight max-w-none rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 shadow-[0_10px_30px_var(--color-shadow)]">
         <p>Wordle Group was created by <a href="mailto:erik@pequod.sh">Erik Westlund</a>.</p>
 

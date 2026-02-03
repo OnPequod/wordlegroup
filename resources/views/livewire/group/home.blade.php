@@ -7,8 +7,16 @@
     <x-layout.social-meta
         title="{{ $group->name }} - Wordle Group Leaderboard & Stats"
         :url="route('group.home', $group)"
-        description="Wordle Group is a way to keep score with a group of friends and track your Wordle performance over time."
+        description="View leaderboard and stats for the {{ $group->name }} Wordle group."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'WebPage',
+        'name' => $group->name . ' - Wordle Group',
+        'description' => 'View leaderboard and stats for the ' . $group->name . ' Wordle group.',
+        'url' => route('group.home', $group),
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
 
     <x-account.home-layout :page="'group.' . $group->id">
 
@@ -26,17 +34,17 @@
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
-                    @if($isAdmin)
-                        <a
-                            class="rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-                            href="{{ route('group.settings', $group) }}"
-                        >Group Settings</a>
-                    @endif
                     @if($memberOfGroup)
                         <a
-                            class="rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
+                            class="order-1 rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
                             href="{{ route('account.record-score') }}"
                         >Record score</a>
+                    @endif
+                    @if($isAdmin)
+                        <a
+                            class="order-2 sm:order-first rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                            href="{{ route('group.settings', $group) }}"
+                        >Group Settings</a>
                     @endif
                 </div>
             </div>

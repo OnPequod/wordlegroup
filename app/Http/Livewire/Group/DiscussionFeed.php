@@ -68,19 +68,17 @@ class DiscussionFeed extends Component
             ->with(['user', 'replies.user'])
             ->orderBy('created_at', 'desc')
             ->limit($limit)
-            ->get()
-            ->reverse()
-            ->values();
+            ->get();
     }
 
     public function getGroupedPostsProperty(): Collection
     {
         $posts = $this->posts;
 
-        // Group posts by day and collapse consecutive messages from same user
+        // Group posts by day (newest day first) and collapse consecutive messages from same user
         return $posts->groupBy(function ($post) {
             return $post->created_at->format('Y-m-d');
-        })->map(function ($dayPosts, $date) {
+        })->sortKeysDesc()->map(function ($dayPosts, $date) {
             $grouped = collect();
             $currentGroup = null;
 
@@ -153,7 +151,6 @@ class DiscussionFeed extends Component
         $this->body = '';
         $this->markAsViewed();
         $this->dispatch('discussionPosted');
-        $this->dispatch('scrollToBottom');
     }
 
     public function startEditing(Comment $post): void

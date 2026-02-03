@@ -5,6 +5,14 @@
         :url="route('board.archive')"
         description="Complete archive of all {{ $this->totalPuzzles }} past Wordle answers. Browse by date, search the history, and see stats for every puzzle."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'CollectionPage',
+        'name' => 'Wordle Answer Archive',
+        'description' => 'Complete archive of all past Wordle answers. Browse by date, search the history, and see stats for every puzzle.',
+        'url' => route('board.archive'),
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
 
     <div class="flex flex-col gap-6 pb-12">
         {{-- Header --}}

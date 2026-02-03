@@ -1,4 +1,4 @@
-<div {{ $attributes->merge(['class' => 'min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-b from-zinc-50 to-zinc-200']) }}>
+<div {{ $attributes->merge(['class' => 'min-h-[calc(100vh-4rem)] flex flex-col bg-white']) }}>
     @if($errorMessage && count($errorMessage) > 0)
         <x-layout.flash-message type="error">{{ $errorMessage[0] }}</x-layout.flash-message>
     @elseif (session()->has('message') && session('message'))

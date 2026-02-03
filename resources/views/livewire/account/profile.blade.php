@@ -2,8 +2,20 @@
     <x-layout.social-meta
         title="Wordle Stats For {{ $user->name }}"
         :url="route('account.profile', $user)"
-        description="Wordle Group is a way to keep score with a group of friends and track your Wordle performance over time."
+        description="View {{ $user->name }}'s Wordle statistics and score history on Wordle Group."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'ProfilePage',
+        'name' => $user->name . '\'s Wordle Profile',
+        'description' => 'View ' . $user->name . '\'s Wordle statistics and score history.',
+        'url' => route('account.profile', $user),
+        'mainEntity' => [
+            '@type' => 'Person',
+            'name' => $user->name,
+        ],
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
 
     <div class="grid grid-cols-1 gap-y-8 divide-y divide-gray-200">
 

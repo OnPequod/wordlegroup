@@ -1,17 +1,4 @@
-<div
-    x-data="{
-        scrollToBottom() {
-            this.$nextTick(() => {
-                const container = this.$refs.messagesContainer;
-                if (container) {
-                    container.scrollTop = container.scrollHeight;
-                }
-            });
-        }
-    }"
-    x-init="scrollToBottom()"
-    @scroll-to-bottom.window="scrollToBottom()"
->
+<div>
     {{-- Sticky input at top --}}
     @if($this->canPost())
         <div class="sticky top-0 z-10 px-4 py-3 bg-white border-b border-zinc-100">
@@ -38,20 +25,7 @@
     @endif
 
     {{-- Messages container --}}
-    <div x-ref="messagesContainer" class="max-h-[500px] overflow-y-auto">
-        {{-- Show earlier messages button --}}
-        @if($this->hasEarlierMessages && !$showingEarlier)
-            <div class="px-4 py-3 text-center">
-                <button
-                    type="button"
-                    wire:click="showEarlierMessages"
-                    class="text-sm text-green-700 hover:text-green-800 font-medium"
-                >
-                    Show earlier messages
-                </button>
-            </div>
-        @endif
-
+    <div class="max-h-[500px] overflow-y-auto">
         @if($this->posts->isEmpty())
             <div class="px-6 py-8 text-center">
                 <p class="text-sm text-zinc-500">No discussions yet. Be the first to start one!</p>
@@ -261,6 +235,19 @@
                     @endforeach
                 @endforeach
             </div>
+
+            {{-- Show earlier messages button --}}
+            @if($this->hasEarlierMessages && !$showingEarlier)
+                <div class="px-4 py-3 text-center">
+                    <button
+                        type="button"
+                        wire:click="showEarlierMessages"
+                        class="text-sm text-green-700 hover:text-green-800 font-medium"
+                    >
+                        Show older messages
+                    </button>
+                </div>
+            @endif
         @endif
     </div>
 </div>

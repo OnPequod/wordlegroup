@@ -26,7 +26,7 @@ class Nav extends Component
 
     public function getRouteMap()
     {
-        return collect($this->getPages())
+        $routes = collect($this->getPages())
             ->flatMap(function ($page, $pageName) {
 
                 if ($pageName === 'userGroups') {
@@ -40,6 +40,11 @@ class Nav extends Component
             })
             ->reject(fn($page) => $page === null)
             ->toArray();
+
+        // Add createGroup route for users with no groups
+        $routes['createGroup'] = route('group.create');
+
+        return $routes;
     }
 
     public function getPages()

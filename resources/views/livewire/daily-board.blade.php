@@ -5,6 +5,15 @@
         :url="route('board', $boardNumber)"
         description="See stats and results for Wordle #{{ $boardNumber }}."
     />
+    <x-layout.json-ld :schema="[
+        '@context' => 'https://schema.org',
+        '@type' => 'WebPage',
+        'name' => 'Wordle #' . $boardNumber . ' - Daily Stats',
+        'description' => 'See stats and results for Wordle #' . $boardNumber . '.',
+        'url' => route('board', $boardNumber),
+        'datePublished' => $this->puzzleDate->toIso8601String(),
+        'isPartOf' => ['@id' => url('/') . '#website'],
+    ]" />
 
     <div class="flex flex-col gap-8 pb-12">
         {{-- Header --}}
