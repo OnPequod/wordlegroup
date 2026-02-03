@@ -202,10 +202,10 @@
                                     <div class="text-xs text-zinc-500 mb-2">
                                         {{ $board['score'] === 7 ? 'X' : $board['score'] }}/6{{ $board['hard_mode'] ? '*' : '' }}
                                         @if($board['bot_skill'] !== null)
-                                            <span class="ml-1">S:{{ $board['bot_skill'] }}</span>
+                                            <span class="ml-1">S: {{ $board['bot_skill'] }}</span>
                                         @endif
                                         @if($board['bot_luck'] !== null)
-                                            <span class="ml-1">L:{{ $board['bot_luck'] }}</span>
+                                            <span class="ml-1">L: {{ $board['bot_luck'] }}</span>
                                         @endif
                                     </div>
                                     <div class="leading-tight text-xs">
