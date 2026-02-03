@@ -46,6 +46,8 @@ class RecordsMailScore
                 'board_number'      => $board['boardNumber'],
                 'board'             => $board['board'] ?? null,
                 'hard_mode'         => $board['hardMode'] ?? null,
+                'bot_skill_score'   => $board['botScores']['skill'] ?? null,
+                'bot_luck_score'    => $board['botScores']['luck'] ?? null,
             ]);
         } catch (\Exception $e) {
             return;
