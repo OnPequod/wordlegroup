@@ -52,10 +52,23 @@ class ActivityFeed extends Component
 
     }
 
+    public function getIsGroupMemberProperty(): bool
+    {
+        if (!$this->user) {
+            return false;
+        }
+
+        return $this->group->memberships()->where('user_id', $this->user->id)->exists();
+    }
+
     public function render()
     {
+        // Group members always see real names, regardless of anonymizePrivateUsers flag
+        $shouldAnonymize = $this->anonymizePrivateUsers && !$this->isGroupMember;
+
         return view('livewire.group.activity-feed', [
             'scores' => $this->getScores(),
+            'anonymizePrivateUsers' => $shouldAnonymize,
         ]);
     }
 }

@@ -29,8 +29,8 @@
         <div class="px-5 py-3 border-t border-zinc-100">
             <p class="text-sm text-zinc-700">
                 <span class="font-medium">
-                    @if($anonymizePrivateUsers && $score->user->private_profile)
-                        Anonymous User
+                    @if($anonymizePrivateUsers && !$score->user->public_profile)
+                        Anonymous
                     @else
                         {{ $score->user->name }}
                     @endif
