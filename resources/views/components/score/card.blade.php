@@ -37,7 +37,7 @@
 
         {{-- Skill/Luck scores --}}
         @if($score->hasBotScore())
-            <div class="text-center text-xs text-zinc-400 pt-1">
+            <div class="text-center text-xs text-zinc-400">
                 @if($score->bot_skill_score !== null)
                     <span>Skill {{ $score->bot_skill_score }}</span>
                 @endif
@@ -51,7 +51,7 @@
         @endif
 
         {{-- Date centered below board --}}
-        <div class="text-center text-xs text-zinc-400 pt-2 pb-6">
+        <div class="text-center text-xs text-zinc-400 pt-4 pb-6">
             {{ $score->date->format('M j, Y') }}
         </div>
     </a>
