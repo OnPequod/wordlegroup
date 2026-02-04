@@ -128,8 +128,13 @@ class Comment extends Model
             return true;
         }
 
-        // Group admin can delete
-        return $this->group->isAdmin($user);
+        // Group admin can delete (if comment belongs to a group)
+        if ($this->group) {
+            return $this->group->isAdmin($user);
+        }
+
+        // Public comments (no group) can only be deleted by author
+        return false;
     }
 
     public function canBeSeenBy(?User $user): bool
@@ -137,6 +142,11 @@ class Comment extends Model
         // If it's a score comment, follow score visibility rules
         if ($this->isScoreComment() && $this->commentable) {
             return $this->commentable->scoreCanBeSeenByUser($user);
+        }
+
+        // Public comments (no group) - anyone can see
+        if (!$this->group) {
+            return true;
         }
 
         // For discussion posts in public groups, anyone can see
