@@ -12,7 +12,7 @@ use Livewire\Component;
 
 class PublicLeaderboard extends Component
 {
-    public string $period = 'forever';
+    public string $period = 'month';
 
     // User settings for inline form
     public ?string $publicAlias = null;

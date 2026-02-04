@@ -35,12 +35,12 @@ class StatisticsTabs extends Component
     {
         $user = Auth::user();
         if (!$user) {
-            return 2; // Default to "This Month" (tab index 2)
+            return 3; // Default to "This Week" (tab index 3)
         }
 
         $membership = $this->group->memberships->firstWhere('user_id', $user->id);
         if (!$membership || !$membership->last_leaderboard_tab) {
-            return 2;
+            return 3;
         }
 
         // Map tab names to indices: 1=forever, 2=month, 3=week
@@ -48,7 +48,7 @@ class StatisticsTabs extends Component
             'forever' => 1,
             'month' => 2,
             'week' => 3,
-            default => 2,
+            default => 3,
         };
     }
 

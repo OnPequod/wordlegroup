@@ -192,11 +192,11 @@ it('shows name only when user enables show_name_on_public_leaderboard', function
 
 it('can switch between time periods', function () {
     Livewire::test(\App\Http\Livewire\PublicLeaderboard::class)
-        ->assertSet('period', 'forever')
-        ->call('setPeriod', 'month')
         ->assertSet('period', 'month')
         ->call('setPeriod', 'week')
-        ->assertSet('period', 'week');
+        ->assertSet('period', 'week')
+        ->call('setPeriod', 'forever')
+        ->assertSet('period', 'forever');
 });
 
 it('can update leaderboard settings via inline form', function () {
