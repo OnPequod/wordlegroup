@@ -114,17 +114,13 @@ App-specific provisioning lives in `ansible/` directory:
 - `ansible/vault/secrets.yml` - App secrets (encrypted)
 
 ### Deployment Workflow
+Production deploys automatically via GitHub Actions when pushing to `main`. Just push and it deploys.
+
 ```bash
-# First time: provision app resources on server
+# First time setup only:
 cd ansible
-make provision-production
-
-# Generate Kamal secrets (pulls from both WSM and app vaults)
-make secrets
-
-# Deploy with Kamal (from project root)
-cd ..
-kamal deploy -d production
+make provision-production  # Create DB, user, storage dirs on server
+make secrets               # Generate .kamal/secrets (for manual deploys if needed)
 ```
 
 ### Database Migration (from monolith.pequod.dev)
