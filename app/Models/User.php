@@ -342,59 +342,35 @@ class User extends Authenticatable
 
     public function updateStats()
     {
+        // Single query for aggregates
+        $aggregates = $this->dailyScores()->toBase()
+            ->selectRaw('COUNT(*) as cnt')
+            ->selectRaw('ROUND(AVG(score), 2) as mean')
+            ->selectRaw('ROUND(AVG(CASE WHEN bot_skill_score IS NOT NULL THEN bot_skill_score END), 1) as bot_skill')
+            ->selectRaw('ROUND(AVG(CASE WHEN bot_luck_score IS NOT NULL THEN bot_luck_score END), 1) as bot_luck')
+            ->first();
+
+        $scoreValues = $aggregates->cnt > 0
+            ? $this->dailyScores()->pluck('score')
+            : collect();
 
         $this->updateQuietly([
-            'daily_scores_recorded' => $this->dailyScores()->count(),
-            'daily_score_mean'      => $this->getMeanDailyScore(),
-            'daily_score_median'    => $this->getMedianDailyScore(),
-            'daily_score_mode'      => $this->getModeDailyScore(),
-            'score_distribution'    => $this->getScoreDistribution(),
-            'bot_skill_mean'        => $this->getBotSkillMean(),
-            'bot_luck_mean'         => $this->getBotLuckMean(),
+            'daily_scores_recorded' => $aggregates->cnt,
+            'daily_score_mean'      => $aggregates->mean ? (float) $aggregates->mean : null,
+            'daily_score_median'    => $scoreValues->isNotEmpty() ? (float) round($scoreValues->median(), 1) : null,
+            'daily_score_mode'      => $scoreValues->isNotEmpty() ? collect($scoreValues->mode())->min() : null,
+            'score_distribution'    => $this->buildScoreDistribution($scoreValues),
+            'bot_skill_mean'        => $aggregates->bot_skill ? (float) $aggregates->bot_skill : null,
+            'bot_luck_mean'         => $aggregates->bot_luck ? (float) $aggregates->bot_luck : null,
         ]);
     }
 
-    public function getBotSkillMean()
+    private function buildScoreDistribution($scoreValues): \Illuminate\Support\Collection
     {
-        $scoresWithBotSkill = $this->dailyScores->whereNotNull('bot_skill_score');
+        $counts = $scoreValues->countBy();
 
-        return $scoresWithBotSkill->isNotEmpty()
-            ? (float) round($scoresWithBotSkill->average('bot_skill_score'), 1)
-            : null;
-    }
-
-    public function getBotLuckMean()
-    {
-        $scoresWithBotLuck = $this->dailyScores->whereNotNull('bot_luck_score');
-
-        return $scoresWithBotLuck->isNotEmpty()
-            ? (float) round($scoresWithBotLuck->average('bot_luck_score'), 1)
-            : null;
-    }
-
-    public function getMeanDailyScore()
-    {
-        return $this->dailyScores->isNotEmpty() ? (float)round($this->dailyScores()->average('score'), 2) : null;
-    }
-
-    public function getMedianDailyScore()
-    {
-        return $this->dailyScores->isNotEmpty() ? (float)round($this->dailyScores->median('score'), 1) : null;
-    }
-
-    public function getModeDailyScore()
-    {
-        return $this->dailyScores->isNotEmpty() ? collect($this->dailyScores->mode('score'))->min() : null;
-    }
-
-    public function getScoreDistribution()
-    {
         return collect([1, 2, 3, 4, 5, 6, 7])
-            ->mapWithKeys(function ($number) {
-                return [
-                    ($number === 7 ? 'X' : $number) => $this->dailyScores->where('score', $number)->count(),
-                ];
-            });
+            ->mapWithKeys(fn($n) => [($n === 7 ? 'X' : $n) => $counts->get($n, 0)]);
     }
 
     public function validateAuthToken($authToken)

@@ -186,8 +186,11 @@ it('calculates user bot skill mean', function () {
         ]);
     }
 
-    $user = $user->fresh(['dailyScores']);
+    $user = $user->fresh();
 
-    expect($user->getBotSkillMean())->toBe(85.0);
-    expect($user->getBotLuckMean())->toBe(75.0);
+    $user->updateStats();
+    $user->refresh();
+
+    expect((float) $user->bot_skill_mean)->toBe(85.0);
+    expect((float) $user->bot_luck_mean)->toBe(75.0);
 });
