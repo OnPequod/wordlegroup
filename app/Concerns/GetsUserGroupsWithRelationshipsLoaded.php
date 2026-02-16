@@ -31,7 +31,7 @@ class GetsUserGroupsWithRelationshipsLoaded
         }
 
         // If this is the authenticated user, use the pre-loaded instance from the service
-        $authUser = app(AuthenticatedUserService::class)->get();
+        $authUser = app(AuthenticatedUserService::class)->getWithGroupDetails();
         if ($authUser && $authUser->id === $user->id) {
             $this->user = $authUser;
             $this->groups = $authUser->memberships->pluck('group');

@@ -302,6 +302,13 @@ class User extends Authenticatable
                      ->whereNull('email_verified_at');
     }
 
+    protected function pruning(): void
+    {
+        $this->scores()->delete();
+        $this->dailyScores()->detach();
+        $this->memberships()->delete();
+    }
+
     public function recordedGroupMembershipScores()
     {
         return $this->belongsToMany(Score::class, 'group_membership_score');

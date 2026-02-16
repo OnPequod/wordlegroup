@@ -11,6 +11,8 @@ class AuthenticatedUserService
 
     protected bool $loaded = false;
 
+    protected bool $deepLoaded = false;
+
     public function get(): ?User
     {
         if (!Auth::check()) {
@@ -19,15 +21,27 @@ class AuthenticatedUserService
 
         if (!$this->loaded) {
             $this->user = Auth::user();
-            $this->user->load([
-                'memberships.group.admin',
-                'memberships.group.memberships.user',
-                'memberships.group.activeLeaderboards',
-            ]);
+            $this->user->load(['memberships.group']);
             $this->loaded = true;
         }
 
         return $this->user;
+    }
+
+    public function getWithGroupDetails(): ?User
+    {
+        $user = $this->get();
+
+        if ($user && !$this->deepLoaded) {
+            $user->load([
+                'memberships.group.admin',
+                'memberships.group.memberships.user',
+                'memberships.group.activeLeaderboards',
+            ]);
+            $this->deepLoaded = true;
+        }
+
+        return $user;
     }
 
     public function check(): bool

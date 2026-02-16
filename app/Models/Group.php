@@ -73,6 +73,14 @@ class Group extends Model
                      ->whereNull('verified_at');
     }
 
+    protected function pruning(): void
+    {
+        $this->leaderboards()->delete();
+        $this->memberships()->delete();
+        $this->comments()->delete();
+        $this->pendingInvitations()->delete();
+    }
+
     public function updateStats()
     {
         $stats = $this->getSummaryStats(); // forever

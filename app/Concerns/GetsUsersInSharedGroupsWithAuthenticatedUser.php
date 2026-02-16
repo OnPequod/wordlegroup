@@ -13,7 +13,7 @@ class GetsUsersInSharedGroupsWithAuthenticatedUser
 
     public function __construct()
     {
-        $this->user = app(AuthenticatedUserService::class)->get();
+        $this->user = app(AuthenticatedUserService::class)->getWithGroupDetails();
         $this->setUsers($this->user);
     }
 
