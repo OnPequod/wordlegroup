@@ -19,7 +19,7 @@
                 tip="Make sure you use the email account you will send your scores from."
             />
             <x-form.input.text
-                wire:model="userName" name="groupName" :errors="$errors" label="Your Name" placeholder="Your Name"
+                wire:model="userName" name="userName" :errors="$errors" label="Your Name" placeholder="Your Name"
             />
         @endunless
         @unless(Auth::check())

@@ -2,16 +2,18 @@
 
 namespace App\Observers;
 
+use App\Jobs\UpdateGroupStatsJob;
+use App\Jobs\UpdateUserStatsJob;
 use App\Models\GroupMembership;
 
 class GroupMembershipObserver
 {
-    public function created(GroupMembership $membership)
+    public function created(GroupMembership $membership): void
     {
         $this->runEvents($membership);
     }
 
-    public function updated(GroupMembership $membership)
+    public function updated(GroupMembership $membership): void
     {
         // Skip expensive recalculation for non-score-related updates
         $ignoredFields = ['last_viewed_discussions_at', 'updated_at'];
@@ -25,9 +27,14 @@ class GroupMembershipObserver
         $this->runEvents($membership);
     }
 
-    public function runEvents(GroupMembership $membership)
+    public function runEvents(GroupMembership $membership): void
     {
-        $membership->user->updateStats();
-        $membership->user->memberships->each(fn($membership) => $membership->group->updateStats());
+        UpdateUserStatsJob::dispatch($membership->user);
+
+        $membership->user->memberships()->with('group')->get()->each(function ($memberRecord): void {
+            if ($memberRecord->group) {
+                UpdateGroupStatsJob::dispatch($memberRecord->group);
+            }
+        });
     }
 }

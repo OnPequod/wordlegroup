@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Group;
 
+use App\Jobs\UpdateGroupStatsJob;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +41,7 @@ class MemberList extends Component
             $membership->delete();
         }
 
-        $this->group->fresh()->updateStats();
+        UpdateGroupStatsJob::dispatch($this->group->fresh());
 
         session()->flash('message', $user->name . ' has been removed from the group.');
 
