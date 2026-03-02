@@ -6,9 +6,11 @@ use App\Concerns\RecordsMailScore;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class RecordScoreFromEmail
+class RecordScoreFromEmail implements ShouldQueue
 {
-    public function handle($event)
+    use InteractsWithQueue;
+
+    public function handle($event): void
     {
         app(RecordsMailScore::class)->record($event->message);
     }

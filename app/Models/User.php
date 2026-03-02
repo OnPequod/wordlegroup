@@ -210,7 +210,7 @@ class User extends Authenticatable
         ]);
 
         Mail::to($this->email)
-            ->send(new NudgeUser($this, $nudgedBy));
+            ->queue(new NudgeUser($this, $nudgedBy));
     }
 
     public function pendingGroupInvitations()

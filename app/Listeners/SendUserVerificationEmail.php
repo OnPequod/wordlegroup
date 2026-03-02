@@ -2,15 +2,14 @@
 
 namespace App\Listeners;
 
-use App\Mail\UnverifiedGroupCreated;
-use App\Mail\UserVerification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Mail;
 
-class SendUserVerificationEmail
+class SendUserVerificationEmail implements ShouldQueue
 {
-    public function handle($event)
+    use InteractsWithQueue;
+
+    public function handle($event): void
     {
         $event->user->sendEmailVerificationNotification();
     }
