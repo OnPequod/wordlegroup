@@ -20,9 +20,6 @@ class SyncScoreDataJob implements ShouldQueue
         $this->score->syncToDailyScores();
         $this->score->syncToGroupMemberships();
         $this->score->user->updateStats();
-
-        $this->score->user->memberships->each(function ($membership) {
-            UpdateGroupStatsJob::dispatch($membership->group);
-        });
+        UpdateGroupStatsJob::dispatchForUser($this->score->user);
     }
 }

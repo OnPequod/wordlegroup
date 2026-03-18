@@ -6,6 +6,7 @@ use App\Concerns\WordleDate;
 use App\Models\DailySummary;
 use App\Models\Puzzle;
 use App\Models\PublicLeaderboard as PublicLeaderboardModel;
+use App\Models\User;
 use App\Rules\NoProfanity;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -22,6 +23,7 @@ class PublicLeaderboard extends Component
     public function mount(): void
     {
         if (Auth::check()) {
+            /** @var User $user */
             $user = Auth::user();
             $this->publicAlias = $user->public_alias;
             $this->showOnPublicLeaderboard = (bool) $user->show_on_public_leaderboard;
@@ -35,6 +37,8 @@ class PublicLeaderboard extends Component
             return;
         }
 
+        $this->resetErrorBag('showOnPublicLeaderboard');
+
         // Validate public alias for profanity
         $rules = [];
         if ($this->publicAlias) {
@@ -45,12 +49,8 @@ class PublicLeaderboard extends Component
             $this->validate($rules);
         }
 
+        /** @var User $user */
         $user = Auth::user();
-
-        // Prevent enabling public leaderboard if account is too new
-        if ($this->showOnPublicLeaderboard && !$user->canParticipateInPublicLeaderboard()) {
-            $this->showOnPublicLeaderboard = false;
-        }
 
         $user->public_alias = $this->publicAlias;
         $user->show_on_public_leaderboard = $this->showOnPublicLeaderboard;
@@ -108,7 +108,10 @@ class PublicLeaderboard extends Component
             return [];
         }
 
-        return Auth::user()->scores()->pluck('board_number')->toArray();
+        /** @var User $user */
+        $user = Auth::user();
+
+        return $user->scores()->pluck('board_number')->toArray();
     }
 
     public function canViewAnswer(int $boardNumber): bool

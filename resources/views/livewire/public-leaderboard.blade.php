@@ -63,7 +63,7 @@
                     {{-- Show my scores on leaderboard --}}
                     <label
                         for="showOnPublicLeaderboard"
-                        class="flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer hover:bg-zinc-50 transition border border-zinc-200"
+                        class="flex items-center gap-3 rounded-lg border border-zinc-200 px-3 py-2 transition hover:bg-zinc-50"
                     >
                         <input
                             type="checkbox"

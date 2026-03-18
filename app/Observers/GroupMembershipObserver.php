@@ -30,11 +30,6 @@ class GroupMembershipObserver
     public function runEvents(GroupMembership $membership): void
     {
         UpdateUserStatsJob::dispatch($membership->user);
-
-        $membership->user->memberships()->with('group')->get()->each(function ($memberRecord): void {
-            if ($memberRecord->group) {
-                UpdateGroupStatsJob::dispatch($memberRecord->group);
-            }
-        });
+        UpdateGroupStatsJob::dispatchForUser($membership->user);
     }
 }

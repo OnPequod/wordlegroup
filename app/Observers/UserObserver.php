@@ -13,10 +13,6 @@ class UserObserver
             return;
         }
 
-        $user->memberships()->with('group')->get()->each(function ($membership): void {
-            if ($membership->group) {
-                UpdateGroupStatsJob::dispatch($membership->group);
-            }
-        });
+        UpdateGroupStatsJob::dispatchForUser($user);
     }
 }

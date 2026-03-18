@@ -2,13 +2,14 @@
 
 namespace App\Http\Livewire\Account;
 
+use App\Models\User;
 use App\Rules\NoProfanity;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Onboarding extends Component
 {
-    public $user;
+    public User $user;
 
     public string $name = '';
     public ?string $publicAlias = null;
@@ -58,14 +59,11 @@ class Onboarding extends Component
 
     public function complete(): mixed
     {
+        $this->resetErrorBag('showOnPublicLeaderboard');
         $this->validate();
 
+        /** @var User $user */
         $user = Auth::user();
-
-        // Prevent enabling public leaderboard if account is too new
-        if ($this->showOnPublicLeaderboard && !$user->canParticipateInPublicLeaderboard()) {
-            $this->showOnPublicLeaderboard = false;
-        }
 
         $user->name = $this->name;
         $user->public_alias = $this->publicAlias;
@@ -85,6 +83,7 @@ class Onboarding extends Component
 
     public function dismiss(): mixed
     {
+        /** @var User $user */
         $user = Auth::user();
         $user->markOnboardingComplete();
 

@@ -2,13 +2,14 @@
 
 namespace App\Http\Livewire\Account;
 
+use App\Models\User;
 use App\Rules\NoProfanity;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Settings extends Component
 {
-    public $user;
+    public User $user;
 
     // Form fields
     public string $name = '';
@@ -57,17 +58,13 @@ class Settings extends Component
 
     public function update()
     {
+        $this->resetErrorBag('showOnPublicLeaderboard');
         $this->validate();
 
         // Check if email is being changed
         if ($this->email !== $this->originalEmail && !$this->confirmEmailChange) {
             $this->confirmEmailChange = true;
             return;
-        }
-
-        // Prevent enabling public leaderboard if account is too new
-        if ($this->showOnPublicLeaderboard && !$this->user->canParticipateInPublicLeaderboard()) {
-            $this->showOnPublicLeaderboard = false;
         }
 
         $this->user->name = $this->name;

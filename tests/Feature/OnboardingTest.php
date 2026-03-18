@@ -61,6 +61,21 @@ it('completes onboarding and redirects to account home', function () {
         ->and($user->public_profile)->toBeTruthy();
 });
 
+it('allows new users to enable public leaderboard participation in account settings', function () {
+    $user = User::factory()->create([
+        'show_on_public_leaderboard' => false,
+        'created_at' => now(),
+    ]);
+
+    $this->actingAs($user);
+
+    Livewire::test(\App\Http\Livewire\Account\Settings::class)
+        ->set('showOnPublicLeaderboard', true)
+        ->call('update');
+
+    expect((bool) $user->fresh()->show_on_public_leaderboard)->toBeTrue();
+});
+
 it('allows logout without completing onboarding', function () {
     $user = User::factory()->needsOnboarding()->create();
 

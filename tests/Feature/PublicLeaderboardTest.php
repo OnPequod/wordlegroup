@@ -74,6 +74,31 @@ it('only includes opted-in users in public leaderboard', function () {
     expect($userIds)->not->toContain($optedOutUser->id);
 });
 
+it('includes newly registered opted-in users in public leaderboards', function () {
+    $user = User::factory()->create([
+        'show_on_public_leaderboard' => true,
+        'show_name_on_public_leaderboard' => true,
+        'created_at' => now(),
+    ]);
+
+    Score::withoutEvents(function () use ($user) {
+        Score::factory()->create([
+            'user_id' => $user->id,
+            'recording_user_id' => $user->id,
+        ]);
+    });
+
+    $user->dailyScores()->syncWithoutDetaching([
+        $user->scores->first()->id => ['board_number' => $user->scores->first()->board_number],
+    ]);
+
+    app(UpdatesPublicLeaderboards::class)->update(now());
+
+    $leaderboard = PublicLeaderboard::getForever();
+
+    expect($leaderboard->leaderboard->pluck('user_id')->toArray())->toContain($user->id);
+});
+
 it('uses public alias instead of name when set', function () {
     $userWithAlias = User::factory()->create([
         'show_on_public_leaderboard' => true,
@@ -294,17 +319,12 @@ it('defaults to not showing on public leaderboard', function () {
     expect((bool) $user->fresh()->show_name_on_public_leaderboard)->toBeFalse();
 });
 
-it('prevents new users from enabling public leaderboard participation', function () {
-    // New user (created now) cannot participate
+it('allows new users to enable public leaderboard participation', function () {
     $newUser = User::factory()->create([
         'show_on_public_leaderboard' => false,
-        'created_at' => now(), // Just created
+        'created_at' => now(),
     ]);
 
-    expect($newUser->canParticipateInPublicLeaderboard())->toBeFalse();
-    expect($newUser->daysUntilCanParticipateInPublicLeaderboard())->toBeGreaterThan(0);
-
-    // Try to enable via Livewire - should be prevented
     $this->actingAs($newUser);
 
     Livewire::test(\App\Http\Livewire\PublicLeaderboard::class)
@@ -312,18 +332,14 @@ it('prevents new users from enabling public leaderboard participation', function
         ->call('saveSettings');
 
     $newUser->refresh();
-    expect((bool) $newUser->show_on_public_leaderboard)->toBeFalse();
+    expect((bool) $newUser->show_on_public_leaderboard)->toBeTrue();
 });
 
 it('allows established users to enable public leaderboard participation', function () {
-    // User registered 2 weeks ago can participate
     $oldUser = User::factory()->create([
         'show_on_public_leaderboard' => false,
         'created_at' => now()->subWeeks(2),
     ]);
-
-    expect($oldUser->canParticipateInPublicLeaderboard())->toBeTrue();
-    expect($oldUser->daysUntilCanParticipateInPublicLeaderboard())->toBe(0);
 
     $this->actingAs($oldUser);
 
