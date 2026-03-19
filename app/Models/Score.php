@@ -35,6 +35,8 @@ class Score extends Model
 
     public function getBoardAttribute($value)
     {
+        $value = Str::replace('🟦', '🟨', $value);
+
         return Str::replace('⬛', '⬜', $value);
     }
 

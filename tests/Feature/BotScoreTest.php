@@ -78,6 +78,32 @@ Luck -5/99";
     expect($result['botScores']['luck'])->toBeNull();
 });
 
+it('parses danish Wørdle shares with blue tiles', function () {
+    $boardText = "Wørdle #1523 5/6
+
+⬛⬛⬛🟦🟦
+⬛⬛🟦⬛⬛
+⬛⬛⬛⬛⬛
+🟦🟩🟩⬛🟦
+🟩🟩🟩🟩🟩";
+
+    $result = app(WordleBoard::class)->parse($boardText);
+
+    expect($result['score'])->toBe('5');
+    expect($result['scoreNumber'])->toBe(5);
+    expect($result['boardNumber'])->toBe(1523);
+    expect($result['valid'])->toBeTrue();
+    expect($result['board'])->toContain('🟨')->not->toContain('🟦');
+});
+
+it('normalizes blue tiles when reading stored boards', function () {
+    $score = new Score([
+        'board' => "⬛⬛⬛🟦🟦\n🟩🟩🟩🟩🟩",
+    ]);
+
+    expect($score->board)->toBe("⬜⬜⬜🟨🟨\n🟩🟩🟩🟩🟩");
+});
+
 /*
 |--------------------------------------------------------------------------
 | Bot Score Recording Tests

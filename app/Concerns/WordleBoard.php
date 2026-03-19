@@ -129,6 +129,8 @@ class WordleBoard
 
     public function extractBoard($entry, $score)
     {
+        $entry = $this->normalizeBoardTiles($entry);
+
         preg_match_all('/([⬜🟨🟩⬛].*[⬜🟨🟩⬛])/s', $entry, $matches);
 
         if (!isset($matches[1][0])) {
@@ -148,10 +150,17 @@ class WordleBoard
 
     public function getBoardFromString($board, $score)
     {
+        $board = $this->normalizeBoardTiles($board);
+
         // Get only the wordle characters
         $board = trim(preg_replace("/[^⬜🟨🟩⬛]/su", "", $board));
 
         return collect(mb_str_split($board, 5))->take($score)->implode("\r\n");
+    }
+
+    protected function normalizeBoardTiles(string $board): string
+    {
+        return Str::replace('🟦', '🟨', $board);
     }
 
     public function chunkSplitUnicode($str, $l = 76, $e = "\r\n")
