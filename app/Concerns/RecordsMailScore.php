@@ -3,8 +3,8 @@
 namespace App\Concerns;
 
 use App\Models\MailScoreMessage;
-use App\Models\Score;
 use App\Models\User;
+use App\Services\ScoreRecorder;
 use PhpMimeMailParser\Parser;
 
 class RecordsMailScore
@@ -32,23 +32,11 @@ class RecordsMailScore
                 return;
             }
 
-            // Get the message text and parse the board.
-            $emailText = $parser->getMessageBody('text');
-
-            $board = app(WordleBoard::class)->parse($emailText);
-
-            // Record the board.
-            Score::create([
-                'user_id'           => $user->id,
-                'recording_user_id' => $user->id,
-                'date'              => $board['date'],
-                'score'             => $board['scoreNumber'],
-                'board_number'      => $board['boardNumber'],
-                'board'             => $board['board'] ?? null,
-                'hard_mode'         => $board['hardMode'] ?? null,
-                'bot_skill_score'   => $board['botScores']['skill'] ?? null,
-                'bot_luck_score'    => $board['botScores']['luck'] ?? null,
-            ]);
+            app(ScoreRecorder::class)->recordFromBoard(
+                $user,
+                $parser->getMessageBody('text'),
+                $user,
+            );
         } catch (\Exception $e) {
             return;
         }

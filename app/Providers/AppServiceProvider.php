@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Concerns\GetsUserGroupsWithRelationshipsLoaded;
 use App\Concerns\GetsUsersInSharedGroupsWithAuthenticatedUser;
+use App\Database\Connectors\MySqlConnector;
 use App\Services\AuthenticatedUserService;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->bind('db.connector.mysql', MySqlConnector::class);
+
         $this->app->singleton(AuthenticatedUserService::class, function ($app) {
             return new AuthenticatedUserService();
         });

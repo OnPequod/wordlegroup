@@ -4,11 +4,11 @@ namespace App\Http\Livewire\Score;
 
 use App\Concerns\WordleBoard;
 use App\Models\Group;
-use App\Models\Score;
 use App\Models\User;
 use App\Rules\BoardNumberMustBeValid;
 use App\Rules\DateMustBeValid;
 use App\Rules\ValidWordleBoard;
+use App\Services\ScoreRecorder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -70,36 +70,15 @@ class RecordForm extends Component
             'board' => ['required', new ValidWordleBoard()],
         ]);
 
-        $data = app(WordleBoard::class)->parse($this->board);
+        app(ScoreRecorder::class)->recordFromBoard(
+            $this->recordedUser(),
+            $this->board,
+            $this->user,
+        );
 
-        $this->storeScore([
-            'score'         => $data['scoreNumber'],
-            'boardNumber'   => $data['boardNumber'],
-            'date'          => $data['date'],
-            'board'         => $data['board'],
-            'hardMode'      => $data['hardMode'] ?? null,
-            'botSkillScore' => $data['botScores']['skill'] ?? null,
-            'botLuckScore'  => $data['botScores']['luck'] ?? null,
-        ]);
-    }
+        session()->flash('message', 'Score recorded.');
 
-    public function storeScore($data)
-    {
-        $date = Carbon::parse($data['date']);
-
-        Score::create([
-            'user_id'           => $this->recordForUserId,
-            'recording_user_id' => $this->user->id,
-            'date'              => $date->format('Y-m-d'),
-            'score'             => $data['score'],
-            'board_number'      => $data['boardNumber'],
-            'board'             => $data['board'] ?? null,
-            'hard_mode'         => $data['hardMode'] ?? null,
-            'bot_skill_score'   => $data['botSkillScore'] ?? null,
-            'bot_luck_score'    => $data['botLuckScore'] ?? null,
-        ]);
-
-        $this->dispatch('scoreRecorded');
+        return $this->redirect(route('account.home'));
     }
 
     public function recordScoreManually()
@@ -110,16 +89,18 @@ class RecordForm extends Component
             'score'       => ['required_without:bricked'],
         ]);
 
-        $this->storeScore([
+        app(ScoreRecorder::class)->record($this->recordedUser(), [
             'score'        => $this->bricked ? 7 : $this->score,
             'boardNumber'  => $this->boardNumber ?? app(WordleBoard::class)->getBoardNumberFromDate($this->date),
             'date'         => $this->date,
             'hardMode'     => $this->hardMode ?? false,
             'botSkillScore' => $this->botSkillScore ?: null,
             'botLuckScore'  => $this->botLuckScore ?: null,
-        ]);
+        ], $this->user);
 
-        $this->dispatch('scoreRecorded');
+        session()->flash('message', 'Score recorded.');
+
+        return $this->redirect(route('account.home'));
     }
 
     public function updatedDate($date)
@@ -137,6 +118,15 @@ class RecordForm extends Component
     public function updatedRecordForUserId($userId)
     {
         $this->recordingForSelf = (int)$userId === Auth::user()->id;
+    }
+
+    protected function recordedUser(): User
+    {
+        if ((int) $this->recordForUserId === $this->user->id) {
+            return $this->user;
+        }
+
+        return User::query()->findOrFail($this->recordForUserId);
     }
 
     public function render()

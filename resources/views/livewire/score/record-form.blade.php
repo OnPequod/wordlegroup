@@ -44,7 +44,7 @@
                         label="Board"
                         :rows="6"
                         placeholder="Wordle 250 3/6..."
-                        wire:model.blur="board"
+                        wire:model.defer="board"
                         class="font-mono text-xs"
                     />
                     <div class="mt-4 flex items-center justify-between">
@@ -81,7 +81,7 @@
                                 label="Date"
                                 :placeholder="$date"
                                 :options="['defaultDate' => $date]"
-                                wire:model="date"
+                                wire:model.defer="date"
                             />
                             <x-form.input.text
                                 :errors="$errors"
@@ -91,7 +91,7 @@
                                 placeholder="123"
                                 min="1"
                                 max="10000"
-                                wire:model.blur="boardNumber"
+                                wire:model.defer="boardNumber"
                             />
                         </div>
                         <x-form.input.text
@@ -102,18 +102,18 @@
                             placeholder="3"
                             min="1"
                             max="6"
-                            wire:model.blur="score"
+                            wire:model.defer="score"
                         />
                         <div class="flex items-center gap-6">
                             <x-form.input.checkbox
                                 name="bricked"
                                 label="X/6 (Missed)"
-                                wire:model="bricked"
+                                wire:model.defer="bricked"
                             />
                             <x-form.input.checkbox
                                 name="hardMode"
                                 label="Hard Mode"
-                                wire:model="hardMode"
+                                wire:model.defer="hardMode"
                             />
                         </div>
 
@@ -129,7 +129,7 @@
                                     placeholder="0-99"
                                     min="0"
                                     max="99"
-                                    wire:model.blur="botSkillScore"
+                                    wire:model.defer="botSkillScore"
                                 />
                                 <x-form.input.text
                                     :errors="$errors"
@@ -139,7 +139,7 @@
                                     placeholder="0-99"
                                     min="0"
                                     max="99"
-                                    wire:model.blur="botLuckScore"
+                                    wire:model.defer="botLuckScore"
                                 />
                             </div>
                         </div>
@@ -192,7 +192,7 @@
 ⬜⬜⬜⬜⬜
 ⬜⬜⬜⬜⬜
 ⬜⬜⬜⬜⬜"
-                            wire:model.blur="board"
+                            wire:model.defer="board"
                             class="font-mono text-xs"
                         />
                     </div>
@@ -235,7 +235,7 @@
                                 label="Date"
                                 :placeholder="$date"
                                 :options="['defaultDate' => $date]"
-                                wire:model="date"
+                                wire:model.defer="date"
                             />
                             <x-form.input.text
                                 :errors="$errors"
@@ -246,7 +246,7 @@
                                 placeholder="1234"
                                 min="1"
                                 max="10000"
-                                wire:model.blur="boardNumber"
+                                wire:model.defer="boardNumber"
                             />
                         </div>
 
@@ -259,19 +259,19 @@
                                 placeholder="4"
                                 min="1"
                                 max="6"
-                                wire:model.blur="score"
+                                wire:model.defer="score"
                             />
                             <div class="flex items-end pb-3">
                                 <div class="flex items-center gap-6">
                                     <x-form.input.checkbox
                                         name="bricked"
                                         label="X/6 (Missed)"
-                                        wire:model="bricked"
+                                        wire:model.defer="bricked"
                                     />
                                     <x-form.input.checkbox
                                         name="hardMode"
                                         label="Hard Mode"
-                                        wire:model="hardMode"
+                                        wire:model.defer="hardMode"
                                     />
                                 </div>
                             </div>
@@ -293,7 +293,7 @@
                                     placeholder="85"
                                     min="0"
                                     max="99"
-                                    wire:model.blur="botSkillScore"
+                                    wire:model.defer="botSkillScore"
                                 />
                                 <x-form.input.text
                                     :errors="$errors"
@@ -304,7 +304,7 @@
                                     placeholder="72"
                                     min="0"
                                     max="99"
-                                    wire:model.blur="botLuckScore"
+                                    wire:model.defer="botLuckScore"
                                 />
                             </div>
                         </div>

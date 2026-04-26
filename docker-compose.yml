@@ -65,9 +65,9 @@ services:
     container_name: wordle-group-mysql
     restart: on-failure
     environment:
-      MYSQL_DATABASE: wordlegroup_prod_copy
-      MYSQL_USER: wordlegroup
-      MYSQL_PASSWORD: wordlegroup-dev-secret
+      MYSQL_DATABASE: wordle_group
+      MYSQL_USER: appdocker
+      MYSQL_PASSWORD: appdocker
       MYSQL_ROOT_PASSWORD: wordlegroup-dev-secret
     volumes:
       - wordle-group-mysql-data:/var/lib/mysql
