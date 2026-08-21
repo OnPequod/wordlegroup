@@ -8,6 +8,7 @@
 .env.backup
 .env.prod_copy
 .env.local
+.env.herd
 .env.production
 .phpunit.result.cache
 docker-compose.override.yml
