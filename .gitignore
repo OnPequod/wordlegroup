@@ -21,7 +21,10 @@ yarn-error.log
 
 # Deployment
 .kamal/secrets
-ansible/vault/secrets.yml
+# ansible/vault/secrets.yml is COMMITTED, encrypted, deliberately. It is
+# ansible-vault ciphertext, and the app's environment must be reconstructible
+# from the repo alone — ignoring it is why production's APP_KEY existed only
+# inside a running container until 2026-08-21.
 *.pem
 .kamal/secrets-common
 .claude/
