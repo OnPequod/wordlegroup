@@ -151,7 +151,7 @@ class User extends Authenticatable
     public function getAverageScoreAttribute()
     {
         return $this->scores()
-                    ->orderByRaw("FIELD(recording_user_id, {$this->id}) DESC")
+                    ->orderByRaw('(recording_user_id = ?) DESC', [$this->id])
                     ->orderByDesc('board_number')
                     ->groupBy('board_number')
                     ->get();

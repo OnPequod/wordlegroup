@@ -131,7 +131,7 @@ class Score extends Model
 
     public function scopeRecordingUserScoreFirst($query, $userId)
     {
-        return $query->orderByRaw("FIELD(recording_user_id, '{$userId}') DESC");
+        return $query->orderByRaw('(recording_user_id = ?) DESC', [$userId]);
     }
 
     public function scoreCannotBeSeenByUser(?User $viewingUser = null)
