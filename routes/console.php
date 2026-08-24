@@ -28,8 +28,13 @@ Artisan::command('inspire', function () {
 Schedule::command('model:prune')->daily();
 
 // Database backups to S3
+// HOURLY as of 2026-08-24 — RPO drops from 24 hours to 1, and the homelab
+// mirror restores it hourly (infra: provision-wordlegroup-mirror.yml). Still
+// the rotating weekday name: each overwrite hides the previous version, and
+// the bucket's 30-day lifecycle rule ages those out, so intraday history
+// costs nothing to keep.
 Schedule::command('backup:database daily')
-    ->dailyAt('03:00')
+    ->hourly()
     ->onOneServer()
     ->withoutOverlapping();
 
