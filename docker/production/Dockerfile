@@ -50,6 +50,7 @@ RUN apk add --no-cache \
     nginx \
     supervisor \
     mysql-client \
+    postgresql17-client \
     libzip-dev \
     icu-dev \
     oniguruma-dev \

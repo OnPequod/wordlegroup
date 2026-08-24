@@ -30,6 +30,14 @@ class BackupDatabase extends Command
             return self::FAILURE;
         }
 
+        $connection = config('database.default');
+        $db = config("database.connections.{$connection}");
+
+        if (!in_array($db['driver'], ['mysql', 'mariadb', 'pgsql'])) {
+            $this->error("No dump strategy for driver '{$db['driver']}' (connection '{$connection}').");
+            return self::FAILURE;
+        }
+
         $this->info("Starting {$type} database backup...");
 
         $filename = $this->getFilename($type);
@@ -41,18 +49,32 @@ class BackupDatabase extends Command
             mkdir(storage_path('app'), 0755, true);
         }
 
-        // Build mysqldump command
-        $host = config('database.connections.mysql.host');
-        $port = config('database.connections.mysql.port');
-        $username = config('database.connections.mysql.username');
-        $password = config('database.connections.mysql.password');
-        $database = config('database.connections.mysql.database');
+        $this->info("Dumping database: {$db['database']}");
 
-        $this->info("Dumping database: {$database}");
+        // The password travels in the environment, never in argv where any user on
+        // the host can read it out of `ps`.
+        if ($db['driver'] === 'pgsql') {
+            $env = ['PGPASSWORD' => $db['password']];
+            $dump = sprintf(
+                'pg_dump --host=%s --port=%s --username=%s --no-owner --no-acl %s',
+                escapeshellarg($db['host']),
+                escapeshellarg((string) $db['port']),
+                escapeshellarg($db['username']),
+                escapeshellarg($db['database'])
+            );
+        } else {
+            $env = ['MYSQL_PWD' => $db['password']];
+            $dump = sprintf(
+                'mysqldump -h %s -P %s -u %s --single-transaction --quick --lock-tables=false --ssl=false %s',
+                escapeshellarg($db['host']),
+                escapeshellarg((string) $db['port']),
+                escapeshellarg($db['username']),
+                escapeshellarg($db['database'])
+            );
+        }
 
-        $result = Process::timeout(300)->run(
-            "mysqldump -h {$host} -P {$port} -u {$username} -p'{$password}' " .
-            "--single-transaction --quick --lock-tables=false --ssl=false {$database} | gzip > {$tempFile}"
+        $result = Process::timeout(300)->env($env)->run(
+            "{$dump} | gzip > " . escapeshellarg($tempFile)
         );
 
         if (!$result->successful()) {
@@ -67,8 +89,18 @@ class BackupDatabase extends Command
             return self::FAILURE;
         }
 
+        // A pipeline's exit code is gzip's, not the dump tool's — a dump that dies
+        // halfway still yields a valid, non-empty gzip that would replace a good
+        // backup. Only the dump tool's own completion trailer proves the stream ran
+        // to the end, so refuse to upload anything that lacks it.
+        if (!$this->dumpIsComplete($tempFile, $db['driver'])) {
+            $this->error("Dump is truncated or corrupt (no completion trailer); refusing to upload it.");
+            @unlink($tempFile);
+            return self::FAILURE;
+        }
+
         $fileSize = $this->formatBytes(filesize($tempFile));
-        $this->info("Backup created: {$fileSize}");
+        $this->info("Backup created and verified: {$fileSize}");
 
         // Upload to Backblaze (overwrites existing file with same name)
         $this->info("Uploading to Backblaze: {$s3Path}");
@@ -88,6 +120,25 @@ class BackupDatabase extends Command
         $this->info("{$type} backup completed successfully: {$filename}");
 
         return self::SUCCESS;
+    }
+
+    protected function dumpIsComplete(string $gzFile, string $driver): bool
+    {
+        $integrity = Process::timeout(120)->run('gzip -t ' . escapeshellarg($gzFile));
+
+        if (!$integrity->successful()) {
+            return false;
+        }
+
+        $trailer = Process::timeout(120)->run(
+            'gzip -cd ' . escapeshellarg($gzFile) . ' | tail -c 512'
+        );
+
+        $marker = $driver === 'pgsql'
+            ? 'PostgreSQL database dump complete'
+            : 'Dump completed';
+
+        return $trailer->successful() && str_contains($trailer->output(), $marker);
     }
 
     /**
