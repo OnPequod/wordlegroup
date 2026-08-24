@@ -106,33 +106,3 @@ jobs:
           DB_PASSWORD: password
         run: php artisan test
 
-  build:
-    runs-on: ubuntu-latest
-    needs: tests
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/production/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/onpequod/wordlegroup:${{ github.sha }}
-            ghcr.io/onpequod/wordlegroup:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
