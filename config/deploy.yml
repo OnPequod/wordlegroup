@@ -1,3 +1,5 @@
+# ⚠️ RETIRED 2026-08-24 — Kamal is gone; production deploys via Laravel Forge
+# push-to-deploy on `main`. dockolith.pequod.dev no longer resolves. Kept for history.
 # Kamal 2 deployment configuration
 # Default: Staging environment
 # For production: kamal deploy -d production

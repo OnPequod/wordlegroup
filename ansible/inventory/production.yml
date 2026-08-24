@@ -1,4 +1,19 @@
 ---
+# ⚠️ RETIRED 2026-08-24 — DO NOT RUN.
+#
+# This inventory describes the Docker/Kamal era: a `deploy` user on
+# dockolith.pequod.dev, provisioned as a Docker host with MySQL. That box was
+# rebuilt onto Laravel Forge + PostgreSQL 17 on 2026-08-24 and is now reached as
+# `ssh wordlegroup` (wordlegroup-ssh.pequod.dev).
+#
+# It is deliberately NOT repointed at the live server. The playbooks that consume
+# this inventory provision a Docker host and would fight Forge for ownership of
+# nginx, PHP-FPM and the database. `dockolith.pequod.dev` no longer resolves —
+# its DNS record was deleted the same day — so an accidental run fails to connect
+# rather than reaching production. That is the intended safety, not a bug.
+#
+# Server-side infrastructure now lives in ~/Projects/infra. Deployment is Forge
+# push-to-deploy on `main`.
 all:
   children:
     production:

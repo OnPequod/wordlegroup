@@ -191,22 +191,20 @@ The app runs at http://localhost:8033
 └─────────────────────┬───────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────┐
-│              dockolith.pequod.dev                       │
+│         wordlegroup-ssh.pequod.dev  (Forge)             │
 │  ┌────────────────────────────────────────────────────┐ │
-│  │              kamal-proxy                           │ │
-│  │         (SSL termination)                          │ │
+│  │           nginx (Forge-managed vhost)              │ │
+│  │              SSL termination                       │ │
 │  └────────────────────┬───────────────────────────────┘ │
 │                       │                                 │
 │  ┌────────────────────▼───────────────────────────────┐ │
-│  │         wordle-group container                     │ │
-│  │  ┌─────────┐  ┌─────────┐  ┌─────────────────────┐ │ │
-│  │  │  nginx  │──│ PHP-FPM │  │  Horizon (worker)   │ │ │
-│  │  └─────────┘  └─────────┘  └─────────────────────┘ │ │
+│  │  PHP-FPM 8.4   │  Horizon (daemon)  │  scheduler   │ │
+│  │                        all host services           │ │
 │  └────────────────────────────────────────────────────┘ │
 │                       │                                 │
 │  ┌────────────────────▼───────────────────────────────┐ │
-│  │     MySQL 8.4          │       Redis               │ │
-│  │  (host.docker.internal)                            │ │
+│  │   PostgreSQL 17        │       Redis               │ │
+│  │        both on 127.0.0.1, no containers            │ │
 │  └────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -220,14 +218,11 @@ ansible/                    # Deployment automation
 ├── vault/                  # Encrypted secrets
 └── Makefile                # Convenience commands
 
-config/
-├── deploy.yml              # Kamal staging config
-└── deploy.production.yml   # Kamal production config
-
-docker/
-└── production/             # Production Docker configs
-    ├── Dockerfile
-    ├── nginx.conf
-    ├── supervisord.conf
-    └── ...
+config/                     # Laravel config (deploy.*.yml are RETIRED Kamal)
+docker/                     # RETIRED — local Sail/Herd only; production has no Docker
 ```
+
+> **Deployment is Laravel Forge, push-to-deploy on `main`** (since 2026-08-24).
+> The `ansible/`, `config/deploy*.yml` and `docker/production/` trees are the
+> retired Kamal setup, kept only for history. Server infrastructure lives in
+> `~/Projects/infra`.
