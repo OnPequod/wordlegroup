@@ -28,25 +28,13 @@ Artisan::command('inspire', function () {
 Schedule::command('model:prune')->daily();
 
 // Database backups to S3
-// HOURLY as of 2026-08-24 — RPO drops from 24 hours to 1, and the homelab
-// mirror restores it hourly (infra: provision-wordlegroup-mirror.yml). Still
-// the rotating weekday name: each overwrite hides the previous version, and
-// the bucket's 30-day lifecycle rule ages those out, so intraday history
-// costs nothing to keep.
-Schedule::command('backup:database daily')
-    ->hourly()
-    ->onOneServer()
-    ->withoutOverlapping();
-
-Schedule::command('backup:database weekly')
-    ->weeklyOn(0, '03:30') // Sunday at 3:30 AM
-    ->onOneServer()
-    ->withoutOverlapping();
-
-Schedule::command('backup:database monthly')
-    ->monthlyOn(1, '04:00') // 1st of month at 4:00 AM
-    ->onOneServer()
-    ->withoutOverlapping();
+// Database backups moved OUT of the app on 2026-08-24: an infra-owned job
+// (infra repo, provision-wordlegroup-backups.yml) now runs hourly + daily
+// pg_dump → age-encrypt → B2, scheduled through Forge. It survives the app
+// being broken and encrypts what the app uploaded in plaintext. The
+// backup:database command remains as a manual utility only — do not
+// re-schedule it without also changing the mirror and monitoring, which
+// watch the infra pipeline's prefix and format.
 
 // Update public leaderboards every 15 minutes
 Schedule::command('leaderboards:update-public')
