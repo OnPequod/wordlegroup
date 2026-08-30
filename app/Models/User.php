@@ -275,10 +275,43 @@ class User extends Authenticatable
         return $user->memberships->pluck('group_id');
     }
 
+    /**
+     * Rows that reference a user through a foreign key that does NOT cascade
+     * on delete. Of the eight foreign keys pointing at users, five cascade;
+     * these three do not, so a user still referenced by one of them cannot be
+     * deleted. See prunable().
+     */
+    public function administeredGroups()
+    {
+        return $this->hasMany(Group::class, 'admin_user_id');
+    }
+
+    public function recordedScores()
+    {
+        return $this->hasMany(Score::class, 'recording_user_id');
+    }
+
+    public function sentGroupInvitations()
+    {
+        return $this->hasMany(GroupMembershipInvitation::class, 'inviting_user_id');
+    }
+
     public function prunable(): Builder
     {
         return static::where('created_at', '<', now()->subMinutes(config('settings.unverified_user_expires_minutes')))
-                     ->whereNull('email_verified_at');
+                     ->whereNull('email_verified_at')
+                     // Skip users that something still points at through a
+                     // non-cascading foreign key. Deleting one raises
+                     // SQLSTATE[23503] and aborts the entire prune run, so a
+                     // single unverified group admin was silently stopping
+                     // every other expired signup from being cleaned up.
+                     // An account that administers a group, invited someone,
+                     // or recorded a score for another player is real data --
+                     // leave it alone rather than cascade the deletion out
+                     // into other people's records.
+                     ->whereDoesntHave('administeredGroups')
+                     ->whereDoesntHave('recordedScores')
+                     ->whereDoesntHave('sentGroupInvitations');
     }
 
     protected function pruning(): void
