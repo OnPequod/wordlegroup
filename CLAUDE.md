@@ -102,52 +102,35 @@ docker exec -i wordle-group-mysql mysql -uroot -pwordlegroup-dev-secret wordlegr
 ## Production Deployment
 
 ### Infrastructure
-- **Server:** dockolith.pequod.dev (managed by ~/Projects/web-server-management)
-- **Domain:** wordlegroup.pequod.dev (temporary), eventually wordlegroup.com
-- **Deploy tool:** Kamal 2
+- **Server:** `wordlegroup-ssh.pequod.dev` (178.156.233.233) — Hetzner, in Forge
+  as `wordlegroup`, labelled `apps` in the Hetzner console. `ssh wordlegroup`.
+- **Domain:** wordlegroup.com
+- **Deploy tool:** **Laravel Forge**, push-to-deploy on `main`. Push and it ships.
+- **Stack:** nginx + PHP-FPM 8.4 as host services, **PostgreSQL 17**, Redis.
+  Horizon runs as a Forge daemon; the scheduler as a Forge scheduled job.
 
-### Ansible Setup
-App-specific provisioning lives in `ansible/` directory:
-- `ansible/inventory/production.yml` - Server connection details
-- `ansible/playbooks/provision.yml` - Creates DB, user, storage dirs
-- `ansible/playbooks/generate-secrets.yml` - Generates .kamal/secrets
-- `ansible/vault/secrets.yml` - App secrets (encrypted)
+> Migrated off Docker/Kamal + MySQL 8 on **2026-08-24**. There is no Docker on
+> the box at all any more. Anything below that mentions Kamal, `kamal-proxy`,
+> `dockolith` or `host.docker.internal` describes the retired setup.
+
+Server-side infrastructure (backups, pgBackRest, monitoring, DNS) is **not** in
+this repo — it lives in `~/Projects/infra`, which owns the box. See
+`~/Projects/infra/directions/wordlegroup-migration.md`.
 
 ### Deployment Workflow
-Production deploys automatically via GitHub Actions when pushing to `main`. Just push and it deploys.
-
-```bash
-# First time setup only:
-cd ansible
-make provision-production  # Create DB, user, storage dirs on server
-make secrets               # Generate .kamal/secrets (for manual deploys if needed)
-```
-
-### Database Migration (from monolith.pequod.dev)
-```bash
-cd ansible
-
-# Transfer dump only
-make migrate-db-production
-
-# Transfer and import
-make migrate-db-production import=true
-```
-
-### Kamal Config Files
-- `config/deploy.yml` - Staging (default)
-- `config/deploy.production.yml` - Production overrides
+Push to `main`. Forge's quick-deploy webhook builds and releases; there is no
+GitHub Actions deploy job (the Kamal ones were deleted on 2026-08-24 — they were
+still armed and pointing at a host that no longer exists).
 
 ### Secrets
-Shared secrets (mysql_root_password, redis_password, kamal_registry_*) come from:
-`~/Projects/web-server-management/vault/secrets.yml`
+App secrets (`app_key`, `db_password`, `aws_*`, `sentry_*`) come from
+`ansible/vault/secrets.yml` in this repo, and the live values are in Forge's
+stored environment for the site.
 
-App secrets (app_key, db_password, aws_*, sentry_*) come from:
-`ansible/vault/secrets.yml`
+> The old shared-secrets path `~/Projects/web-server-management/vault/secrets.yml`
+> is a repo that no longer exists. Ansible tolerated the missing file silently,
+> which is how `make secrets` appeared to work while depending on nothing.
 
-===
-
-<laravel-boost-guidelines>
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -158,7 +141,7 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.17
+- php - 8.4.23
 - laravel/framework (LARAVEL) - v12
 - laravel/horizon (HORIZON) - v
 - laravel/octane (OCTANE) - v2
@@ -198,7 +181,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 ## Frontend Bundling
 
-- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `vendor/bin/sail npm run build`, `vendor/bin/sail npm run dev`, or `vendor/bin/sail composer run dev`. Ask them.
+- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
 
 ## Documentation Files
 
@@ -283,33 +266,26 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 - Add useful array shape type definitions when appropriate.
 
-=== sail rules ===
+=== herd rules ===
 
-# Laravel Sail
+# Laravel Herd
 
-- This project runs inside Laravel Sail's Docker containers. You MUST execute all commands through Sail.
-- Start services using `vendor/bin/sail up -d` and stop them with `vendor/bin/sail stop`.
-- Open the application in the browser by running `vendor/bin/sail open`.
-- Always prefix PHP, Artisan, Composer, and Node commands with `vendor/bin/sail`. Examples:
-    - Run Artisan Commands: `vendor/bin/sail artisan migrate`
-    - Install Composer packages: `vendor/bin/sail composer install`
-    - Execute Node commands: `vendor/bin/sail npm run dev`
-    - Execute PHP scripts: `vendor/bin/sail php [script]`
-- View all available Sail commands by running `vendor/bin/sail` without arguments.
+- The application is served by Laravel Herd and will be available at: `https?://[kebab-case-project-dir].test`. Use the `get-absolute-url` tool to generate valid URLs for the user.
+- You must not run any commands to make the site available via HTTP(S). It is always available through Laravel Herd.
 
 === tests rules ===
 
 # Test Enforcement
 
 - Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
-- Run the minimum number of tests needed to ensure code quality and speed. Use `vendor/bin/sail artisan test --compact` with a specific filename or filter.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test --compact` with a specific filename or filter.
 
 === laravel/core rules ===
 
 # Do Things the Laravel Way
 
-- Use `vendor/bin/sail artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using the `list-artisan-commands` tool.
-- If you're creating a generic PHP class, use `vendor/bin/sail artisan make:class`.
+- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using the `list-artisan-commands` tool.
+- If you're creating a generic PHP class, use `php artisan make:class`.
 - Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
 
 ## Database
@@ -322,7 +298,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ### Model Creation
 
-- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other things, using `list-artisan-commands` to check the available options to `vendor/bin/sail artisan make:model`.
+- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other things, using `list-artisan-commands` to check the available options to `php artisan make:model`.
 
 ### APIs & Eloquent Resources
 
@@ -353,11 +329,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 - When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
 - Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
-- When creating tests, make use of `vendor/bin/sail artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
+- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
 
 ## Vite Error
 
-- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `vendor/bin/sail npm run build` or ask the user to run `vendor/bin/sail npm run dev` or `vendor/bin/sail composer run dev`.
+- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
 
 === laravel/v12 rules ===
 
@@ -398,8 +374,8 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Pest
 
-- This project uses Pest for testing. Create tests: `vendor/bin/sail artisan make:test --pest {name}`.
-- Run tests: `vendor/bin/sail artisan test --compact` or filter: `vendor/bin/sail artisan test --compact --filter=testName`.
+- This project uses Pest for testing. Create tests: `php artisan make:test --pest {name}`.
+- Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
 - Do NOT delete tests without approval.
 - CRITICAL: ALWAYS use `search-docs` tool for version-specific Pest documentation and updated code examples.
 - IMPORTANT: Activate `pest-testing` every time you're working with a Pest or testing-related task.
