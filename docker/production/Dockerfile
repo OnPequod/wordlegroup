@@ -49,8 +49,8 @@ LABEL service="wordle-group"
 RUN apk add --no-cache \
     nginx \
     supervisor \
-    mysql-client \
     postgresql17-client \
+    postgresql17-dev \
     libzip-dev \
     icu-dev \
     oniguruma-dev \
@@ -64,7 +64,7 @@ RUN apk add --no-cache \
 # Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
-    pdo_mysql \
+    pdo_pgsql \
     zip \
     intl \
     mbstring \
