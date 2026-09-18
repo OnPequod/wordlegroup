@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Str;
 
-$mysqlSslCaAttribute = class_exists('Pdo\\Mysql')
-    ? Pdo\Mysql::ATTR_SSL_CA
-    : PDO::MYSQL_ATTR_SSL_CA;
-
 return [
 
     /*
@@ -19,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -62,8 +58,11 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // The attribute constant only exists where pdo_mysql does, so it is
+            // resolved inside the guard rather than at file scope.
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                $mysqlSslCaAttribute => env('MYSQL_ATTR_SSL_CA'),
+                (class_exists('Pdo\\Mysql') ? Pdo\Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA)
+                    => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 

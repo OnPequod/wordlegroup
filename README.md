@@ -9,7 +9,7 @@ A Laravel application for tracking and sharing Wordle scores with friends and gr
 - **Framework:** Laravel 12.x with Livewire 4
 - **PHP:** 8.4
 - **Frontend:** Tailwind CSS, Alpine.js
-- **Database:** MySQL 8.4
+- **Database:** PostgreSQL 17
 - **Cache/Queue:** Redis with Horizon
 - **Deployment:** Kamal 2
 
@@ -27,7 +27,7 @@ A Laravel application for tracking and sharing Wordle scores with friends and gr
 
 Servers are provisioned using [web-server-management](https://github.com/onpequod/web-server-management) which sets up:
 - Docker
-- MySQL 8.4
+- PostgreSQL 17
 - Redis
 - kamal-proxy
 

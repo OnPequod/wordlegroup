@@ -16,7 +16,7 @@ services:
       - wordle-group-network
       - mailpit_default
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -51,7 +51,7 @@ services:
       - wordle-group-network
       - mailpit_default
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -60,24 +60,24 @@ services:
   # ===================
   # Data Services
   # ===================
-  mysql:
-    image: mysql:8.4
-    container_name: wordle-group-mysql
+  postgres:
+    image: postgres:17-alpine
+    container_name: wordle-group-postgres
     restart: on-failure
     environment:
-      MYSQL_DATABASE: wordle_group
-      MYSQL_USER: appdocker
-      MYSQL_PASSWORD: appdocker
-      MYSQL_ROOT_PASSWORD: wordlegroup-dev-secret
+      POSTGRES_DB: wordle_group
+      POSTGRES_USER: wordle_group
+      POSTGRES_PASSWORD: wordlegroup-dev-secret
     volumes:
-      - wordle-group-mysql-data:/var/lib/mysql
+      - wordle-group-postgres-data:/var/lib/postgresql/data
       - ./storage/app/dumps:/dumps
     ports:
-      - "127.0.0.1:3307:3306"
+      # 5433 on the host, so the stack can run alongside Herd's PostgreSQL.
+      - "127.0.0.1:5433:5432"
     networks:
       - wordle-group-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pwordlegroup-dev-secret"]
+      test: ["CMD-SHELL", "pg_isready -U wordle_group -d wordle_group"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -111,5 +111,10 @@ networks:
     external: true
 
 volumes:
-  wordle-group-mysql-data:
+  # wordle-group-mysql-data is retired and deliberately NOT declared here.
+  # Compose deletes exactly the named volumes declared in this block on
+  # `docker compose down -v`, so declaring it is what would put the archived
+  # MySQL data at risk. Nothing references it any more; `docker volume rm` is
+  # the only way to lose it.
+  wordle-group-postgres-data:
   wordle-group-redis-data:

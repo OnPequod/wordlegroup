@@ -7,7 +7,7 @@ Wordle Group is a Laravel application for tracking and sharing Wordle scores wit
 - **Framework:** Laravel 12.x
 - **PHP:** 8.4
 - **Frontend:** Livewire 4, Tailwind CSS, Alpine.js
-- **Database:** MySQL 8.4
+- **Database:** PostgreSQL 17
 - **Cache/Queue:** Redis
 - **Testing:** Pest 3.0, PHPUnit 11
 
@@ -15,7 +15,7 @@ Wordle Group is a Laravel application for tracking and sharing Wordle scores wit
 All services run in Docker. Key containers:
 - `wordle-group-php` - PHP-FPM application
 - `wordle-group-nginx` - Web server (port 8033)
-- `wordle-group-mysql` - MySQL database (port 3307 on host)
+- `wordle-group-postgres` - PostgreSQL database (port 5433 on host)
 - `wordle-group-redis` - Redis cache/queue
 - `wordle-group-mailpit` - Local email testing
 
@@ -40,9 +40,10 @@ docker exec wordle-group-php php artisan config:cache
 ## Database Access
 From host machine (IDE/Beekeeper):
 - Host: `localhost` or `127.0.0.1`
-- Port: `3307`
-- User: `wordlegroup`
+- Port: `5433`
+- User: `wordle_group`
 - Password: `wordlegroup-dev-secret`
+- Database: `wordle_group`
 
 ## Testing
 ```bash
@@ -90,7 +91,7 @@ docker exec wordle-group-php php artisan view:clear
 docker exec wordle-group-php php artisan migrate:fresh --seed
 
 # Reload prod copy database
-docker exec -i wordle-group-mysql mysql -uroot -pwordlegroup-dev-secret wordlegroup_prod_copy < storage/app/dumps/wordlegroup.sql
+docker compose exec -T postgres psql -U wordle_group -d wordlegroup_prod_copy < storage/app/dumps/wordlegroup.sql
 ```
 
 ## Livewire 4 Notes
