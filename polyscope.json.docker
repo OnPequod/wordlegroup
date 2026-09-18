@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "setup": [
+      "printf 'docker\\n' > .dev-env",
+      "projectctl workspace-link wg \"wordlegroup-$(basename \"$PWD\").test\" \"$PWD\"",
+      ". \"$HOME/.config/localdev/workspaces/wordlegroup-$(basename \"$PWD\").test.env\" && COMPOSE_PROJECT_NAME=\"$COMPOSE_PROJECT\" docker compose -f \"$OVERRIDE_PATH\" exec -T php composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-mailparse",
+      ". \"$HOME/.config/localdev/workspaces/wordlegroup-$(basename \"$PWD\").test.env\" && COMPOSE_PROJECT_NAME=\"$COMPOSE_PROJECT\" docker compose -f \"$OVERRIDE_PATH\" exec -T php php artisan migrate --force --no-interaction",
+      "npm install",
+      "npm run build"
+    ],
+    "archive": "projectctl workspace-unlink \"wordlegroup-$(basename \"$PWD\").test\""
+  },
+  "preview": {
+    "url": "http://wordlegroup-{{folder}}.test"
+  }
+}

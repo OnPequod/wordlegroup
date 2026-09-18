@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "setup": [
+      "projectctl workspace-herd-link wg \"wordlegroup-{{folder}}.test\" \"$PWD\"",
+      "composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-mailparse",
+      "php artisan migrate --force --no-interaction",
+      "npm install",
+      "npm run build"
+    ],
+    "archive": "projectctl workspace-herd-unlink wg \"wordlegroup-{{folder}}.test\" --keep-databases"
+  },
+  "preview": {
+    "url": "http://wordlegroup-{{folder}}.test"
+  }
+}
