@@ -106,13 +106,20 @@ docker compose exec -T postgres psql -U wordle_group -d wordlegroup_prod_copy < 
 - **Server:** the shared **apps** box, `apps-ssh.pequod.dev` (178.156.197.33),
   Hetzner, in Forge. `ssh flint` or `ssh apps` (user `forge`). Moved here on
   2026-08-27.
-- **Site path:** `~/wordlegroup.com/current` (Forge releases; `.env` lives in
-  `~/wordlegroup.com/.env`). Database `wordlegroup_production`, user `wordlegroup`.
+- **Site path:** `~/wordlegroup.com/current` (Forge zero-downtime releases;
+  `.env` lives in `~/wordlegroup.com/.env`, symlinked into each release).
+  `storage/` is per release, so `laravel.log` starts fresh on every deploy —
+  older logs are under `releases/<id>/storage/logs`.
+- **Database:** `wordlegroup_production`, role `wordlegroup` (non-superuser).
+  Don't use psql as `forge`. For read-only queries over plain ssh
+  (`php artisan db` needs a TTY, so use `ssh -t flint` for that):
+  ```bash
+  ssh flint "cd ~/wordlegroup.com && set -a && . ./.env >/dev/null 2>&1; set +a; PGPASSWORD=\"\$DB_PASSWORD\" PGOPTIONS='-c default_transaction_read_only=on' psql -h 127.0.0.1 -U \"\$DB_USERNAME\" -d \"\$DB_DATABASE\" -Atc 'SELECT count(*) FROM users;'"
+  ```
 - **Domain:** wordlegroup.com
 
-> The old box, `wordlegroup-ssh.pequod.dev` (178.156.233.233), is now
-> `framework` and no longer hosts this app. Its host key changed, so an SSH
-> warning on that IP is expected; don't go there for wordlegroup.
+> 178.156.233.233 is now `framework` and no longer hosts this app; its host
+> key changed, so an SSH warning on that IP is expected.
 - **Deploy tool:** **Laravel Forge**, push-to-deploy on `main`. Push and it ships.
 - **Stack:** nginx + PHP-FPM 8.4 as host services, **PostgreSQL 17**, Redis.
   Horizon runs as a Forge daemon; the scheduler as a Forge scheduled job.
@@ -126,7 +133,8 @@ this repo — it lives in `~/Projects/infra`, which owns the box. See
 `~/Projects/infra/directions/wordlegroup-migration.md`.
 
 ### Deployment Workflow
-Push to `main`. Forge's quick-deploy webhook builds and releases; there is no
+Push to `main`. Forge's quick-deploy webhook builds and releases, running
+`migrate --force` before activating the release; there is no
 GitHub Actions deploy job (the Kamal ones were deleted on 2026-08-24 — they were
 still armed and pointing at a host that no longer exists).
 
