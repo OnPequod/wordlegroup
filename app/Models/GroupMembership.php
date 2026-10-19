@@ -11,7 +11,12 @@ class GroupMembership extends Model
 
     protected $guarded = [];
 
-    protected $dates = ['verified_at', 'token_generated_at', 'last_viewed_discussions_at', 'last_viewed_activity_at'];
+    protected $casts = [
+        'verified_at' => 'datetime',
+        'token_generated_at' => 'datetime',
+        'last_viewed_discussions_at' => 'datetime',
+        'last_viewed_activity_at' => 'datetime',
+    ];
 
     protected $hidden = ['token', 'token_generated_at'];
 

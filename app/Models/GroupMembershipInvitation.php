@@ -20,7 +20,14 @@ class GroupMembershipInvitation extends Model
 
     protected $hidden = ['token'];
 
-    protected $dates = ['reminded_at'];
+    protected $casts = [
+        'reminded_at' => 'datetime',
+    ];
+
+    public function setEmailAttribute(?string $email): void
+    {
+        $this->attributes['email'] = User::normalizeEmail($email);
+    }
 
     public function invitingUser()
     {

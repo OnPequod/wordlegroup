@@ -59,6 +59,8 @@ class Onboarding extends Component
 
     public function complete(): mixed
     {
+        $this->email = User::normalizeEmail($this->email);
+
         $this->resetErrorBag('showOnPublicLeaderboard');
         $this->validate();
 

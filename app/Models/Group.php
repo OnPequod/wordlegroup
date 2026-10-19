@@ -18,9 +18,8 @@ class Group extends Model
 
     protected $casts = [
         'leaderboard' => 'collection',
+        'verified_at' => 'datetime',
     ];
-
-    protected $dates = ['verified_at'];
 
     protected $guarded = [];
 

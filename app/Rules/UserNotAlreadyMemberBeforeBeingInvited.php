@@ -18,7 +18,7 @@ class UserNotAlreadyMemberBeforeBeingInvited implements Rule
 
     public function passes($attribute, $value)
     {
-        $user = User::where('email', $value)->first();
+        $user = User::where('email', User::normalizeEmail($value))->first();
 
         if (!$user) {
             return true;

@@ -79,6 +79,8 @@ class Login extends Component
 
     public function send()
     {
+        $this->email = User::normalizeEmail($this->email);
+
         $this->validate(['email'     => ['required_without:login_code', 'exists:users'],]);
 
         $this->user = User::where('email', $this->email)->first();

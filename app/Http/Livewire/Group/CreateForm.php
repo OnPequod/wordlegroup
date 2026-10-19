@@ -53,6 +53,8 @@ class CreateForm extends Component
 
     public function store()
     {
+        $this->email = User::normalizeEmail($this->email);
+
         $this->validate();
 
         $user = Auth::check()

@@ -58,6 +58,8 @@ class Settings extends Component
 
     public function update()
     {
+        $this->email = User::normalizeEmail($this->email);
+
         $this->resetErrorBag('showOnPublicLeaderboard');
         $this->validate();
 

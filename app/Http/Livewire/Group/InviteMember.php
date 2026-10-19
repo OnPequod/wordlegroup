@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Group;
 
 use App\Models\Group;
 use App\Models\GroupMembershipInvitation;
+use App\Models\User;
 use App\Rules\UserNotAlreadyMemberBeforeBeingInvited;
 use Livewire\Component;
 
@@ -39,6 +40,8 @@ class InviteMember extends Component
 
     public function invite()
     {
+        $this->email = User::normalizeEmail($this->email);
+
         $this->validate();
 
         GroupMembershipInvitation::createInvitation($this->group, $this->email, $this->name);

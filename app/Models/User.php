@@ -75,6 +75,21 @@ class User extends Authenticatable
         'allow_reminder_emails' => 'boolean',
     ];
 
+    /**
+     * Emails are stored lowercased. MySQL's collation compared them
+     * case-insensitively; PostgreSQL does not, so every write and lookup
+     * has to agree on one form.
+     */
+    public static function normalizeEmail(?string $email): string
+    {
+        return Str::lower(trim((string) $email));
+    }
+
+    public function setEmailAttribute(?string $email): void
+    {
+        $this->attributes['email'] = self::normalizeEmail($email);
+    }
+
     protected static function booted(): void
     {
         static::updated(function (User $user) {

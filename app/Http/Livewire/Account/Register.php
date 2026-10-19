@@ -40,6 +40,8 @@ class Register extends Component
 
     public function store()
     {
+        $this->email = User::normalizeEmail($this->email);
+
         $this->validate();
 
         $user = User::create([
