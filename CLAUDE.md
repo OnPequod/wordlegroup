@@ -103,9 +103,16 @@ docker compose exec -T postgres psql -U wordle_group -d wordlegroup_prod_copy < 
 ## Production Deployment
 
 ### Infrastructure
-- **Server:** `wordlegroup-ssh.pequod.dev` (178.156.233.233) — Hetzner, in Forge
-  as `wordlegroup`, labelled `apps` in the Hetzner console. `ssh wordlegroup`.
+- **Server:** the shared **apps** box, `apps-ssh.pequod.dev` (178.156.197.33),
+  Hetzner, in Forge. `ssh flint` or `ssh apps` (user `forge`). Moved here on
+  2026-08-27.
+- **Site path:** `~/wordlegroup.com/current` (Forge releases; `.env` lives in
+  `~/wordlegroup.com/.env`). Database `wordlegroup_production`, user `wordlegroup`.
 - **Domain:** wordlegroup.com
+
+> The old box, `wordlegroup-ssh.pequod.dev` (178.156.233.233), is now
+> `framework` and no longer hosts this app. Its host key changed, so an SSH
+> warning on that IP is expected; don't go there for wordlegroup.
 - **Deploy tool:** **Laravel Forge**, push-to-deploy on `main`. Push and it ships.
 - **Stack:** nginx + PHP-FPM 8.4 as host services, **PostgreSQL 17**, Redis.
   Horizon runs as a Forge daemon; the scheduler as a Forge scheduled job.
