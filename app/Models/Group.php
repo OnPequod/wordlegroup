@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Group extends Model
@@ -73,6 +74,23 @@ class Group extends Model
     }
 
     protected function pruning(): void
+    {
+        $this->deleteRelatedRecords();
+    }
+
+    /**
+     * Delete the group at its administrator's request. Members keep their
+     * scores; only the group and what hangs off it goes.
+     */
+    public function deleteWithRelatedRecords(): void
+    {
+        DB::transaction(function () {
+            $this->deleteRelatedRecords();
+            $this->delete();
+        });
+    }
+
+    protected function deleteRelatedRecords(): void
     {
         $this->leaderboards()->delete();
         $this->memberships()->delete();

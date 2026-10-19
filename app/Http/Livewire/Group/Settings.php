@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Group;
 use App\Models\Group;
 use App\Rules\TransferGroupAdministratorConfirmed;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Settings extends Component
@@ -16,6 +17,7 @@ class Settings extends Component
     public bool $public = false;
     public int $initialAdminUserId;
     public bool $confirmTransfer = false;
+    public string $deleteConfirmation = '';
 
     public function getRules()
     {
@@ -59,6 +61,26 @@ class Settings extends Component
         session()->flash('message', 'Settings saved.');
 
         return redirect()->to(route('group.settings', $this->group));
+    }
+
+    public function deleteGroup()
+    {
+        if (!$this->group->isAdmin(Auth::user())) {
+            abort(403);
+        }
+
+        $this->validate(
+            ['deleteConfirmation' => ['required', Rule::in([$this->group->name])]],
+            ['deleteConfirmation.in' => 'Type the group name exactly to confirm.'],
+        );
+
+        $name = $this->group->name;
+
+        $this->group->deleteWithRelatedRecords();
+
+        session()->flash('message', $name . ' has been deleted.');
+
+        return redirect()->to(route('account.home'));
     }
 
     public function render()

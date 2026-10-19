@@ -86,6 +86,30 @@
                         </a>
                     </div>
                 </div>
+
+                {{-- Delete Group --}}
+                <div class="bg-white rounded-xl border border-red-200 shadow-sm shadow-zinc-900/5 p-8">
+                    <h3 class="text-lg font-semibold text-red-700 pb-3 border-b border-zinc-100">Delete Group</h3>
+                    <form class="pt-5 mb-0" wire:submit.prevent="deleteGroup">
+                        <p class="text-sm text-zinc-600 mb-2">This permanently removes the group, its leaderboards, discussion, and pending invitations. Members keep their own scores.</p>
+                        <p class="text-sm text-zinc-600 mb-4">Type <span class="font-semibold text-zinc-900">{{ $group->name }}</span> to confirm.</p>
+                        <x-form.input.text
+                            :errors="$errors"
+                            name="deleteConfirmation"
+                            label="Group name"
+                            wire:model="deleteConfirmation"
+                            placeholder="{{ $group->name }}"
+                        />
+                        <div class="pt-4">
+                            <button
+                                type="submit"
+                                class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
+                                wire:loading.attr="disabled"
+                                wire:target="deleteGroup"
+                            >Delete Group</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
