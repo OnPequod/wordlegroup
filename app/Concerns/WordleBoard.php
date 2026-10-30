@@ -115,9 +115,9 @@ class WordleBoard
 
     public function getBoardNumberFromBoard($board)
     {
-        preg_match_all('/(\d+|\d+,\d+)(\s.+|\s)(\d|x|X)\/6/', $board, $matches);
+        preg_match_all("/(\d{1,3}(?:[,.'’ \x{00A0}\x{202F}]\d{3})+|\d+)(\s.+|\s)(\d|x|X)\/6/u", $board, $matches);
 
-        $boardNumberCandidate = Str::replace(',', '', $matches[1][0]);
+        $boardNumberCandidate = preg_replace('/\D/', '', $matches[1][0] ?? '');
         $boardNumber = is_numeric($boardNumberCandidate ?? null)
             ? (int) $boardNumberCandidate
             : null;
